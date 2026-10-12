@@ -1,12 +1,24 @@
 /* Python executes off the UI thread. The UI can terminate this worker. */
 let python;
+const source=new URL(self.location.href).searchParams.get('source')==='cdn'?'cdn':'site';
+const indexURL=source==='cdn'?'https://cdn.jsdelivr.net/pyodide/v0.27.7/full/':new URL('../runtime/pyodide/',self.location.href).href;
+let phase='loader',failedFile='';
 async function initialize() {
   try {
-    const indexURL=new URL('../runtime/pyodide/',self.location.href).href;
+    if(typeof WebAssembly!=='object')throw new Error('WebAssembly is unavailable in this browser');
+    // Preserve the original fetch API, but retain the exact failed runtime file.
+    const originalFetch=self.fetch.bind(self);
+    self.fetch=async (...args)=>{
+      const url=String(args[0]?.url||args[0]),file=url.split('/').at(-1).split('?')[0];
+      try{const response=await originalFetch(...args);if(!response.ok){failedFile=file;throw new Error(`HTTP ${response.status}: ${file}`);}return response;}
+      catch(error){failedFile=file;throw error;}
+    };
     self.postMessage({type:'loading-progress',phase:'files'});
     importScripts(indexURL+'pyodide.js');
+    phase='runtime';
     self.postMessage({type:'loading-progress',phase:'initializing'});
-    python = await loadPyodide({indexURL});
+    python = await loadPyodide({indexURL,enableRunUntilComplete:false});
+    phase='lesson';
     python.runPython(`
 import ast, builtins, io, json, sys, traceback
 
@@ -54,8 +66,8 @@ def lesson_run(payload_json):
         results.append({'output': output.getvalue(), 'error': error_data})
     return json.dumps({'results': results, 'hasIfExp':has_ifexp}, ensure_ascii=False)
 `);
-    self.postMessage({type:'ready',source:'site'});
-  } catch (error) { self.postMessage({type:'init-error',message:String(error)}); }
+    self.postMessage({type:'ready',source});
+  } catch (error) { self.postMessage({type:'init-error',source,phase,file:failedFile,message:String(error).slice(0,2000)}); }
 }
 const ready = initialize();
 self.onmessage = async ({data}) => {

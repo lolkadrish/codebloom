@@ -28,3 +28,4 @@ Reference solutions and QA harnesses are kept outside the published files.
 After all nine exercises are verified, the next-step course opens automatically. Both courses use this shared interface, themes and language preference. Keep this folder together with the repository root for the full local route. The combined source archive contains both courses.
 
 The core Python runtime is now hosted in ../runtime/pyodide on the same site, with a two-minute startup watchdog and a retry button beside the result. Keep the runtime folder in the complete source archive for local use.
+Startup now automatically retries against the official pinned jsDelivr distribution in a fresh worker. Both errors remain visible if neither source loads. Synchronous beginner exercises do not enable the optional async stack-switching runtime feature.

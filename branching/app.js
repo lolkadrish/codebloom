@@ -16,6 +16,8 @@ if(!languageIds.includes(state.language))state.language='ru';
 if(!['system','light','dark','lavender'].includes(state.theme))state.theme='system';
 if(!Number.isInteger(state.current)||state.current<0||state.current>=LESSON_TASKS.length)state.current=0;
 let current=state.current,worker,ready=false,busy=false,job=null,sequence=0,timer,initTimer,errorLine=null,runtimeKey='loading',runtimeKind='';
+const runtimeSources=['site','cdn'];
+let runtimeSourceIndex=0,loadingErrors=[];
 const explorerState={temperature:-5,energy:55,weather:'rain',weight:3,fragile:'yes'};
 const loc = value => Array.isArray(value)?value[languageIds.indexOf(state.language)]:value;
 const t = (key,values={}) => {let text=loc(UI[key])??key;for(const [name,value]of Object.entries(values))text=text.replaceAll('{'+name+'}',String(value));return text;};
@@ -101,7 +103,7 @@ function renderQuiz(){
 }
 $('quiz-form').addEventListener('change',()=>{const module=LESSON_MODULES[task().module];state.answers[keyOf(module.id)]=module.quiz.map((_,qi)=>{const el=document.querySelector(`input[name="question-${qi}"]:checked`);return el?Number(el.value):null;});persist();});
 $('quiz-form').addEventListener('submit',event=>{event.preventDefault();const module=LESSON_MODULES[task().module],answers=module.quiz.map((_,qi)=>document.querySelector(`input[name="question-${qi}"]:checked`));if(answers.some(el=>!el)){$('quiz-feedback').textContent=t('quizChoose');return;}const correct=answers.filter((el,i)=>Number(el.value)===module.quiz[i].answer).length;$('quiz-feedback').textContent=correct===2?t('quizCorrect'):t('quizWrong',{n:correct});$('quiz-feedback').className=correct===2?'pass':'';if(correct===2){state.quizzes[keyOf(module.id)]=true;$('quiz-status').textContent=t('quizDone');persist();}});
-function renderInitialization(failed=false){if(busy)return;$('output').dataset.state=failed?'python-error':'python-loading';$('output').className='output-box'+(failed?' error':'');$('execution-label').textContent=t(failed?'loadFailed':runtimeKey);$('output').innerHTML=`<p class="output-placeholder">${escapeHTML(t(failed?'loadingFailureHelp':'loadingHelp'))}</p>${failed?`<button id="retry-in-console" class="secondary-button">${escapeHTML(t('retryLoading'))}</button>`:''}`;if($('retry-in-console'))$('retry-in-console').onclick=createWorker;}
+function renderInitialization(failed=false){if(busy)return;$('output').dataset.state=failed?'python-error':'python-loading';$('output').className='output-box'+(failed?' error':'');$('execution-label').textContent=t(failed?'loadFailed':runtimeKey);$('output').innerHTML=`<p class="output-placeholder">${escapeHTML(t(failed?'loadingFailureHelp':runtimeSourceIndex?'fallbackHelp':'loadingHelp'))}</p>${failed?`<button id="retry-in-console" class="secondary-button">${escapeHTML(t('retryLoading'))}</button><details class="loading-details" open><summary>${escapeHTML(t('loadingDetails'))}</summary><pre>${escapeHTML(loadingErrors.join('\n\n'))}</pre></details>`:''}`;if($('retry-in-console'))$('retry-in-console').onclick=()=>createWorker();}
 function clearInitialization(){if(['python-error','python-loading'].includes($('output').dataset.state)){delete $('output').dataset.state;$('output').className='output-box';$('output').innerHTML=`<p class="output-placeholder">${escapeHTML(t('outputPlaceholder'))}</p>`;$('execution-label').textContent=t('waiting');}}
 function resetResult(){ delete $('output').dataset.state;$('output').className='output-box';$('output').innerHTML=`<p class="output-placeholder">${escapeHTML(t('outputPlaceholder'))}</p>`;$('execution-label').textContent=t('waiting');$('feedback').hidden=true;$('test-section').hidden=true;$('test-rows').innerHTML='';if(!ready)renderInitialization(runtimeKind==='error'); }
 function renderHints(){const count=Math.min(3,Math.max(0,Number(state.hints[keyOf(task().id)])||0));$('hint-count').textContent=`${count} / 3`;$('hint').disabled=count===3;$('hints').innerHTML=task().hints.slice(0,count).map((hint,i)=>`<div class="hint-card"><strong>${escapeHTML(t('hintNumber',{n:i+1}))}</strong><span>${escapeHTML(loc(hint))}</span></div>`).join('');}
@@ -109,22 +111,25 @@ function saveCode(){state.drafts[keyOf(task().id)]=$('code').value;errorLine=nul
 function replaceSelection(text){const editor=$('code');editor.setRangeText(text,editor.selectionStart,editor.selectionEnd,'end');saveCode();}
 function shiftIndent(reverse=false){const editor=$('code'),text=editor.value,start=editor.selectionStart,end=editor.selectionEnd,lineStart=text.lastIndexOf('\n',start-1)+1,blockEnd=start===end?(text.indexOf('\n',start)===-1?text.length:text.indexOf('\n',start)):(end>start&&text[end-1]==='\n'?end-1:end);let firstDelta=0,totalDelta=0;const changed=text.slice(lineStart,blockEnd).split('\n').map((line,i)=>{const remove=reverse?(line.match(/^ {1,4}/)?.[0].length||0):0,delta=reverse?-remove:4;if(i===0)firstDelta=delta;totalDelta+=delta;return reverse?line.slice(remove):'    '+line;}).join('\n');editor.setRangeText(changed,lineStart,blockEnd,'preserve');editor.setSelectionRange(Math.max(lineStart,start+firstDelta),Math.max(lineStart,end+totalDelta));editor.focus();saveCode();}
 function setBusy(value){busy=value;$('run').disabled=value||!ready;$('check').disabled=value||!ready;$('reset-code').disabled=value;$('language').disabled=value;$('code').readOnly=value;$('stdin').readOnly=value;$('stop').hidden=!value;$('indent').disabled=value;$('outdent').disabled=value;renderNavigation();}
-function renderRuntime(){$('runtime').className='runtime '+runtimeKind;$('runtime').innerHTML=`<span>${escapeHTML(t(runtimeKey))}</span>${runtimeKind==='error'?`<button id="retry-python">${escapeHTML(t('retry'))}</button>`:''}`;if($('retry-python'))$('retry-python').onclick=createWorker;}
+function renderRuntime(){$('runtime').className='runtime '+runtimeKind;$('runtime').innerHTML=`<span>${escapeHTML(t(runtimeKey))}</span>${runtimeKind==='error'?`<button id="retry-python">${escapeHTML(t('retry'))}</button>`:''}`;if($('retry-python'))$('retry-python').onclick=()=>createWorker();}
 function setRuntime(kind,key){runtimeKind=kind;runtimeKey=key;renderRuntime();}
-function createWorker(){
-  worker?.terminate();clearTimeout(initTimer);ready=false;setBusy(false);setRuntime('','loading');delete $('runtime').dataset.source;renderInitialization();
-  try{worker=new Worker(new URL('python-worker.js?v=3',assetRoot));const instance=worker;const watchInitialization=()=>{clearTimeout(initTimer);initTimer=setTimeout(()=>{if(!ready&&worker===instance){instance.terminate();setRuntime('error','loadFailed');renderInitialization(true);}},120000);};watchInitialization();
+function createWorker(fallback=false){
+  if(!fallback){runtimeSourceIndex=0;loadingErrors=[];}
+  worker?.terminate();clearTimeout(initTimer);clearTimeout(timer);job=null;ready=false;setBusy(false);setRuntime('',runtimeSourceIndex?'fallbackLoading':'loading');delete $('runtime').dataset.source;renderInitialization();
+  const source=runtimeSources[runtimeSourceIndex];
+  const failInitialization=message=>{worker?.terminate();clearTimeout(initTimer);ready=false;loadingErrors.push(`${source}: ${String(message).slice(0,2200)}`);if(runtimeSourceIndex<runtimeSources.length-1){runtimeSourceIndex++;createWorker(true);}else{setRuntime('error','loadFailed');setBusy(false);renderInitialization(true);}};
+  try{const workerURL=new URL('python-worker.js?v=4',assetRoot);workerURL.searchParams.set('source',source);worker=new Worker(workerURL);const instance=worker;const watchInitialization=()=>{clearTimeout(initTimer);initTimer=setTimeout(()=>{if(!ready&&worker===instance)failInitialization('Loading timed out after 120 seconds');},120000);};watchInitialization();
     worker.onmessage=({data})=>{
       if(worker!==instance)return;
-      if(data.type==='loading-progress'){setRuntime('',data.phase==='files'?'loadingFiles':'startingPython');renderInitialization();watchInitialization();return;}
+      if(data.type==='loading-progress'){setRuntime('',runtimeSourceIndex?'fallbackLoading':data.phase==='files'?'loadingFiles':'startingPython');renderInitialization();watchInitialization();return;}
       if(data.type==='ready'){clearTimeout(initTimer);ready=true;setRuntime('ready','ready');$('runtime').dataset.source=data.source||'site';setBusy(false);clearInitialization();return;}
-      if(data.type==='init-error'){clearTimeout(initTimer);instance.terminate();ready=false;setRuntime('error','loadFailed');setBusy(false);renderInitialization(true);return;}
+      if(data.type==='init-error'){failInitialization([data.phase,data.file,data.message||'Unknown initialization error'].filter(Boolean).join(' · '));return;}
       if(!job||data.id!==job.id)return;const finished=job;job=null;clearTimeout(timer);setBusy(false);
       if(data.type==='worker-error'){ready=false;setRuntime('error','loadFailed');setBusy(false);feedback('info',t('error'),t('workerFailure'));return;}
       processResult(data,finished);
     };
-    worker.onerror=()=>{if(worker!==instance)return;clearTimeout(initTimer);clearTimeout(timer);job=null;ready=false;setRuntime('error','loadFailed');setBusy(false);renderInitialization(true);};
-  }catch{setRuntime('error','loadFailed');renderInitialization(true);}
+    worker.onerror=event=>{if(worker!==instance)return;clearTimeout(timer);job=null;if(!ready){failInitialization(event.message||'The browser could not start the Python worker');return;}instance.terminate();ready=false;setRuntime('error','loadFailed');loadingErrors=[`${source}: ${event.message||'The Python worker stopped unexpectedly'}`];setBusy(false);renderInitialization(true);};
+  }catch(error){failInitialization(error);}
 }
 function feedback(kind,title,body,extra=''){$('feedback').className='feedback '+kind;$('feedback').innerHTML=`<h2>${escapeHTML(title)}</h2><p>${escapeHTML(body)}</p>${extra}`;$('feedback').hidden=false;}
 function explainError(error){
