@@ -2,10 +2,16 @@
 const $ = id => document.getElementById(id);
 const escapeHTML = value => String(value).replace(/[&<>"']/g, x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
 const languageIds = ['ru','uk','en'];
-const STORAGE_KEY = 'python-first-step-v1';
-let state = {language:'ru',theme:'system',current:0,drafts:{},inputs:{},solved:{},hints:{},quizzes:{},answers:{}};
+const courseStage=document.documentElement.dataset.course==='next'?'next':'first';
+const assetRoot=new URL('.',document.currentScript.src);
+const STORAGE_KEY=courseStage==='first'?'python-first-step-v1':'python-next-step-v1';
+const PREFERENCES_KEY='python-learning-preferences-v1';
+let state = {language:'ru',theme:'system',current:0,drafts:{},inputs:{},solved:{},hints:{},quizzes:{},answers:{},verifiedRevisions:{}};
 try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));if(saved&&typeof saved==='object'&&!Array.isArray(saved))for(const key of Object.keys(state))if(key in saved)state[key]=saved[key];}catch{}
-for(const key of ['drafts','inputs','solved','hints','quizzes','answers'])if(!state[key]||typeof state[key]!=='object'||Array.isArray(state[key]))state[key]={};
+for(const key of ['drafts','inputs','solved','hints','quizzes','answers','verifiedRevisions'])if(!state[key]||typeof state[key]!=='object'||Array.isArray(state[key]))state[key]={};
+// Preserve the original Russian next-step drafts and verified progress.
+if(courseStage==='next')for(const item of LESSON_TASKS)for(const field of ['drafts','inputs','solved','hints','verifiedRevisions']){const legacy=item.id,key='ru:'+item.id;if(legacy in state[field]&&!(key in state[field]))state[field][key]=state[field][legacy];}
+try{const preferences=JSON.parse(localStorage.getItem(PREFERENCES_KEY))||JSON.parse(localStorage.getItem('python-first-step-v1'));if(preferences&&typeof preferences==='object'){if(languageIds.includes(preferences.language))state.language=preferences.language;if(['system','light','dark','lavender'].includes(preferences.theme))state.theme=preferences.theme;}}catch{}
 if(!languageIds.includes(state.language))state.language='ru';
 if(!['system','light','dark','lavender'].includes(state.theme))state.theme='system';
 if(!Number.isInteger(state.current)||state.current<0||state.current>=LESSON_TASKS.length)state.current=0;
@@ -18,8 +24,9 @@ const keyOf = id => state.language+':'+id;
 const task = () => LESSON_TASKS[current];
 const casesOf = item => item.cases.map(c=>({input:c.input.map(loc),out:loc(c.out)}));
 const codeOf = item => typeof state.drafts[keyOf(item.id)]==='string'?state.drafts[keyOf(item.id)]:item.starter;
-const isSolved = item => typeof state.solved[keyOf(item.id)]==='string'&&state.solved[keyOf(item.id)]===codeOf(item);
-function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));$('save-status').textContent=t('saved');}catch{$('save-status').textContent=t('notSaved');}}
+const isSolved = item => typeof state.solved[keyOf(item.id)]==='string'&&state.solved[keyOf(item.id)]===codeOf(item)&&(state.verifiedRevisions[keyOf(item.id)]||1)===(item.revision||1);
+const courseHref = stage => new URL(stage==='first'?(courseStage==='first'?'./':'branching/'):(courseStage==='first'?'../':'./'),location.href).href;
+function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));localStorage.setItem(PREFERENCES_KEY,JSON.stringify({language:state.language,theme:state.theme}));$('save-status').textContent=t('saved');}catch{$('save-status').textContent=t('notSaved');}}
 function applyTheme(){const mode=state.theme==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):state.theme;document.documentElement.dataset.theme=mode;$('theme').value=state.theme;$('theme-icon').textContent=mode==='dark'?'☾':mode==='lavender'?'✦':'◐';document.querySelector('meta[name="theme-color"]').content=mode==='dark'?'#1d1e2b':'#7255db';}
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(state.theme==='system')applyTheme();});
 function applyLocale(){
@@ -30,6 +37,9 @@ function applyLocale(){
   const heading=document.querySelector('[data-i18n="courseHeading"]');heading.innerHTML=escapeHTML(t('courseHeading')).replace(/\n/g,'<br>').replace(/\.$/,'<span>.</span>');
   document.querySelector('[data-i18n="courseIntro"]').style.whiteSpace='pre-line';
   $('language').value=state.language;applyTheme();renderRuntime();renderReference();
+  for(const stage of ['first','next']){const link=$('course-'+stage);link.href=courseHref(stage);if(stage===courseStage)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');}
+  $('related-course').href=courseHref(courseStage==='first'?'next':'first');$('related-course-label').textContent=t(courseStage==='first'?'nextCourse':'returnFirstCourse');
+  $('completion-course-link').href=courseHref(courseStage==='first'?'next':'first');
 }
 function highlight(code){
   const pattern=/(#[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:if|elif|else|and|or|not|True|False)\b|\b(?:print|input|int|str)\b|\b\d+\b)/g;
@@ -54,17 +64,25 @@ function showTask(index,{scroll=false}={}){
 }
 function traceCode(lines,active){$('explorer-code').innerHTML=lines.map((line,i)=>`<span class="trace-line ${active.includes(i)?'trace-active':''}">${escapeHTML(line)}</span>`).join('');}
 function renderExplorer(updateOnly=false){
-  const module=LESSON_MODULES[task().module];let controls='',lines=[],active=[],output='',explanation='';const quote=key=>JSON.stringify(t(key));
+  const module=LESSON_MODULES[task().module],type=module.explorer||module.id;let controls='',lines=[],active=[],output='',explanation='';const quote=key=>JSON.stringify(t(key));
   const slider=(name,label,min,max,value,unit='')=>`<div class="slider-control"><input type="range" data-explorer="${name}" min="${min}" max="${max}" value="${value}" aria-label="${escapeHTML(t(label))}"><output>${value}${unit}</output></div>`;
-  if(module.id==='if'||module.id==='ternary'){
+  if(type==='if'||type==='ternary'){
     const temp=explorerState.temperature;controls=slider('temperature','temperature',-10,35,temp,'°');
-    if(module.id==='if'){lines=[`temp = ${temp}`,'if temp < 0:',`    print(${quote('hat')})`];active=temp<0?[1,2]:[];output=temp<0?t('hat'):t('noOutput');explanation=t(temp<0?'traceTrue':'traceFalse');}
+    if(type==='if'){lines=[`temp = ${temp}`,'if temp < 0:',`    print(${quote('hat')})`];active=temp<0?[1,2]:[];output=temp<0?t('hat'):t('noOutput');explanation=t(temp<0?'traceTrue':'traceFalse');}
     else{lines=[`temp = ${temp}`,`label = ${quote('cold')} if temp < 10 else ${quote('warm')}`,'print(label)'];active=[1];output=t(temp<10?'cold':'warm');explanation=t('traceTernary');}
-  }else if(module.id==='else'){
+  }else if(type==='else'){
     const charge=explorerState.energy;controls=slider('energy','energy',0,100,charge,'%');lines=[`charge = ${charge}`,'if charge >= 30:',`    print(${quote('readyOutput')})`,'else:',`    print(${quote('charge')})`];active=charge>=30?[1,2]:[3,4];output=t(charge>=30?'readyOutput':'charge');explanation=t(charge>=30?'traceTrue':'traceElse');
-  }else if(module.id==='elif'){
+  }else if(type==='elif'){
     controls=`<div class="choice-controls">${['rain','snow','sun','unknown'].map(value=>`<button type="button" data-weather="${value}" class="${explorerState.weather===value?'active':''}" aria-pressed="${explorerState.weather===value}">${escapeHTML(t(value))}</button>`).join('')}</div>`;
     lines=[`weather = "${explorerState.weather}"`,'if weather == "rain":',`    print(${quote('umbrella')})`,'elif weather == "snow":',`    print(${quote('boots')})`,'elif weather == "sun":',`    print(${quote('walk')})`,'else:',`    print(${quote('lookOutside')})`];const index={rain:1,snow:3,sun:5,unknown:7}[explorerState.weather];active=[index,index+1];output=t({rain:'umbrella',snow:'boots',sun:'walk',unknown:'lookOutside'}[explorerState.weather]);explanation=t('traceElif');
+  }else if(type==='warmup'){
+    const temp=explorerState.temperature;controls=slider('temperature','temperature',-10,35,temp,'°');lines=[`temp = ${temp}`,'if temp < 0:',`    print(${quote('frost')})`,'elif temp < 15:',`    print(${quote('cool')})`,'else:',`    print(${quote('warm')})`];const branch=temp<0?1:temp<15?3:5;active=[branch,branch+1];output=t(temp<0?'frost':temp<15?'cool':'warm');explanation=t('traceElif');
+  }else if(type==='logic'){
+    const temp=explorerState.temperature,weather=explorerState.weather;controls=slider('temperature','temperature',-10,35,temp,'°')+`<div class="choice-controls">${['rain','snow','sun'].map(value=>`<button type="button" data-weather="${value}" class="${weather===value?'active':''}" aria-pressed="${weather===value}">${escapeHTML(t(value))}</button>`).join('')}</div>`;lines=[`temp = ${temp}`,`weather = "${weather}"`,'if temp >= 10 and temp <= 25:',`    print(${quote('comfortable')})`,'if weather == "rain" or weather == "snow":',`    print(${quote('wetWeather')})`];active=[];const values=[];if(temp>=10&&temp<=25){active.push(2,3);values.push(t('comfortable'));}if(weather==='rain'||weather==='snow'){active.push(4,5);values.push(t('wetWeather'));}output=values.join('\n')||t('noOutput');explanation=t('traceLogic');
+  }else if(type==='thresholds'){
+    const points=explorerState.points??72;controls=slider('points','points',0,100,points);lines=[`points = ${points}`,'if points >= 90:',`    print(${quote('gold')})`,'elif points >= 50:',`    print(${quote('silver')})`,'else:',`    print(${quote('bronze')})`,`print(points % 4)`];const branch=points>=90?1:points>=50?3:5;active=[branch,branch+1,7];output=t(points>=90?'gold':points>=50?'silver':'bronze')+'\n'+points%4;explanation=t('traceThresholds');
+  }else if(type==='ordering'){
+    const height=explorerState.height??180;controls=slider('height','height',-10,320,height,' cm');lines=[`height = ${height}`,'if height < 0 or height > 300:',`    print(${quote('checkInput')})`,'elif height >= 190:',`    print(${quote('tall')})`,'else:',`    print(${quote('regularHeight')})`];const invalid=height<0||height>300,branch=invalid?1:height>=190?3:5;active=[branch,branch+1];output=t(invalid?'checkInput':height>=190?'tall':'regularHeight');explanation=t('traceOrdering');
   }else{
     const weight=explorerState.weight,fragile=explorerState.fragile==='yes';controls=`<div class="nested-controls">${slider('weight','weight',1,10,weight,' kg')}<select data-explorer="fragile" aria-label="${escapeHTML(t('handling'))}"><option value="yes" ${fragile?'selected':''}>${escapeHTML(t('yes'))}</option><option value="no" ${!fragile?'selected':''}>${escapeHTML(t('no'))}</option></select></div>`;
     lines=[`weight = ${weight}`,`fragile = ${fragile?'True':'False'}`,'if weight <= 5:','    if fragile:',`        print(${quote('carefully')})`,'    else:',`        print(${quote('regular')})`,'else:',`    print(${quote('large')})`];active=weight>5?[7,8]:fragile?[2,3,4]:[2,5,6];output=t(weight>5?'large':fragile?'carefully':'regular');explanation=t('traceNested');
@@ -73,7 +91,7 @@ function renderExplorer(updateOnly=false){
 }
 $('explorer-controls').addEventListener('input',event=>{
   const el=event.target.closest('[data-explorer]');if(!el)return;const name=el.dataset.explorer;explorerState[name]=name==='fragile'?el.value:Number(el.value);
-  const readout=el.closest('.slider-control')?.querySelector('output');if(readout)readout.textContent=el.value+(name==='temperature'?'°':name==='energy'?'%':' kg');
+  const readout=el.closest('.slider-control')?.querySelector('output');if(readout)readout.textContent=el.value+(name==='temperature'?'°':name==='energy'?'%':name==='weight'?' kg':name==='height'?' cm':'');
   renderExplorer(true);
 });
 $('explorer-controls').addEventListener('click',event=>{const el=event.target.closest('[data-weather]');if(el){explorerState.weather=el.dataset.weather;renderExplorer();$('explorer-controls').querySelector(`[data-weather="${explorerState.weather}"]`)?.focus({preventScroll:true});}});
@@ -93,7 +111,7 @@ function renderRuntime(){$('runtime').className='runtime '+runtimeKind;$('runtim
 function setRuntime(kind,key){runtimeKind=kind;runtimeKey=key;renderRuntime();}
 function createWorker(){
   worker?.terminate();clearTimeout(initTimer);ready=false;setBusy(false);setRuntime('','loading');
-  try{worker=new Worker('python-worker.js');initTimer=setTimeout(()=>{if(!ready){worker.terminate();setRuntime('error','loadFailed');}},45000);
+  try{worker=new Worker(new URL('python-worker.js',assetRoot));initTimer=setTimeout(()=>{if(!ready){worker.terminate();setRuntime('error','loadFailed');}},45000);
     worker.onmessage=({data})=>{
       if(data.type==='ready'){clearTimeout(initTimer);ready=true;setRuntime('ready','ready');setBusy(false);return;}
       if(data.type==='init-error'){clearTimeout(initTimer);ready=false;setRuntime('error','loadFailed');setBusy(false);return;}
@@ -123,7 +141,7 @@ function processResult(data,finished){
   $('test-summary').textContent=`${passed} / ${checks.length}`;$('test-rows').innerHTML=checks.map((result,i)=>`<tr><td>${String(i+1).padStart(2,'0')}</td><td><pre>${escapeHTML(cases[i].input.join('\n'))}</pre></td><td><pre>${escapeHTML(cases[i].out||t('noOutput'))}</pre></td><td><pre>${escapeHTML(result.error?errorTitle(result.error)+': '+result.error.message:normalOutput(result.output)||t('noOutput'))}</pre></td><td class="${result.passed?'pass':'fail'}">${escapeHTML(t(result.passed?'pass':'fail'))}</td></tr>`).join('');$('test-section').hidden=false;
   const firstError=checks.find(c=>c.error);if(firstError){showError(firstError.error);return;}
   $('execution-label').textContent=t('testsCount',{n:passed,total:checks.length});$('output').className='output-box';$('output').innerHTML='<pre>'+escapeHTML(normalOutput(checks[0].output)||t('noOutput'))+'</pre>';
-  if(passed===checks.length){if(item.requiresTernary&&!data.hasIfExp){feedback('info',t('ternaryTitle'),t('ternaryHelp'));return;}state.solved[keyOf(item.id)]=finished.code;persist();renderNavigation();feedback('success','✓ '+t('allPassed',{n:checks.length}),t(current===LESSON_TASKS.length-1?'lastSuccess':'successText'),current<LESSON_TASKS.length-1?`<button class="secondary-button" id="continue">${escapeHTML(t('continue'))}</button>`:'');if($('continue'))$('continue').onclick=()=>showTask(current+1,{scroll:true});}
+  if(passed===checks.length){if(item.requiresTernary&&!data.hasIfExp){feedback('info',t('ternaryTitle'),t('ternaryHelp'));return;}state.solved[keyOf(item.id)]=finished.code;state.verifiedRevisions[keyOf(item.id)]=item.revision||1;persist();renderNavigation();if(courseStage==='first'&&LESSON_TASKS.every(isSolved)){window.location.assign(courseHref('next')+'#museum');return;}feedback('success','✓ '+t('allPassed',{n:checks.length}),t(current===LESSON_TASKS.length-1?'lastSuccess':'successText'),current<LESSON_TASKS.length-1?`<button class="secondary-button" id="continue">${escapeHTML(t('continue'))}</button>`:'');if($('continue'))$('continue').onclick=()=>showTask(current+1,{scroll:true});}
   else{const first=checks.findIndex(c=>!c.passed),actual=normalOutput(checks[first].output),expected=cases[first].out;let message=t('mismatch');if(!actual&&expected)message=t('missingOutput');else if(actual&&!expected)message=t('unexpectedOutput');else if(actual.trim()===expected.trim())message=t('whitespace');feedback('',t('passedCount',{n:passed,total:checks.length}),message);}
 }
 function execute(kind){
@@ -148,5 +166,6 @@ $('theme').onchange=()=>{state.theme=$('theme').value;applyTheme();persist();};
 function renderReference(){const parts=[['referenceInputs','word = input()\nnumber = int(input())'],['referenceDecisions','if condition:\n    action_a()\nelif other_condition:\n    action_b()\nelse:\n    action_c()'],['referenceCompare',t('referenceOperators')],['referenceLogic',t('referenceLogicText')],['referenceShort','result = yes_value if condition else no_value']];$('reference-content').innerHTML=parts.map(([heading,code])=>`<h3>${escapeHTML(t(heading))}</h3><pre>${escapeHTML(code)}</pre>`).join('')+'<p>'+escapeHTML(t('referenceIndent'))+'</p>';}
 $('reference-open').onclick=()=>$('reference-dialog').showModal();$('reference-close').onclick=()=>$('reference-dialog').close();$('reference-dialog').addEventListener('click',event=>{if(event.target===$('reference-dialog')){const rect=$('reference-dialog').getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)$('reference-dialog').close();}});
 document.querySelector('.brand').onclick=event=>{event.preventDefault();showTask(0,{scroll:true});};
+for(const stage of ['first','next'])$('course-'+stage).addEventListener('click',event=>{if(stage===courseStage)event.preventDefault();});
 window.addEventListener('hashchange',()=>{const index=LESSON_TASKS.findIndex(item=>item.id===location.hash.slice(1));if(index>=0&&!busy)showTask(index);});
 applyLocale();const hashIndex=LESSON_TASKS.findIndex(item=>item.id===location.hash.slice(1));showTask(hashIndex>=0?hashIndex:current);createWorker();

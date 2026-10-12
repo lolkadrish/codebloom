@@ -2,7 +2,7 @@
 
 An introductory, interactive Python branching lesson with a fully translated Russian, Ukrainian and English interface.
 
-Public URL: https://lolkadrish.github.io/python-next-step/branching/
+Start of the combined two-course learning path: https://lolkadrish.github.io/python-next-step/branching/
 
 - Five topics: `if`, `else`, `elif`, nested conditions and conditional expressions.
 - Nine exercises and ten quick understanding questions.
@@ -23,3 +23,6 @@ Run `python -m http.server 8000` in the folder containing these files. Open `htt
 The actual Python execution wrapper is checked against 138 input/output cases (46 cases in each of three languages), five error cases and the final exercise’s conditional-expression check. Browser checks cover Python execution, translated output, language-specific drafts, quizzes, interactive branch traces, themes and persistence.
 
 Reference solutions and QA harnesses are kept outside the published files.
+
+
+After all nine exercises are verified, the next-step course opens automatically. Both courses use this shared interface, themes and language preference. Keep this folder together with the repository root for the full local route. The combined source archive contains both courses.
