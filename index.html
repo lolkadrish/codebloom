@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#7053df">
+  <meta name="description" content="Следующий шаг после первых условий в Python. 12 задач, настоящая проверка кода и подсказки без готовых ответов.">
+  <title>Следующий шаг · Условия в Python</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="course.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#task-heading">К заданию</a>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Следующий шаг, начало курса"><span class="brand-icon">&gt;_</span><span>следующий<span class="brand-light"> шаг</span></span></a>
+    <div class="header-topic">ПРАКТИКУМ <span>/</span> PYTHON</div>
+    <div class="top-actions"><span id="runtime" class="runtime" role="status"><i></i><span>Загрузка Python…</span></span><button id="cheatsheet" class="quiet-button">Шпаргалка <span>↗</span></button></div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Навигация по курсу">
+      <div class="course-label">ТВОЙ МАРШРУТ</div>
+      <h2>Условия<br>в Python<span class="purple-dot">.</span></h2>
+      <p class="sidebar-description">Чуть сложнее.<br>Всё ещё по шагам.</p>
+      <nav id="course-nav" aria-label="Темы и задания"></nav>
+      <div class="progress-card"><div class="progress-label"><span>Пройдено</span><strong id="progress-count">0 / 12</strong></div><div class="progress-track"><div id="progress-bar"></div></div><p>Код и прогресс сохраняются<br>в этом браузере.</p></div>
+      <div class="sidebar-note"><span>✦</span><p>Ошибки — часть практики.<br>Меняй одну вещь за раз.</p></div>
+    </aside>
+    <main id="main">
+      <div class="breadcrumbs"><span>Условия в Python</span><span>/</span><span id="topic-name"></span><div class="pager"><button id="previous" aria-label="Предыдущее задание">←</button><span id="task-position"></span><button id="next" aria-label="Следующее задание">→</button></div></div>
+      <section class="lesson-header"><div class="eyebrow"><span class="level-tag" id="task-level"></span><span id="task-duration"></span></div><h1 id="task-heading" tabindex="-1"></h1><p id="task-intro"></p><span id="solved-badge" class="solved-badge" hidden>✓ Задание пройдено</span></section>
+      <details id="theory" class="theory-card" open><summary><span class="book-icon">≡</span><span>Перед практикой <small id="theory-title"></small></span><span class="details-arrow">⌄</span></summary><div id="theory-content" class="theory-content"></div></details>
+      <section class="task-card" aria-labelledby="requirements-heading"><div class="task-card-title"><span class="small-icon">⌁</span><h2 id="requirements-heading">Твоя задача</h2><span class="task-type">ПИШЕМ КОД</span></div><div id="requirements"></div><div class="input-rule" id="input-rule"></div><div id="examples" class="examples"></div></section>
+      <div class="workspace">
+        <section class="editor-panel" aria-labelledby="editor-heading"><div class="panel-heading"><h2 id="editor-heading"><span class="python-icon">Py</span> Твой код</h2><span class="file-label">main.py <span id="save-status">· сохранено</span></span><button id="reset-code" title="Вернуть начальный код" class="icon-button" aria-label="Вернуть начальный код">↺</button></div>
+          <div class="editor-shell"><div id="line-numbers" class="line-numbers" aria-hidden="true"></div><div class="code-surface"><pre id="code-highlight" aria-hidden="true"></pre><textarea id="code" aria-label="Код Python" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea></div></div>
+          <div class="editor-tools"><div><button id="indent" class="indent-button" title="Добавить 4 пробела">+4 пробела</button><button id="outdent" class="indent-button" title="Убрать до 4 пробелов">−4</button></div><span>Tab — отступ <span class="tool-divider">·</span> Ctrl + Enter — проверить</span></div>
+          <div class="editor-actions"><button id="run" class="secondary-button"><span>▷</span> Запустить</button><button id="check" class="primary-button"><span>✓</span> Проверить решение</button><button id="stop" class="danger-button" hidden>Остановить</button></div>
+        </section>
+        <section class="console-panel" aria-label="Ввод и результат"><div class="panel-heading"><h2>Проверим на практике</h2><span class="panel-number">02</span></div><div class="console-body"><label for="stdin">Входные данные</label><p class="input-help">Каждый вызов <code>input()</code> читает одну строку.</p><textarea id="stdin" spellcheck="false" aria-label="Входные данные программы"></textarea><div class="output-title"><span>Результат</span><span id="execution-label">Ждёт запуска</span></div><div id="output" class="output-box" role="status" aria-live="polite"><p class="output-placeholder">Твой код оживёт здесь.<br>Нажми «Запустить», чтобы увидеть вывод.</p></div></div><div class="console-tip"><span>↳</span><p>«Запустить» использует данные сверху.<br>«Проверить» запускает все тесты задания.</p></div></section>
+      </div>
+      <section id="feedback" class="feedback" aria-live="polite" hidden></section>
+      <section class="help-row"><div><span class="help-symbol">?</span><div><h2>Нужна маленькая подсказка?</h2><p>Одна мысль за раз. Готового решения здесь нет.</p></div></div><button id="hint" class="secondary-button">Подсказка <span id="hint-count">0 / 3</span> ↗</button></section>
+      <div id="hint-list" class="hint-list" aria-live="polite"></div>
+      <section id="test-section" class="test-section" hidden><details open><summary>Результаты проверки <span id="test-summary"></span></summary><div class="table-wrap"><table><thead><tr><th>Тест</th><th>Ввод</th><th>Ожидается</th><th>Твой вывод</th><th>Итог</th></tr></thead><tbody id="test-rows"></tbody></table></div></details></section>
+      <div id="completion" class="completion" hidden><span>✦</span><h2>Все 12 задач пройдены!</h2><p>Ты потренировал диапазоны, логические операторы, вложенные условия и короткую запись. Возвращайся к любой задаче, чтобы закрепить навык.</p></div>
+      <footer><span>Следующий шаг · учимся через практику</span><span>12 задач <i>·</i> без циклов и функций</span></footer>
+    </main>
+  </div>
+  <dialog id="reference-dialog"><div class="dialog-header"><div><span class="eyebrow">ДЕРЖИ ПОД РУКОЙ</span><h2>Маленькая шпаргалка</h2></div><button id="close-reference" class="icon-button" aria-label="Закрыть шпаргалку">×</button></div><div class="reference-content"><h3>Переменная — имя для значения</h3><pre>temperature = 25
+name = input()
+age = int(input())</pre><p><code>=</code> записывает значение. <code>==</code> проверяет равенство.</p><h3>Сравнения</h3><div class="operator-grid"><span><code>==</code> равно</span><span><code>!=</code> не равно</span><span><code>&gt; / &lt;</code> больше / меньше</span><span><code>&gt;= / &lt;=</code> с учётом равенства</span></div><h3>Несколько проверок</h3><p><code>and</code> — обе верны. <code>or</code> — хотя бы одна верна. <code>not</code> — наоборот.</p><h3>Отступы: 0 → 4 → 8 пробелов</h3><pre>if temperature &lt; 10:
+    if temperature &lt; 0:
+        print("Мороз")
+    else:
+        print("Прохладно")
+else:
+    print("Можно гулять")</pre><p><code>else</code> стоит под своим <code>if</code>. Двоеточие — в конце всей строки условия. После <code>input()</code> и <code>print()</code> двоеточие не ставится.</p><h3>Остаток от деления</h3><p><code>8 % 3</code> — это <code>2</code>. Если остаток <code>0</code>, число делится нацело.</p><h3>Выбор одной строкой</h3><pre>message = "Тепло" if temperature &gt;= 20 else "Холодно"</pre><p>Значение, если да → <code>if</code> условие → <code>else</code> значение, если нет. Двоеточия не нужны.</p></div></dialog>
+</body>
+</html>
