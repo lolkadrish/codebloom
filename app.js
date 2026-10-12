@@ -147,7 +147,7 @@ function processResult(data,finished){
   }else{
     const failed=checks.findIndex(x=>!x.passed),result=checks[failed],expected=task.cases[failed].out;
     let message=`В тесте ${failed+1} результат отличается от ожидаемого. Сравни ввод и вывод в таблице ниже. Проверь границы и порядок веток.`;
-    if(!result.output)message='В программе нет нужного вывода. Не забудь print(): присваивание само по себе ничего не печатает.';
+    if(!result.output)message='При этом вводе программа ничего не вывела. Проверь, выполняется ли print() для этого случая. Возможно, ни одно условие не подошло.';
     else if(result.output.trim()===expected.trim())message='Ответ почти совпал, но есть лишние пробелы или пустые строки. Вывод должен точно совпадать с текстом задания.';
     feedback('',`Пока пройдено ${passed} из ${checks.length} тестов`,message);
   }
