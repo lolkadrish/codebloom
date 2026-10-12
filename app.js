@@ -3,13 +3,13 @@ const $ = id => document.getElementById(id);
 const escapeHTML = value => String(value).replace(/[&<>"']/g, x => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
 const tasks = COURSE.flatMap((module, moduleIndex) => module.tasks.map(task => ({...task,module,moduleIndex})));
 const STORAGE_KEY = 'python-next-step-v1';
-let state = {current:0,drafts:{},inputs:{},solved:{},hints:{}};
+let state = {current:0,drafts:{},inputs:{},solved:{},hints:{},verifiedRevisions:{}};
 try { const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)); if(saved && typeof saved==='object') for(const key of Object.keys(state)) if(key in saved) state[key]=saved[key]; } catch {}
-for(const key of ['drafts','inputs','solved','hints']) if(!state[key] || typeof state[key]!=='object' || Array.isArray(state[key])) state[key]={};
+for(const key of ['drafts','inputs','solved','hints','verifiedRevisions']) if(!state[key] || typeof state[key]!=='object' || Array.isArray(state[key])) state[key]={};
 if(!Number.isInteger(state.current) || state.current<0 || state.current>=tasks.length) state.current=0;
 let current=state.current, worker, ready=false, busy=false, job=null, sequence=0, timer, initTimer, errorLine=null;
 const codeOf=task => typeof state.drafts[task.id]==='string' ? state.drafts[task.id] : task.starter;
-const isSolved=task => typeof state.solved[task.id]==='string' && state.solved[task.id]===codeOf(task);
+const isSolved=task => typeof state.solved[task.id]==='string' && state.solved[task.id]===codeOf(task) && (state.verifiedRevisions[task.id]||1)===(task.revision||1);
 const persist=() => {try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));$('save-status').textContent='· сохранено';}catch{$('save-status').textContent='· без сохранения';}};
 function highlight(code){
   const pattern=/(#[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:if|elif|else|and|or|not|True|False)\b|\b(?:print|input|int|str)\b|\b\d+\b)/g;
@@ -141,7 +141,7 @@ function processResult(data,finished){
   $('output').innerHTML=`<pre>${escapeHTML(normalOutput(checks[0].output)||'∅ Нет вывода')}</pre>`;
   if(passed===checks.length){
     if(task.requiresTernary&&!data.hasIfExp){feedback('info','Вывод верный. Остался один шаг.','В этом задании нужен хотя бы один выбор значения короткой записью if/else. Перепиши подходящий блок и проверь ещё раз.');return;}
-    state.solved[task.id]=finished.code;persist();updateProgress();
+    state.solved[task.id]=finished.code;state.verifiedRevisions[task.id]=task.revision||1;persist();updateProgress();
     feedback('success',`✓ Все ${checks.length} тестов пройдены`,current===tasks.length-1?'Последняя задача решена. Если какие-то задания пропущены, их можно выбрать слева.':'Границы и разные варианты ввода проверены. Можно переходить к следующему заданию.',current<tasks.length-1?'<button id="continue" class="secondary-button">Следующее задание →</button>':'');
     if($('continue'))$('continue').onclick=()=>showTask(current+1,{scroll:true});
   }else{
