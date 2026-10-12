@@ -101,7 +101,9 @@ function renderQuiz(){
 }
 $('quiz-form').addEventListener('change',()=>{const module=LESSON_MODULES[task().module];state.answers[keyOf(module.id)]=module.quiz.map((_,qi)=>{const el=document.querySelector(`input[name="question-${qi}"]:checked`);return el?Number(el.value):null;});persist();});
 $('quiz-form').addEventListener('submit',event=>{event.preventDefault();const module=LESSON_MODULES[task().module],answers=module.quiz.map((_,qi)=>document.querySelector(`input[name="question-${qi}"]:checked`));if(answers.some(el=>!el)){$('quiz-feedback').textContent=t('quizChoose');return;}const correct=answers.filter((el,i)=>Number(el.value)===module.quiz[i].answer).length;$('quiz-feedback').textContent=correct===2?t('quizCorrect'):t('quizWrong',{n:correct});$('quiz-feedback').className=correct===2?'pass':'';if(correct===2){state.quizzes[keyOf(module.id)]=true;$('quiz-status').textContent=t('quizDone');persist();}});
-function resetResult(){ $('output').className='output-box';$('output').innerHTML=`<p class="output-placeholder">${escapeHTML(t('outputPlaceholder'))}</p>`;$('execution-label').textContent=t('waiting');$('feedback').hidden=true;$('test-section').hidden=true;$('test-rows').innerHTML=''; }
+function renderInitialization(failed=false){if(busy)return;$('output').dataset.state=failed?'python-error':'python-loading';$('output').className='output-box'+(failed?' error':'');$('execution-label').textContent=t(failed?'loadFailed':runtimeKey);$('output').innerHTML=`<p class="output-placeholder">${escapeHTML(t(failed?'loadingFailureHelp':'loadingHelp'))}</p>${failed?`<button id="retry-in-console" class="secondary-button">${escapeHTML(t('retryLoading'))}</button>`:''}`;if($('retry-in-console'))$('retry-in-console').onclick=createWorker;}
+function clearInitialization(){if(['python-error','python-loading'].includes($('output').dataset.state)){delete $('output').dataset.state;$('output').className='output-box';$('output').innerHTML=`<p class="output-placeholder">${escapeHTML(t('outputPlaceholder'))}</p>`;$('execution-label').textContent=t('waiting');}}
+function resetResult(){ delete $('output').dataset.state;$('output').className='output-box';$('output').innerHTML=`<p class="output-placeholder">${escapeHTML(t('outputPlaceholder'))}</p>`;$('execution-label').textContent=t('waiting');$('feedback').hidden=true;$('test-section').hidden=true;$('test-rows').innerHTML='';if(!ready)renderInitialization(runtimeKind==='error'); }
 function renderHints(){const count=Math.min(3,Math.max(0,Number(state.hints[keyOf(task().id)])||0));$('hint-count').textContent=`${count} / 3`;$('hint').disabled=count===3;$('hints').innerHTML=task().hints.slice(0,count).map((hint,i)=>`<div class="hint-card"><strong>${escapeHTML(t('hintNumber',{n:i+1}))}</strong><span>${escapeHTML(loc(hint))}</span></div>`).join('');}
 function saveCode(){state.drafts[keyOf(task().id)]=$('code').value;errorLine=null;paintEditor();persist();renderNavigation();$('feedback').hidden=true;$('test-section').hidden=true;}
 function replaceSelection(text){const editor=$('code');editor.setRangeText(text,editor.selectionStart,editor.selectionEnd,'end');saveCode();}
@@ -110,17 +112,19 @@ function setBusy(value){busy=value;$('run').disabled=value||!ready;$('check').di
 function renderRuntime(){$('runtime').className='runtime '+runtimeKind;$('runtime').innerHTML=`<span>${escapeHTML(t(runtimeKey))}</span>${runtimeKind==='error'?`<button id="retry-python">${escapeHTML(t('retry'))}</button>`:''}`;if($('retry-python'))$('retry-python').onclick=createWorker;}
 function setRuntime(kind,key){runtimeKind=kind;runtimeKey=key;renderRuntime();}
 function createWorker(){
-  worker?.terminate();clearTimeout(initTimer);ready=false;setBusy(false);setRuntime('','loading');
-  try{worker=new Worker(new URL('python-worker.js',assetRoot));initTimer=setTimeout(()=>{if(!ready){worker.terminate();setRuntime('error','loadFailed');}},45000);
+  worker?.terminate();clearTimeout(initTimer);ready=false;setBusy(false);setRuntime('','loading');delete $('runtime').dataset.source;renderInitialization();
+  try{worker=new Worker(new URL('python-worker.js?v=3',assetRoot));const instance=worker;const watchInitialization=()=>{clearTimeout(initTimer);initTimer=setTimeout(()=>{if(!ready&&worker===instance){instance.terminate();setRuntime('error','loadFailed');renderInitialization(true);}},120000);};watchInitialization();
     worker.onmessage=({data})=>{
-      if(data.type==='ready'){clearTimeout(initTimer);ready=true;setRuntime('ready','ready');setBusy(false);return;}
-      if(data.type==='init-error'){clearTimeout(initTimer);ready=false;setRuntime('error','loadFailed');setBusy(false);return;}
+      if(worker!==instance)return;
+      if(data.type==='loading-progress'){setRuntime('',data.phase==='files'?'loadingFiles':'startingPython');renderInitialization();watchInitialization();return;}
+      if(data.type==='ready'){clearTimeout(initTimer);ready=true;setRuntime('ready','ready');$('runtime').dataset.source=data.source||'site';setBusy(false);clearInitialization();return;}
+      if(data.type==='init-error'){clearTimeout(initTimer);instance.terminate();ready=false;setRuntime('error','loadFailed');setBusy(false);renderInitialization(true);return;}
       if(!job||data.id!==job.id)return;const finished=job;job=null;clearTimeout(timer);setBusy(false);
       if(data.type==='worker-error'){ready=false;setRuntime('error','loadFailed');setBusy(false);feedback('info',t('error'),t('workerFailure'));return;}
       processResult(data,finished);
     };
-    worker.onerror=()=>{clearTimeout(initTimer);clearTimeout(timer);job=null;ready=false;setRuntime('error','loadFailed');setBusy(false);feedback('info',t('error'),t('workerFailure'));};
-  }catch{setRuntime('error','loadFailed');}
+    worker.onerror=()=>{if(worker!==instance)return;clearTimeout(initTimer);clearTimeout(timer);job=null;ready=false;setRuntime('error','loadFailed');setBusy(false);renderInitialization(true);};
+  }catch{setRuntime('error','loadFailed');renderInitialization(true);}
 }
 function feedback(kind,title,body,extra=''){$('feedback').className='feedback '+kind;$('feedback').innerHTML=`<h2>${escapeHTML(title)}</h2><p>${escapeHTML(body)}</p>${extra}`;$('feedback').hidden=false;}
 function explainError(error){

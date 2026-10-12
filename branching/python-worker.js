@@ -2,8 +2,11 @@
 let python;
 async function initialize() {
   try {
-    importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js');
-    python = await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.27.7/full/'});
+    const indexURL=new URL('../runtime/pyodide/',self.location.href).href;
+    self.postMessage({type:'loading-progress',phase:'files'});
+    importScripts(indexURL+'pyodide.js');
+    self.postMessage({type:'loading-progress',phase:'initializing'});
+    python = await loadPyodide({indexURL});
     python.runPython(`
 import ast, builtins, io, json, sys, traceback
 
@@ -51,7 +54,7 @@ def lesson_run(payload_json):
         results.append({'output': output.getvalue(), 'error': error_data})
     return json.dumps({'results': results, 'hasIfExp':has_ifexp}, ensure_ascii=False)
 `);
-    self.postMessage({type:'ready'});
+    self.postMessage({type:'ready',source:'site'});
   } catch (error) { self.postMessage({type:'init-error',message:String(error)}); }
 }
 const ready = initialize();
