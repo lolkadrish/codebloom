@@ -19,6 +19,7 @@ let current=state.current,worker,ready=false,busy=false,job=null,sequence=0,time
 const runtimeSources=['site','cdn'];
 let runtimeSourceIndex=0,loadingErrors=[];
 const explorerState={temperature:-5,energy:55,weather:'rain',weight:3,fragile:'yes'};
+let guideLanguage=null;
 const loc = value => Array.isArray(value)?value[languageIds.indexOf(state.language)]:value;
 const t = (key,values={}) => {let text=loc(UI[key])??key;for(const [name,value]of Object.entries(values))text=text.replaceAll('{'+name+'}',String(value));return text;};
 const rich = value => escapeHTML(loc(value)).replace(/`([^`]+)`/g,'<code>$1</code>');
@@ -57,13 +58,29 @@ function renderNavigation(){
 function showTask(index,{scroll=false}={}){
   if(busy||index<0||index>=LESSON_TASKS.length)return;
   current=index;state.current=index;const item=task(),module=LESSON_MODULES[item.module],cases=casesOf(item);
-  history.replaceState(null,'','#'+item.id);$('module-name').textContent=loc(module.title);$('task-position').textContent=`${index+1} / ${LESSON_TASKS.length}`;$('level-label').textContent=t('level',{n:String(item.module+1).padStart(2,'0')});$('task-time').textContent=t('minutes',{n:item.time});$('task-heading').textContent=loc(item.title);$('task-intro').textContent=loc(item.intro);
+  history.replaceState(null,'','#'+item.id);$('module-name').textContent=loc(module.title);$('task-position').textContent=`${index+1} / ${LESSON_TASKS.length}`;$('level-label').textContent=t('level',{n:String(item.module+1).padStart(2,'0')});$('task-time').textContent=typeof LEARNING_GUIDE==='undefined'?t('minutes',{n:item.time}):loc(LEARNING_GUIDE.labels.pace);$('task-heading').textContent=loc(item.title);$('task-intro').textContent=loc(item.intro);
   $('module-symbol').textContent=module.id==='nested'?loc(['if внутри if','if усередині if','if inside if']):module.symbol;$('theory-heading').textContent=loc(module.heading);$('theory-copy').innerHTML=loc(module.copy).split('\n\n').map(text=>'<p>'+rich(text)+'</p>').join('');$('theory-note').innerHTML=rich(module.note);$('explorer-prompt').textContent=loc(module.explorerPrompt);renderExplorer();renderQuiz();
+  renderLearningGuide(module.id);
   $('requirements').innerHTML=item.requirements.map(line=>'<li>'+rich(line)+'</li>').join('');$('input-rule').innerHTML=`<strong>${escapeHTML(t('input'))}:</strong> ${escapeHTML(loc(item.input))}<span class="language-note">${escapeHTML(t('languageNotice'))}</span>`;
   $('examples').innerHTML=cases.slice(0,2).map((c,i)=>`<div class="example"><div><span>${escapeHTML(t('exampleInput',{n:i+1}))}</span><pre>${escapeHTML(c.input.join('\n'))}</pre></div><div class="example-arrow">→</div><div><span>${escapeHTML(t('output'))}</span><pre>${escapeHTML(c.out||t('noOutput'))}</pre></div><button data-example="${i}" aria-label="${escapeHTML(t('exampleUse',{n:i+1}))}" title="${escapeHTML(t('exampleUse',{n:i+1}))}">↗</button></div>`).join('');
   $('code').value=codeOf(item);$('code').scrollTop=0;$('code').scrollLeft=0;$('stdin').value=typeof state.inputs[keyOf(item.id)]==='string'?state.inputs[keyOf(item.id)]:cases[0].input.join('\n');errorLine=null;paintEditor();resetResult();renderHints();renderNavigation();persist();
   if(scroll){$('task-heading').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}
 }
+function renderLearningGuide(moduleId){
+  if(typeof LEARNING_GUIDE==='undefined'||!$('lesson-guide'))return;
+  const guide=LEARNING_GUIDE,labels=guide.labels,label=key=>escapeHTML(loc(labels[key]));
+  const paragraphs=items=>items.map(text=>'<p>'+rich(text)+'</p>').join('');
+  const codeBlock=code=>'<pre class="guide-code"><code>'+highlight(loc(code))+'</code></pre>';
+  if(guideLanguage!==state.language){
+    const firstRender=guideLanguage===null;guideLanguage=state.language;
+    $('basics-title').textContent=loc(labels.start);$('basics-intro').textContent=loc(labels.intro);$('basics-link').textContent=loc(labels.startLink);
+    $('basics-body').innerHTML=guide.basics.map(part=>`<section class="basics-part"><h3>${escapeHTML(loc(part.title))}</h3>${paragraphs(part.paragraphs)}${part.code?codeBlock(part.code):''}${part.steps?paragraphs(part.steps):''}${part.operators?`<dl class="operator-list">${part.operators.map(([symbol,meaning])=>`<div><dt><code>${escapeHTML(symbol)}</code></dt><dd>${rich(meaning)}</dd></div>`).join('')}</dl>`:''}${part.online?`<a class="guide-online" href="https://lolkadrish.github.io/python-next-step/branching/">${label('online')} ↗</a>`:''}</section>`).join('');
+    if(firstRender)$('basics').open=courseStage==='first'&&current===0;
+  }
+  const lesson=guide.lessons[courseStage][moduleId],example=lesson.example,lines=loc(example.code).split('\n');
+  $('lesson-guide').innerHTML=`<h2>${label('detail')}</h2>${paragraphs(lesson.paragraphs)}${lesson.before?codeBlock(lesson.before):''}<h3>${label('example')}</h3>${codeBlock(example.code)}<details class="line-explanations" open><summary>${label('lines')}<span class="chevron">⌄</span></summary><ol class="line-walk">${example.lines.map((text,index)=>`<li><div class="walk-code"><span aria-label="${label('line')} ${index+1}">${index+1}</span><code>${escapeHTML(lines[index])}</code></div><p>${rich(text)}</p></li>`).join('')}</ol></details><h3>${label('runs')}</h3><div class="guide-table-wrap"><table class="guide-table"><thead><tr><th scope="col">${label('input')}</th><th scope="col">${label('output')}</th><th scope="col">${label('why')}</th></tr></thead><tbody>${example.runs.map(([input,output,reason])=>`<tr><td><pre>${escapeHTML(loc(input))}</pre></td><td><pre>${escapeHTML(loc(output))}</pre></td><td>${rich(reason)}</td></tr>`).join('')}</tbody></table></div><div class="guide-rules"><h3>${label('rules')}</h3><ul>${lesson.rules.map(text=>'<li>'+rich(text)+'</li>').join('')}</ul></div><div class="guide-mistakes"><h3>${label('mistakes')}</h3>${paragraphs(lesson.mistakes)}</div><div class="guide-think"><h3>${label('think')}</h3><p>${rich(lesson.think)}</p></div>`;
+}
+$('basics-link')?.addEventListener('click',()=>{$('basics').open=true;$('basics').scrollIntoView({behavior:'smooth',block:'start'});$('basics-summary').focus({preventScroll:true});});
 function traceCode(lines,active){$('explorer-code').innerHTML=lines.map((line,i)=>`<span class="trace-line ${active.includes(i)?'trace-active':''}">${escapeHTML(line)}</span>`).join('');}
 function renderExplorer(updateOnly=false){
   const module=LESSON_MODULES[task().module],type=module.explorer||module.id;let controls='',lines=[],active=[],output='',explanation='';const quote=key=>JSON.stringify(t(key));

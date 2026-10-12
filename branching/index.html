@@ -7,10 +7,11 @@
   <meta name="description" content="Интерактивный урок условий Python: теория, эксперименты и 9 задач. Русский, українська, English. Светлая и тёмная темы.">
   <title>Первый шаг · Условия в Python</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
   <script>try{const s=JSON.parse(localStorage.getItem('python-learning-preferences-v1'))||JSON.parse(localStorage.getItem('python-first-step-v1'));const mode=s?.theme||'system';document.documentElement.dataset.theme=mode==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):mode;}catch{}</script>
   <script src="content.js?v=4" defer></script>
-  <script src="app.js?v=4" defer></script>
+  <script src="learning-guide.js?v=1" defer></script>
+  <script src="app.js?v=5" defer></script>
 </head>
 <body>
   <a class="skip" href="#task-heading" data-i18n="skip">К заданию</a>
@@ -27,6 +28,7 @@
     <aside class="sidebar" data-i18n-aria="navigation">
       <div class="sidebar-intro"><p class="eyebrow" data-i18n="yourRoute">ТВОЙ МАРШРУТ</p><h2 data-i18n="courseHeading">Условия<br>в Python<span>.</span></h2><p class="muted" data-i18n="courseIntro">От первого «если»<br>до собственных решений.</p></div>
       <nav class="stage-nav" data-i18n-aria="courseSelection"><a id="course-first" class="stage-link" href="./"><span class="stage-number">01</span><span><strong data-i18n="firstCourse">Первый шаг</strong><small data-i18n="firstCourseCount">9 задач · основы</small></span></a><a id="course-next" class="stage-link" href="../"><span class="stage-number">02</span><span><strong data-i18n="secondCourse">Следующий шаг</strong><small data-i18n="secondCourseCount">12 задач · практика</small></span></a></nav>
+      <button id="basics-link" class="basics-link" type="button"></button>
       <nav id="course-nav"></nav>
       <div class="progress-card"><div><span data-i18n="progress">Твой прогресс</span><strong id="progress-count">0 / 9</strong></div><div class="progress-track"><span id="progress-bar"></span></div><p data-i18n="savedLocally">Код и прогресс сохраняются в этом браузере.</p></div>
       <div class="sidebar-note"><span>✦</span><p data-i18n="sidebarNote">Не спеши. Одна понятная строка лучше десяти случайных.</p></div>
@@ -35,7 +37,8 @@
     <main>
       <div class="breadcrumbs"><span data-i18n="courseName">Условия в Python</span><span>/</span><span id="module-name"></span><div class="pager"><button id="previous" data-i18n-aria="previous">←</button><span id="task-position"></span><button id="next" data-i18n-aria="next">→</button></div></div>
       <section class="lesson-heading"><div class="eyebrow"><span id="level-label" class="tag"></span><span id="task-time"></span><span id="runtime" class="runtime" role="status"></span></div><h1 id="task-heading" tabindex="-1"></h1><p id="task-intro"></p><span class="solved-badge" id="solved-badge" hidden></span></section>
-      <details class="theory-card" id="theory" open><summary><span class="summary-icon">≡</span><span data-i18n="understand">Сначала разберёмся</span><span id="module-symbol" class="code-label"></span><span class="chevron">⌄</span></summary><div class="theory-body"><div><h2 id="theory-heading"></h2><div id="theory-copy"></div><div class="note" id="theory-note"></div></div><div class="explorer"><div class="explorer-heading"><span class="eyebrow" data-i18n="experiment">ПОПРОБУЙ И ПОСМОТРИ</span><span class="live-dot" aria-hidden="true"></span></div><p id="explorer-prompt"></p><div id="explorer-controls"></div><pre id="explorer-code" class="mini-code"></pre><div class="explorer-result"><span data-i18n="output">Вывод</span><strong id="explorer-output" aria-live="polite"></strong></div><p class="explorer-explanation" id="explorer-explanation" aria-live="polite"></p></div></div></details>
+      <details id="basics" class="basics-card"><summary id="basics-summary"><span class="summary-icon" aria-hidden="true">0</span><span id="basics-title"></span><span class="chevron" aria-hidden="true">⌄</span></summary><div class="basics-content"><p id="basics-intro" class="basics-intro"></p><div id="basics-body"></div></div></details>
+      <details class="theory-card" id="theory" open><summary><span class="summary-icon">≡</span><span data-i18n="understand">Сначала разберёмся</span><span id="module-symbol" class="code-label"></span><span class="chevron">⌄</span></summary><div class="theory-body"><div><h2 id="theory-heading"></h2><div id="theory-copy"></div><div class="note" id="theory-note"></div></div><div class="explorer"><div class="explorer-heading"><span class="eyebrow" data-i18n="experiment">ПОПРОБУЙ И ПОСМОТРИ</span><span class="live-dot" aria-hidden="true"></span></div><p id="explorer-prompt"></p><div id="explorer-controls"></div><pre id="explorer-code" class="mini-code"></pre><div class="explorer-result"><span data-i18n="output">Вывод</span><strong id="explorer-output" aria-live="polite"></strong></div><p class="explorer-explanation" id="explorer-explanation" aria-live="polite"></p></div></div><div id="lesson-guide" class="lesson-guide"></div></details>
       <details class="quiz-card" id="quiz"><summary><span class="summary-icon">✓</span><span data-i18n="quizHeading">Два вопроса для себя</span><span id="quiz-status"></span><span class="chevron">⌄</span></summary><form id="quiz-form"><div id="quiz-questions"></div><div class="quiz-actions"><button class="secondary-button" type="submit" data-i18n="checkAnswers">Проверить ответы</button><p id="quiz-feedback" role="status"></p></div></form></details>
       <section class="task-card" aria-labelledby="practice-heading"><div class="card-title"><span class="summary-icon">⌁</span><h2 id="practice-heading" data-i18n="yourTask">Теперь твоя задача</h2><span class="practice-label" data-i18n="practice">ПРАКТИКА</span></div><ol id="requirements"></ol><div class="input-rule" id="input-rule"></div><div class="examples" id="examples"></div></section>
       <div class="workspace">

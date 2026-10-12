@@ -29,3 +29,5 @@ After all nine exercises are verified, the next-step course opens automatically.
 
 The core Python runtime is now hosted in ../runtime/pyodide on the same site, with a two-minute startup watchdog and a retry button beside the result. Keep the runtime folder in the complete source archive for local use.
 Startup now automatically retries against the official pinned jsDelivr distribution in a fresh worker. Both errors remain visible if neither source loads. Synchronous beginner exercises do not enable the optional async stack-switching runtime feature.
+
+The shared learning-guide.js adds seven absolute-beginner sections and detailed explanations for both courses, including line-by-line traces, input/output tables, comparison operators, common errors and prompts before practice. Examples do not solve the exercises.
