@@ -33,3 +33,10 @@ Startup now automatically retries against the official pinned jsDelivr distribut
 The shared learning-guide.js adds seven absolute-beginner sections and detailed explanations for both courses, including line-by-line traces, input/output tables, comparison operators, common errors and prompts before practice. Examples do not solve the exercises.
 
 The first if explorer starts at +5 and requires a successful explicit Python run with a negative temperature. Its completion is saved per language. It gates first-module checking, the module tick, course completion and automatic continuation. Existing solved programs remain intact; the first-course progress now has ten steps.
+
+
+Теория находится на отдельной странице theory.html: семь вводных разделов и восемь тем для обоих курсов. В задачах остаются практика, эксперименты и ссылка на нужное объяснение. Язык и тема общие с курсами; чтение теории не отмечает задания выполненными.
+
+Кнопка «Поделиться заданием» копирует обычную ссылку с идентификатором задачи. Ссылка не содержит код или прогресс. Другой браузер начинает со своими пустыми сохранениями; перезагрузка сохраняет собственные решения. Синхронизации между устройствами и аккаунтов нет. Люди, использующие один профиль браузера на одном устройстве, используют одно локальное сохранение.
+
+Ошибки после запуска или проверки объясняются простым языком: отмечается строка, показывается причина и ссылка на правило. Проверены двадцать реальных ошибок Python на трёх языках, включая смешанные условие и print, двоеточия, скобки, кавычки, отступы, опечатки в командах и неизвестные переменные. Точное сообщение Python можно раскрыть отдельно. Код не исправляется автоматически, решения задач не подставляются.

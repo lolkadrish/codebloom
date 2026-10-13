@@ -20,7 +20,6 @@ const runtimeSources=['site','cdn'];
 let runtimeSourceIndex=0,loadingErrors=[];
 const explorerState={temperature:5,energy:55,weather:'rain',weight:3,fragile:'yes'};
 let experimentAttempt=null;
-let guideLanguage=null;
 const loc = value => Array.isArray(value)?value[languageIds.indexOf(state.language)]:value;
 const t = (key,values={}) => {let text=loc(UI[key])??key;for(const [name,value]of Object.entries(values))text=text.replaceAll('{'+name+'}',String(value));return text;};
 const rich = value => escapeHTML(loc(value)).replace(/`([^`]+)`/g,'<code>$1</code>');
@@ -47,7 +46,7 @@ function applyLocale(){
   $('language').value=state.language;applyTheme();renderRuntime();renderReference();
   for(const stage of ['first','next']){const link=$('course-'+stage);link.href=courseHref(stage);if(stage===courseStage)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');}
   $('related-course').href=courseHref(courseStage==='first'?'next':'first');$('related-course-label').textContent=t(courseStage==='first'?'nextCourse':'returnFirstCourse');
-  $('completion-course-link').href=courseHref(courseStage==='first'?'next':'first');
+  $('completion-course-link').href=courseHref(courseStage==='first'?'next':'first');$('basics-link').href=theoryHref();
 }
 function highlight(code){
   const pattern=/(#[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:if|elif|else|and|or|not|True|False)\b|\b(?:print|input|int|str)\b|\b\d+\b)/g;
@@ -68,29 +67,16 @@ function showTask(index,{scroll=false}={}){
   if(busy||index<0||index>=LESSON_TASKS.length)return;
   if(index!==current)experimentAttempt=null;
   current=index;state.current=index;const item=task(),module=LESSON_MODULES[item.module],cases=casesOf(item);
-  history.replaceState(null,'','#'+item.id);$('module-name').textContent=loc(module.title);$('task-position').textContent=`${index+1} / ${LESSON_TASKS.length}`;$('level-label').textContent=t('level',{n:String(item.module+1).padStart(2,'0')});$('task-time').textContent=typeof LEARNING_GUIDE==='undefined'?t('minutes',{n:item.time}):loc(LEARNING_GUIDE.labels.pace);$('task-heading').textContent=loc(item.title);$('task-intro').textContent=loc(item.intro);
-  $('module-symbol').textContent=module.id==='nested'?loc(['if внутри if','if усередині if','if inside if']):module.symbol;$('theory-heading').textContent=loc(module.heading);$('theory-copy').innerHTML=loc(module.copy).split('\n\n').map(text=>'<p>'+rich(text)+'</p>').join('');$('theory-note').innerHTML=rich(module.note);$('explorer-prompt').textContent=loc(module.explorerPrompt);renderExplorer();renderQuiz();
-  renderLearningGuide(module.id);
+  history.replaceState(null,'','#'+item.id);$('module-name').textContent=loc(module.title);$('task-position').textContent=`${index+1} / ${LESSON_TASKS.length}`;$('level-label').textContent=t('level',{n:String(item.module+1).padStart(2,'0')});$('task-time').textContent=t('ownPace');$('task-heading').textContent=loc(item.title);$('task-intro').textContent=loc(item.intro);
+  $('module-symbol').textContent=module.symbol;$('topic-theory-link').href=theoryHref(module.id);$('topic-theory-link').textContent=t('readTheory')+' '+loc(module.title)+' →';$('explorer-prompt').textContent=loc(module.explorerPrompt);renderExplorer();renderQuiz();$('share-status').textContent='';$('share-address').hidden=true;
   $('requirements').innerHTML=item.requirements.map(line=>'<li>'+rich(line)+'</li>').join('');$('input-rule').innerHTML=`<strong>${escapeHTML(t('input'))}:</strong> ${escapeHTML(loc(item.input))}<span class="language-note">${escapeHTML(t('languageNotice'))}</span>`;
   $('examples').innerHTML=cases.slice(0,2).map((c,i)=>`<div class="example"><div><span>${escapeHTML(t('exampleInput',{n:i+1}))}</span><pre>${escapeHTML(c.input.join('\n'))}</pre></div><div class="example-arrow">→</div><div><span>${escapeHTML(t('output'))}</span><pre>${escapeHTML(c.out||t('noOutput'))}</pre></div><button data-example="${i}" aria-label="${escapeHTML(t('exampleUse',{n:i+1}))}" title="${escapeHTML(t('exampleUse',{n:i+1}))}">↗</button></div>`).join('');
   $('code').value=codeOf(item);$('code').scrollTop=0;$('code').scrollLeft=0;$('stdin').value=typeof state.inputs[keyOf(item.id)]==='string'?state.inputs[keyOf(item.id)]:cases[0].input.join('\n');errorLine=null;paintEditor();resetResult();renderHints();renderNavigation();persist();
   if(scroll){$('task-heading').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}
 }
-function renderLearningGuide(moduleId){
-  if(typeof LEARNING_GUIDE==='undefined'||!$('lesson-guide'))return;
-  const guide=LEARNING_GUIDE,labels=guide.labels,label=key=>escapeHTML(loc(labels[key]));
-  const paragraphs=items=>items.map(text=>'<p>'+rich(text)+'</p>').join('');
-  const codeBlock=code=>'<pre class="guide-code"><code>'+highlight(loc(code))+'</code></pre>';
-  if(guideLanguage!==state.language){
-    const firstRender=guideLanguage===null;guideLanguage=state.language;
-    $('basics-title').textContent=loc(labels.start);$('basics-intro').textContent=loc(labels.intro);$('basics-link').textContent=loc(labels.startLink);
-    $('basics-body').innerHTML=guide.basics.map(part=>`<section class="basics-part"><h3>${escapeHTML(loc(part.title))}</h3>${paragraphs(part.paragraphs)}${part.code?codeBlock(part.code):''}${part.steps?paragraphs(part.steps):''}${part.operators?`<dl class="operator-list">${part.operators.map(([symbol,meaning])=>`<div><dt><code>${escapeHTML(symbol)}</code></dt><dd>${rich(meaning)}</dd></div>`).join('')}</dl>`:''}${part.online?`<a class="guide-online" href="https://lolkadrish.github.io/python-next-step/branching/">${label('online')} ↗</a>`:''}</section>`).join('');
-    if(firstRender)$('basics').open=courseStage==='first'&&current===0;
-  }
-  const lesson=guide.lessons[courseStage][moduleId],example=lesson.example,lines=loc(example.code).split('\n');
-  $('lesson-guide').innerHTML=`<h2>${label('detail')}</h2>${paragraphs(lesson.paragraphs)}${lesson.before?codeBlock(lesson.before):''}<h3>${label('example')}</h3>${codeBlock(example.code)}<details class="line-explanations" open><summary>${label('lines')}<span class="chevron">⌄</span></summary><ol class="line-walk">${example.lines.map((text,index)=>`<li><div class="walk-code"><span aria-label="${label('line')} ${index+1}">${index+1}</span><code>${escapeHTML(lines[index])}</code></div><p>${rich(text)}</p></li>`).join('')}</ol></details><h3>${label('runs')}</h3><div class="guide-table-wrap"><table class="guide-table"><thead><tr><th scope="col">${label('input')}</th><th scope="col">${label('output')}</th><th scope="col">${label('why')}</th></tr></thead><tbody>${example.runs.map(([input,output,reason])=>`<tr><td><pre>${escapeHTML(loc(input))}</pre></td><td><pre>${escapeHTML(loc(output))}</pre></td><td>${rich(reason)}</td></tr>`).join('')}</tbody></table></div><div class="guide-rules"><h3>${label('rules')}</h3><ul>${lesson.rules.map(text=>'<li>'+rich(text)+'</li>').join('')}</ul></div><div class="guide-mistakes"><h3>${label('mistakes')}</h3>${paragraphs(lesson.mistakes)}</div><div class="guide-think"><h3>${label('think')}</h3><p>${rich(lesson.think)}</p></div>`;
-}
-$('basics-link')?.addEventListener('click',()=>{$('basics').open=true;$('basics').scrollIntoView({behavior:'smooth',block:'start'});$('basics-summary').focus({preventScroll:true});});
+const theoryTopic = id => ({warmup:'elif',boundaries:'boundaries',compact:'ternary'}[id]||id);
+function theoryHref(id='basics'){return new URL('../theory.html',assetRoot).href+'#'+theoryTopic(id);}
+function shareHref(){const url=new URL(courseHref(courseStage));url.search='';url.hash=task().id;return url.href;}
 function traceCode(lines,active){$('explorer-code').innerHTML=lines.map((line,i)=>`<span class="trace-line ${active.includes(i)?'trace-active':''}">${escapeHTML(line)}</span>`).join('');}
 function renderExplorer(updateOnly=false){
   const module=LESSON_MODULES[task().module],type=module.explorer||module.id;let controls='',lines=[],active=[],output='',explanation='';const quote=key=>JSON.stringify(t(key));
@@ -179,16 +165,15 @@ function createWorker(fallback=false){
   }catch(error){failInitialization(error);}
 }
 function feedback(kind,title,body,extra=''){$('feedback').className='feedback '+kind;$('feedback').innerHTML=`<h2>${escapeHTML(title)}</h2><p>${escapeHTML(body)}</p>${extra}`;$('feedback').hidden=false;}
-function explainError(error){
-  const {type,message='',text=''}=error;
-  if(type==='IndentationError'||type==='TabError')return t('indentationError');
-  if(type==='NameError')return t('nameError',{name:message.match(/name '([^']+)'/)?.[1]||''});
-  if(type==='EOFError')return t('eofError');if(type==='ValueError')return t('valueError');if(type==='TypeError')return t('typeError');
-  if(type==='SyntaxError'){if(message.includes('unmatched')||message.includes('never closed'))return t('bracketsError');if(message.includes("expected ':'"))return t('colonError');if(text.trim().endsWith(':')&&!/^\s*(if|elif|else|for|while|def|class|try|except|finally|with|match|case)\b/.test(text))return t('extraColon');return t('syntaxError');}
-  return message||t('syntaxError');
+function errorTitle(error){return t('codeError')+(error.line?' · '+t('line')+' '+error.line:'');}
+function showError(error){
+  errorLine=error.line;paintEditor();const help=PYTHON_HELP.diagnose(error,$('code').value,state.language);
+  $('execution-label').textContent=t('error');$('output').className='output-box error';$('output').innerHTML='<p class="error-summary">'+escapeHTML(help.title)+'</p><p>'+escapeHTML(help.body)+'</p>';
+  const lines=$('code').value.split('\n'),source=error.text||lines[(error.line||1)-1]||'';
+  const excerpt=source?'<pre class="error-source">'+escapeHTML(source.trimEnd())+'</pre>':'';
+  const details='<details class="error-details"><summary>'+escapeHTML(t('technicalDetails'))+'</summary><pre>'+escapeHTML(error.type+'\n'+(error.message||''))+'</pre></details>';
+  feedback('',errorTitle(error)+' — '+help.title,help.body,excerpt+'<a class="guide-online" href="'+escapeHTML(theoryHref(help.topic))+'">'+escapeHTML(t('reviewRule'))+' →</a>'+details);
 }
-function errorTitle(error){return error.type+(error.line?' · '+t('line')+' '+error.line:'');}
-function showError(error){errorLine=error.line;paintEditor();$('execution-label').textContent=t('error');$('output').className='output-box error';$('output').innerHTML='<pre>'+escapeHTML(errorTitle(error)+'\n'+error.message)+'</pre>';feedback('',errorTitle(error),explainError(error),error.text?'<pre>'+escapeHTML(error.text.trimEnd())+'</pre>':'');}
 const normalOutput = value => value.replace(/\r\n/g,'\n').replace(/\n$/,'');
 function processResult(data,finished){
   if(finished.kind==='experiment'){processExperimentResult(data,finished);return;}
@@ -219,6 +204,7 @@ $('previous').onclick=()=>showTask(current-1,{scroll:true});$('next').onclick=()
 $('course-nav').onclick=event=>{if(event.target.closest('[data-experiment]')){openRequiredExperiment();return;}const taskButton=event.target.closest('[data-task]'),moduleButton=event.target.closest('[data-module]');if(taskButton)showTask(Number(taskButton.dataset.task),{scroll:true});else if(moduleButton){const mi=Number(moduleButton.dataset.module),first=LESSON_TASKS.findIndex(item=>item.module===mi&&!isSolved(item));showTask(first===-1?LESSON_TASKS.findIndex(item=>item.module===mi):first,{scroll:true});}};
 $('examples').onclick=event=>{const button=event.target.closest('[data-example]');if(button&&!busy){$('stdin').value=casesOf(task())[Number(button.dataset.example)].input.join('\n');state.inputs[keyOf(task().id)]=$('stdin').value;persist();}};
 $('language').onchange=()=>{experimentAttempt=null;state.language=$('language').value;applyLocale();showTask(current);};
+$('share-task').onclick=async()=>{const url=shareHref();try{await navigator.clipboard.writeText(url);$('share-status').textContent=t('linkCopied');}catch{$('share-address').value=url;$('share-address').hidden=false;$('share-address').focus();$('share-address').select();$('share-status').textContent=t('copyLinkManually');}};
 $('theme').onchange=()=>{state.theme=$('theme').value;applyTheme();persist();};
 function renderReference(){const parts=[['referenceInputs','word = input()\nnumber = int(input())'],['referenceDecisions','if condition:\n    action_a()\nelif other_condition:\n    action_b()\nelse:\n    action_c()'],['referenceCompare',t('referenceOperators')],['referenceLogic',t('referenceLogicText')],['referenceShort','result = yes_value if condition else no_value']];$('reference-content').innerHTML=parts.map(([heading,code])=>`<h3>${escapeHTML(t(heading))}</h3><pre>${escapeHTML(code)}</pre>`).join('')+'<p>'+escapeHTML(t('referenceIndent'))+'</p>';}
 $('reference-open').onclick=()=>$('reference-dialog').showModal();$('reference-close').onclick=()=>$('reference-dialog').close();$('reference-dialog').addEventListener('click',event=>{if(event.target===$('reference-dialog')){const rect=$('reference-dialog').getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)$('reference-dialog').close();}});
