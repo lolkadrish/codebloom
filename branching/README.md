@@ -31,3 +31,5 @@ The core Python runtime is now hosted in ../runtime/pyodide on the same site, wi
 Startup now automatically retries against the official pinned jsDelivr distribution in a fresh worker. Both errors remain visible if neither source loads. Synchronous beginner exercises do not enable the optional async stack-switching runtime feature.
 
 The shared learning-guide.js adds seven absolute-beginner sections and detailed explanations for both courses, including line-by-line traces, input/output tables, comparison operators, common errors and prompts before practice. Examples do not solve the exercises.
+
+The first if explorer starts at +5 and requires a successful explicit Python run with a negative temperature. Its completion is saved per language. It gates first-module checking, the module tick, course completion and automatic continuation. Existing solved programs remain intact; the first-course progress now has ten steps.
