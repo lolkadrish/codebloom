@@ -1,4 +1,4 @@
-# Первый шаг / Перший крок / First step
+# Первый этап / Перший етап / First stage
 
 An introductory, interactive Python branching lesson with a fully translated Russian, Ukrainian and English interface.
 
