@@ -38,7 +38,7 @@
     const firstTasks={basics:'positive',if:'positive',else:'admission',elif:'grade',nested:'login',ternary:'maximum'};
     const nextTasks={update:'tariff',ternary:'label',logic:'weekend',boundaries:'divisible',ordering:'robot'};
     const loopTasks={while:'count-up',for:'repeat-word',accumulator:'sum',control:'skip','nested-loops':'pairs'};const links=[];if(loopTasks[id])links.push(['loops.html#'+loopTasks[id],'thirdCourse']);
-    const continuationTasks={'integer-parts':'time-parts','clean-text':'command-word','saved-conditions':'club-flag','several-actions':'delivery-price'};if(continuationTasks[id])links.push(['continuation.html#'+continuationTasks[id],'continuationCourse']);
+    const continuationTasks={'integer-parts':'full-packs','clean-text':'trim-message','saved-conditions':'age-check','several-actions':'add-fee'};if(continuationTasks[id])links.push(['continuation.html#'+continuationTasks[id],'continuationCourse']);
     if(firstTasks[id])links.push(['branching/#'+firstTasks[id],'firstCourse']);
     if(nextTasks[id])links.push(['./#'+nextTasks[id],'secondCourse']);
     if(!links.length)links.push(['branching/','firstCourse'],['./','secondCourse']);
