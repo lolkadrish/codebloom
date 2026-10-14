@@ -3,10 +3,10 @@
   const $=id=>document.getElementById(id),languages=['ru','uk','en'],preferenceKey='python-learning-preferences-v1';
   let language='ru',theme='system';
   try{const saved=JSON.parse(localStorage.getItem(preferenceKey))||JSON.parse(localStorage.getItem('python-first-step-v1'))||{};if(languages.includes(saved.language))language=saved.language;if(['system','light','dark','lavender'].includes(saved.theme))theme=saved.theme;}catch{}
-  const topics=[['basics','basicsTopic'],['if','topicIf'],['else','topicElse'],['elif','topicElif'],['nested','topicNested'],['ternary','topicTernary'],['logic','topicLogic'],['boundaries','topicBoundaries'],['ordering','topicOrdering']];
+  const topics=[['basics','basicsTopic'],['if','topicIf'],['else','topicElse'],['elif','topicElif'],['nested','topicNested'],['ternary','topicTernary'],['logic','topicLogic'],['boundaries','topicBoundaries'],['ordering','topicOrdering'],['while','topicWhile'],['for','topicFor'],['accumulator','topicAccumulator'],['control','topicControl'],['nested-loops','topicNestedLoops']];
   const loc=value=>Array.isArray(value)?value[languages.indexOf(language)]:value;
   const t=key=>loc(UI[key])||key,escape=GUIDE_RENDERER.escape;
-  const lesson=id=>['logic','boundaries','ordering'].includes(id)?LEARNING_GUIDE.lessons.next[id]:LEARNING_GUIDE.lessons.first[id];
+  const lesson=id=>LEARNING_GUIDE.lessons.loops?.[id]||(['logic','boundaries','ordering'].includes(id)?LEARNING_GUIDE.lessons.next[id]:LEARNING_GUIDE.lessons.first[id]);
   const media=matchMedia('(prefers-color-scheme:dark)');
   function savePreferences(){try{localStorage.setItem(preferenceKey,JSON.stringify({language,theme}));}catch{}}
   function applyTheme(){const mode=theme==='system'?(media.matches?'dark':'light'):theme;document.documentElement.dataset.theme=mode;$('theme').value=theme;$('theme-icon').textContent=mode==='dark'?'☾':mode==='lavender'?'✦':'◐';document.querySelector('meta[name="theme-color"]').content=mode==='dark'?'#1d1e2b':'#7255db';}
@@ -23,7 +23,7 @@
     for(const [direction,offset] of [['previous',-1],['next',1]]){const link=$('theory-'+direction),target=topics[index+offset];link.hidden=!target;if(target){link.href='#'+target[0];link.textContent=t(direction==='next'?'nextTopic':'previousTopic');}}
     const firstTasks={basics:'positive',if:'positive',else:'admission',elif:'grade',nested:'login',ternary:'maximum'};
     const nextTasks={logic:'weekend',boundaries:'divisible',ordering:'robot'};
-    const links=[];
+    const loopTasks={while:'count-up',for:'repeat-word',accumulator:'sum',control:'skip','nested-loops':'pairs'};const links=[];if(loopTasks[id])links.push(['loops.html#'+loopTasks[id],'thirdCourse']);
     if(firstTasks[id])links.push(['branching/#'+firstTasks[id],'firstCourse']);
     if(nextTasks[id])links.push(['./#'+nextTasks[id],'secondCourse']);
     if(!links.length)links.push(['branching/','firstCourse'],['./','secondCourse']);

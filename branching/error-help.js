@@ -2,6 +2,12 @@
 // Explanations follow Python's real error. They never change or complete student code.
 (() => {
 const messages={
+  loopBlock:[['У цикла нет блока действий','У циклу немає блоку дій','The loop has no body'],['После while или for с двоеточием нужна хотя бы одна команда с отступом. Обычно добавляют 4 пробела. Строка после цикла возвращается на уровень самого while или for.','Після while або for із двокрапкою потрібна хоча б одна команда з відступом. Зазвичай додають 4 пробіли. Рядок після циклу повертається на рівень самого while або for.','After while or for and a colon, place at least one indented command. Use 4 spaces. Lines after the loop align with the while or for statement.']],
+  loopColon:[['Закончи запись цикла двоеточием','Заверши запис циклу двокрапкою','Finish the loop statement with a colon'],['В while после условия, а в for после всей последовательности нужен знак : . Команду действия перенеси на следующую строку с отступом.','У while після умови, а у for після всієї послідовності потрібен знак : . Команду дії перенеси на наступний рядок із відступом.','Put : after the while condition or the whole for sequence. Place the action on the next indented line.']],
+  forIn:[['В for пропущено слово in','У for пропущене слово in','for is missing in'],['Запись состоит из for, имени переменной, слова in и последовательности: for item in range(...): . Имя переменной — место для очередного значения.','Запис складається з for, назви змінної, слова in та послідовності: for item in range(...): . Назва змінної — місце для чергового значення.','The pattern is for item in range(...): . in separates the loop variable from the sequence. The variable receives each value.']],
+  zeroStep:[['Шаг range() не может быть нулём','Крок range() не може бути нулем','The range step cannot be zero'],['Нулевой шаг не сдвигает значение. Для движения вперёд нужен положительный шаг, для движения назад — отрицательный.','Нульовий крок не зсуває значення. Для руху вперед потрібен додатний крок, для руху назад — від’ємний.','A zero step cannot move a value. Use a positive step to move forwards and a negative one to move backwards.']],
+  loopOutside:[['Эта команда должна находиться внутри цикла','Ця команда має бути всередині циклу','This command belongs inside a loop'],['break и continue управляют ближайшим while или for. Проверь, есть ли такой цикл и относится ли команда к нему по отступу. Один if без цикла для них недостаточен.','break та continue керують найближчим while або for. Перевір, чи є такий цикл і чи належить команда до нього за відступом. Одного if без циклу для них недостатньо.','break and continue control their nearest while or for. Check that a loop exists and the indentation places the command inside it. An if alone is not enough.']],
+  rangeType:[['range() ожидает целые числа','range() очікує цілі числа','range() needs whole numbers'],['input() читает текст. Если это количество повторений или граница диапазона, преобразуй ввод в число через int(input()). Слова в range() передавать нельзя.','input() читає текст. Якщо це кількість повторень або межа діапазону, перетвори ввід на число через int(input()). Слова в range() передавати не можна.','input() reads text. Convert a repetition count or range bound using int(input()). range() does not accept words.']],
   sameLine:[['Условие и действие смешались','Закінчення умови й дія змішалися','The condition and action are mixed together'],['Закончи строку с условием двоеточием. Перенеси print(...) на следующую строку и добавь перед ним 4 пробела. Образец: if условие: затем строка с отступом и действием.','Заверши рядок з умовою двокрапкою. Перенеси print(...) на наступний рядок і додай перед ним 4 пробіли. Зразок: if умова: потім рядок із відступом і дією.','End the condition with a colon. Put print(...) on the next line, indented by 4 spaces. The pattern is if condition: followed by an indented action.']],
   colon:[['После условия нужно двоеточие','Після умови потрібна двокрапка','The condition needs a colon'],['Поставь : в конце всей строки с if или elif. После else тоже пишется : . Действие начинается на следующей строке с отступом.','Постав : у кінці всього рядка з if або elif. Після else також пишуть : . Дія починається на наступному рядку з відступом.','Put : at the end of the whole if or elif line. else also ends with : . Place the action on the next line with indentation.']],
   keywordColon:[['Двоеточие стоит слишком рано','Двокрапка стоїть надто рано','The colon comes too early'],['У if и elif сначала пишется условие, а уже после него — : . Например: if условие: . У else условия нет: пишут просто else: .','В if та elif спочатку пишуть умову, а вже після неї — : . Наприклад: if умова: . В else умови немає: пишуть просто else: .','Write the condition after if or elif, then put : at the end. For example: if condition: . else has no condition; write else: .']],
@@ -31,17 +37,20 @@ function diagnose(error,code,language='ru'){
   let key='runtime',topic='basics',values={};
   if(type==='TabError'||type==='IndentationError'){
     topic='if';key='indentation';
-    if(message.includes('expected an indented block')){key='emptyBlock';values.previous=message.match(/on line (\d+)/)?.[1]||Math.max(1,(error.line||2)-1);}
+    if(message.includes('expected an indented block')){key='emptyBlock';values.previous=message.match(/on line (\d+)/)?.[1]||Math.max(1,(error.line||2)-1);if(/^\s*(while|for)\b/.test(lines[Number(values.previous)-1]||'')){key='loopBlock';topic=/^\s*for\b/.test(lines[Number(values.previous)-1])?'for':'while';}}
     else if(message.includes('unexpected indent'))key='unexpectedIndent';
   }else if(type==='NameError'){
     values.name=message.match(/name '([^']+)'/)?.[1]||'?';const spellings={intput:'input()',inputt:'input()',Input:'input()',Print:'print()',pritn:'print()',prnt:'print()',Int:'int()'};
     values.suggestion=spellings[values.name];key=values.suggestion?'typo':'name';
   }else if(type==='EOFError')key='eof';
-  else if(type==='ValueError')key='value';
-  else if(type==='TypeError')key=/\bint\s*\(\s*input\s*\)/.test(line)?'inputCall':'type';
+  else if(type==='ValueError'){key=message.includes('range() arg 3 must not be zero')?'zeroStep':'value';if(key==='zeroStep')topic='for';}
+  else if(type==='TypeError'){key=/\bint\s*\(\s*input\s*\)/.test(line)?'inputCall':message.includes('cannot be interpreted as an integer')?'rangeType':'type';if(key==='rangeType')topic='for';}
   else if(type==='SyntaxError'){
     key='syntax';
-    if(message.includes('unterminated string')||message.includes('invalid character'))key='quotes';
+    if(message.includes('outside loop')||message.includes('not properly in loop')){key='loopOutside';topic='control';}
+    else if(/^for\b/.test(line)&&!/^for\s+.+\s+in\s+/.test(line)){key='forIn';topic='for';}
+    else if(/^(while|for)\b/.test(line)&&message.includes("expected ':'")){key='loopColon';topic=line.startsWith('for')?'for':'while';}
+    else if(message.includes('unterminated string')||message.includes('invalid character'))key='quotes';
     else if(message.includes('unmatched')||message.includes('never closed')||message.includes('does not match'))key='brackets';
     else if(/\bif\b.+\belse\s*:/.test(line)&&!/^if\b/.test(line)){key='ternary';topic='ternary';}
     else if(/^(if|elif)\s*:/.test(line)){key='keywordColon';topic='if';}

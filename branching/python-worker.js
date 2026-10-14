@@ -36,6 +36,9 @@ def lesson_run(payload_json):
     try:
         tree = ast.parse(code, filename='<lesson>')
         has_ifexp = any(isinstance(node, ast.IfExp) for node in ast.walk(tree))
+        features = {name: any(isinstance(node, kind) for node in ast.walk(tree)) for name, kind in [('while', ast.While), ('for', ast.For), ('break', ast.Break), ('continue', ast.Continue)]}
+        features['range'] = any(isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == 'range' for node in ast.walk(tree))
+        features['nestedFor'] = any(isinstance(child, ast.For) for node in ast.walk(tree) if isinstance(node, ast.For) for statement in node.body for child in ast.walk(statement))
         executable = compile(tree, '<lesson>', 'exec')
     except SyntaxError as error:
         return json.dumps({'results': [], 'syntax': {'type':type(error).__name__, 'message':error.msg, 'line':error.lineno, 'offset':error.offset, 'text':error.text or ''}}, ensure_ascii=False)
@@ -64,7 +67,7 @@ def lesson_run(payload_json):
         finally:
             sys.stdout, sys.stderr, sys.stdin = old_stdout, old_stderr, old_stdin
         results.append({'output': output.getvalue(), 'error': error_data})
-    return json.dumps({'results': results, 'hasIfExp':has_ifexp}, ensure_ascii=False)
+    return json.dumps({'results': results, 'hasIfExp':has_ifexp, 'features':features}, ensure_ascii=False)
 `);
     self.postMessage({type:'ready',source});
   } catch (error) { self.postMessage({type:'init-error',source,phase,file:failedFile,message:String(error).slice(0,2000)}); }
