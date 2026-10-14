@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru" data-theme="light" data-course="loops">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#7255db">
+  <meta name="description" content="Циклы в Python с нуля: while, for, range, накопители, break и continue. 12 задач, пошаговые эксперименты и личный прогресс.">
+  <title>Циклы · Python с нуля</title>
+  <link rel="icon" href="branching/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="branching/styles.css?v=7">
+  <script>try{const s=JSON.parse(localStorage.getItem('python-learning-preferences-v1'))||JSON.parse(localStorage.getItem('python-first-step-v1'));const mode=s?.theme||'system';document.documentElement.dataset.theme=mode==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):mode;}catch{}</script>
+  <script src="branching/content.js?v=7" defer></script>
+  <script src="loops-content.js?v=1" defer></script>
+  <script src="loop-explorer.js?v=1" defer></script>
+  <script src="branching/error-help.js?v=2" defer></script>
+  <script src="branching/app.js?v=8" defer></script>
+</head>
+<body>
+  <a class="skip" href="#task-heading" data-i18n="skip">К заданию</a>
+  <header class="topbar">
+    <a class="brand" href="#count-up"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 5v14m0-7h7m0 0 5-5m-5 5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-i18n="brand">первый шаг<span>.</span></span></a>
+    <span class="top-caption">PYTHON <span>/</span> <span data-i18n="topCaption">НАЧАЛО</span></span>
+    <div class="top-controls">
+      <label class="select-wrap language"><span aria-hidden="true">◎</span><select id="language" data-i18n-aria="languageLabel"><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option></select></label>
+      <label class="select-wrap theme"><span id="theme-icon" aria-hidden="true">◐</span><select id="theme" data-i18n-aria="theme"><option value="system" data-i18n="themeSystem">Как в системе</option><option value="light" data-i18n="themeLight">Светлая</option><option value="dark" data-i18n="themeDark">Тёмная</option><option value="lavender" data-i18n="themeLavender">Лавандовая</option></select></label>
+      <button id="reference-open" class="icon-button" data-i18n-title="reference" data-i18n-aria="reference">?</button>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar" data-i18n-aria="navigation">
+      <div class="sidebar-intro"><p class="eyebrow" data-i18n="yourRoute">ТВОЙ МАРШРУТ</p><h2 data-i18n="courseHeading">Условия<br>в Python<span>.</span></h2><p class="muted" data-i18n="courseIntro">От первого «если»<br>до собственных решений.</p></div>
+      <nav class="stage-nav" data-i18n-aria="courseSelection"><a id="course-first" class="stage-link" href="branching/"><span class="stage-number">01</span><span><strong data-i18n="firstCourse">Первый шаг</strong><small data-i18n="firstCourseCount">9 задач · основы</small></span></a><a id="course-next" class="stage-link" href="./"><span class="stage-number">02</span><span><strong data-i18n="secondCourse">Следующий шаг</strong><small data-i18n="secondCourseCount">12 задач · практика</small></span></a><a id="course-loops" class="stage-link" href="loops.html"><span class="stage-number">03</span><span><strong data-i18n="thirdCourse">Циклы</strong><small data-i18n="thirdCourseCount">12 задач · циклы</small></span></a></nav>
+      <a id="basics-link" class="basics-link" href="theory.html#basics" data-i18n="theoryLibrary">Теория · от самого начала →</a>
+      <nav id="course-nav"></nav>
+      <div class="progress-card"><div><span data-i18n="progress">Твой прогресс</span><strong id="progress-count">0 / 9</strong></div><div class="progress-track"><span id="progress-bar"></span></div><p id="progress-scope" class="progress-scope"></p><p data-i18n="savedLocally">Код и прогресс сохраняются в этом браузере.</p></div>
+      <div class="sidebar-note"><span>✦</span><p data-i18n="sidebarNote">Не спеши. Одна понятная строка лучше десяти случайных.</p></div>
+      <a class="next-course" id="related-course" href="../"><span id="related-course-label">Готов к следующему шагу?</span><span aria-hidden="true">↗</span></a>
+    </aside>
+    <main>
+      <div class="breadcrumbs"><span data-i18n="courseName">Условия в Python</span><span>/</span><span id="module-name"></span><div class="pager"><button id="previous" data-i18n-aria="previous">←</button><span id="task-position"></span><button id="next" data-i18n-aria="next">→</button></div></div>
+      <div class="share-row"><button id="share-task" class="secondary-button" data-i18n="shareTask">Поделиться заданием ↗</button><span id="share-status" role="status"></span><input id="share-address" class="share-address" readonly hidden data-i18n-aria="shareAddress"></div>
+      <section class="lesson-heading"><div class="eyebrow"><span id="level-label" class="tag"></span><span id="task-time"></span><span id="runtime" class="runtime" role="status"></span></div><h1 id="task-heading" tabindex="-1"></h1><p id="task-intro"></p><span class="solved-badge" id="solved-badge" hidden></span></section>
+      <div class="theory-shortcut"><span data-i18n="theoryShortcut">Нужны объяснения? Они собраны на одной странице.</span><a id="topic-theory-link" href="theory.html#if"></a></div>
+      <details class="theory-card practice-explorer" id="theory" open><summary><span class="summary-icon">▷</span><span data-i18n="experimentCard">Эксперимент с кодом</span><span id="module-symbol" class="code-label"></span><span class="chevron">⌄</span></summary><div class="theory-body"><div class="explorer" id="lesson-explorer" tabindex="-1"><div class="explorer-heading"><span class="eyebrow" data-i18n="experiment">ПОПРОБУЙ И ПОСМОТРИ</span><span id="experiment-required" class="experiment-required" hidden></span><span class="live-dot" aria-hidden="true"></span></div><p id="explorer-prompt"></p><div id="explorer-controls"></div><div id="loop-trace" class="loop-trace" hidden aria-live="polite"></div><div id="explorer-actions" class="explorer-actions" hidden><button id="experiment-run" class="primary-button" type="button" disabled></button><span id="experiment-status" class="experiment-status" aria-live="polite"></span></div><pre id="explorer-code" class="mini-code"></pre><div class="explorer-result"><span data-i18n="output">Вывод</span><strong id="explorer-output" aria-live="polite"></strong></div><p class="explorer-explanation" id="explorer-explanation" aria-live="polite"></p></div></div></details>
+      <details class="quiz-card" id="quiz"><summary><span class="summary-icon">✓</span><span data-i18n="quizHeading">Два вопроса для себя</span><span id="quiz-status"></span><span class="chevron">⌄</span></summary><form id="quiz-form"><div id="quiz-questions"></div><div class="quiz-actions"><button class="secondary-button" type="submit" data-i18n="checkAnswers">Проверить ответы</button><p id="quiz-feedback" role="status"></p></div></form></details>
+      <section class="task-card" aria-labelledby="practice-heading"><div class="card-title"><span class="summary-icon">⌁</span><h2 id="practice-heading" data-i18n="yourTask">Теперь твоя задача</h2><span class="practice-label" data-i18n="practice">ПРАКТИКА</span></div><ol id="requirements"></ol><div class="input-rule" id="input-rule"></div><div class="examples" id="examples"></div></section>
+      <div class="workspace">
+        <section class="editor-panel" aria-labelledby="editor-heading"><div class="panel-heading"><h2 id="editor-heading"><span class="python-icon">Py</span><span data-i18n="yourCode">Твой код</span></h2><span class="file-label">main.py <span id="save-status"></span></span><button class="icon-button" id="reset-code" data-i18n-aria="reset" data-i18n-title="reset">↺</button></div><div class="editor-shell"><div class="line-numbers" id="line-numbers" aria-hidden="true"></div><div class="code-surface"><pre id="code-highlight" aria-hidden="true"></pre><textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" data-i18n-aria="codeLabel"></textarea></div></div><div class="editor-tools"><div><button id="indent" data-i18n="indent">+4 пробела</button><button id="outdent" data-i18n-aria="outdent">−4</button></div><span data-i18n="shortcuts">Tab — отступ · Ctrl + Enter — проверить</span></div><p id="experiment-gate" class="experiment-gate" hidden></p><div class="editor-actions"><button id="run" class="secondary-button"><span aria-hidden="true">▷</span><span data-i18n="run">Запустить</span></button><button id="check" class="primary-button"><span aria-hidden="true">✓</span><span data-i18n="check">Проверить решение</span></button><button id="stop" class="danger-button" data-i18n="stop" hidden>Остановить</button></div></section>
+        <section class="console-panel"><div class="panel-heading"><h2 data-i18n="tryCode">Проверим на практике</h2><span class="panel-number">02</span></div><div class="console-body"><label for="stdin" data-i18n="input">Входные данные</label><p class="muted input-help" data-i18n="inputHelp">Каждый input() читает одну строку.</p><textarea id="stdin" data-i18n-aria="input" spellcheck="false"></textarea><div class="output-heading"><span data-i18n="result">Результат</span><span id="execution-label"></span></div><div id="output" class="output-box" aria-live="polite" role="status"></div></div><div class="console-tip"><span aria-hidden="true">↳</span><p data-i18n="runHelp">«Запустить» использует данные сверху. «Проверить» запускает все тесты задания.</p></div></section>
+      </div>
+      <section id="feedback" class="feedback" aria-live="polite" hidden></section>
+      <div class="hint-row"><div><span class="hint-icon">?</span><div><h2 data-i18n="hintHeading">Нужна маленькая подсказка?</h2><p data-i18n="hintIntro">По одной мысли. Без готового решения.</p></div></div><button id="hint" class="secondary-button"><span data-i18n="hint">Подсказка</span><span id="hint-count"></span><span aria-hidden="true">↗</span></button></div><div id="hints" aria-live="polite"></div>
+      <section class="tests" id="test-section" hidden><details open><summary><span data-i18n="testResults">Результаты проверки</span><span id="test-summary"></span></summary><div class="table-wrap"><table><thead><tr><th data-i18n="test">Тест</th><th data-i18n="input">Ввод</th><th data-i18n="expected">Ожидается</th><th data-i18n="actual">Твой вывод</th><th data-i18n="verdict">Итог</th></tr></thead><tbody id="test-rows"></tbody></table></div></details></section>
+      <section id="completion" class="completion" hidden><span>✦</span><h2 data-i18n="completeTitle">Первый шаг сделан.</h2><p data-i18n="completeText">Ты прошёл все девять задач. Теперь можно попробовать задания чуть сложнее.</p><a class="primary-button" id="completion-course-link" href="../" data-i18n="nextCourseLink">К следующему шагу →</a></section>
+      <footer><span data-i18n="footer">Первый шаг · учимся через практику</span><a href="https://proginschool.github.io/tutorial/loops.html" target="_blank" rel="noopener" data-i18n="originalLesson">Исходный урок ↗</a><span data-i18n="footerFacts">5 тем · 9 задач · в своём темпе</span></footer>
+    </main>
+  </div>
+  <dialog id="reference-dialog"><div class="dialog-heading"><div><p class="eyebrow">PYTHON / <span data-i18n="reference">ШПАРГАЛКА</span></p><h2 data-i18n="referenceTitle">Всегда под рукой.</h2></div><button class="icon-button" id="reference-close" data-i18n-aria="close">×</button></div><div id="reference-content"></div></dialog>
+</body>
+</html>
