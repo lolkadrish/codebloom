@@ -10,6 +10,19 @@
   const media=matchMedia('(prefers-color-scheme:dark)');
   function savePreferences(){try{localStorage.setItem(preferenceKey,JSON.stringify({language,theme}));}catch{}}
   function applyTheme(){const mode=theme==='system'?(media.matches?'dark':'light'):theme;document.documentElement.dataset.theme=mode;$('theme').value=theme;$('theme-icon').textContent=mode==='dark'?'☾':mode==='lavender'?'✦':'◐';document.querySelector('meta[name="theme-color"]').content=mode==='dark'?'#1d1e2b':'#7255db';}
+  function bindWalkthrough(model){
+    if(!model?.walkthrough)return;
+    let position=0;
+    const update=()=>{
+      const view=GUIDE_RENDERER.walkthroughState(model,LEARNING_GUIDE.labels,language,position);
+      $('guide-walk-code').innerHTML=view.code;$('guide-walk-variables').innerHTML=view.variables;
+      $('guide-walk-output').textContent=view.output;$('guide-walk-note').textContent=view.note;$('guide-walk-count').textContent=view.count;
+      $('guide-walk-reset').disabled=view.first;$('guide-walk-next').disabled=view.last;
+    };
+    $('guide-walk-next').onclick=()=>{position=Math.min(position+1,model.walkthrough.frames.length-1);update();};
+    $('guide-walk-reset').onclick=()=>{position=0;update();};
+    update();
+  }
   function render({focus=false}={}){
     const requested=location.hash.slice(1),index=Math.max(0,topics.findIndex(([id])=>id===requested)),[id,title]=topics[index];
     document.documentElement.lang=language;document.title=t('theoryLibraryTitle')+' · '+t(title);
@@ -20,6 +33,7 @@
     $('theory-nav').innerHTML=topics.map(([topic,label],i)=>'<a class="theory-topic-link" href="#'+topic+'"'+(topic===id?' aria-current="page"':'')+'><span>'+String(i).padStart(2,'0')+'</span>'+escape(t(label))+'</a>').join('');
     $('topic-name').textContent=t(title);$('theory-title').textContent=id==='basics'?loc(LEARNING_GUIDE.labels.start):t(title);$('theory-intro').textContent=t(id==='basics'?'basicsTopicIntro':'topicIntro');
     $('theory-content').innerHTML=id==='basics'?GUIDE_RENDERER.basics(LEARNING_GUIDE,language):GUIDE_RENDERER.lesson(lesson(id),LEARNING_GUIDE.labels,language);
+    if(id!=='basics')bindWalkthrough(lesson(id));
     for(const [direction,offset] of [['previous',-1],['next',1]]){const link=$('theory-'+direction),target=topics[index+offset];link.hidden=!target;if(target){link.href='#'+target[0];link.textContent=t(direction==='next'?'nextTopic':'previousTopic');}}
     const firstTasks={basics:'positive',if:'positive',else:'admission',elif:'grade',nested:'login',ternary:'maximum'};
     const nextTasks={update:'tariff',ternary:'label',logic:'weekend',boundaries:'divisible',ordering:'robot'};
