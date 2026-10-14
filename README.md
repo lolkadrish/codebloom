@@ -1,10 +1,12 @@
 # Python с нуля — условия и циклы на одном сайте
 
-Начало маршрута: https://lolkadrish.github.io/python-next-step/branching/
+Первый этап: https://lolkadrish.github.io/python-next-step/branching/
 
-Второй курс: https://lolkadrish.github.io/python-next-step/
+Второй этап: https://lolkadrish.github.io/python-next-step/
 
-Курс циклов: https://lolkadrish.github.io/python-next-step/loops.html
+Третий этап: https://lolkadrish.github.io/python-next-step/continuation.html#full-packs
+
+Четвёртый этап (циклы): https://lolkadrish.github.io/python-next-step/loops.html
 
 ## Учебный маршрут
 
