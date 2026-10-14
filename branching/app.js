@@ -116,7 +116,7 @@ $('explorer-controls').addEventListener('input',event=>{
 });
 function openRequiredExperiment(){showTask(0,{scroll:true});$('theory').open=true;const target=$('lesson-explorer');if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.focus({preventScroll:true});}}
 function executeLoopDemo(){
-  if(busy||!ready||courseStage!=='loops')return;const code=LOOP_EXPLORER.prepare();job={id:++sequence,kind:'loop-demo',taskId:task().id,language:state.language,code};setBusy(true);$('explorer-output').textContent=t('running');worker.postMessage({id:job.id,code,cases:[[]]});timer=setTimeout(()=>{if(job){job=null;worker.terminate();createWorker();feedback('info',t('timeoutTitle'),t('timeoutHelp'));}},12000);
+  if(busy||!ready||courseStage!=='loops')return;const code=LOOP_EXPLORER.prepare();if(!code)return;job={id:++sequence,kind:'loop-demo',taskId:task().id,language:state.language,code};setBusy(true);$('explorer-output').textContent=t('running');worker.postMessage({id:job.id,code,cases:[[]]});timer=setTimeout(()=>{if(job){job=null;worker.terminate();createWorker();feedback('info',t('timeoutTitle'),t('timeoutHelp'));}},12000);
 }
 function executeExperiment(){
   if(busy||!ready||!isRequiredExperiment())return;
