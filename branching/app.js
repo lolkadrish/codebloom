@@ -37,7 +37,7 @@ function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));l
 function applyTheme(){const mode=state.theme==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):state.theme;document.documentElement.dataset.theme=mode;$('theme').value=state.theme;$('theme-icon').textContent=mode==='dark'?'☾':mode==='lavender'?'✦':'◐';document.querySelector('meta[name="theme-color"]').content=mode==='dark'?'#1d1e2b':'#7255db';}
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(state.theme==='system')applyTheme();});
 function applyLocale(){
-  document.documentElement.lang=state.language;document.title=t('brand')+' · '+t('courseName');
+  document.documentElement.lang=state.language;document.title=t('courseName')+' · '+t('theoryCourseName');
   document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
   document.querySelectorAll('[data-i18n-aria]').forEach(el=>el.setAttribute('aria-label',t(el.dataset.i18nAria)));
   document.querySelectorAll('[data-i18n-title]').forEach(el=>el.title=t(el.dataset.i18nTitle));
