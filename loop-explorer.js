@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const values={limit:5,start:1,stop:5,step:1,skip:3,halt:6,rows:2,columns:2};
+  const values={repeatCount:3,limit:5,start:1,stop:5,step:1,skip:3,halt:6,rows:2,columns:2};
   let model=null,signature='',attempt=null,position=0,context=null,installed=false,invalidParameters=false;
   function build(id,v,t){
     const frames=[];let output='';
@@ -8,10 +8,16 @@
     let code='',variables={};
     const emit=value=>{output+=(output?'\n':'')+value;};
     if(id==='while'){
-      code=`charge = ${v.limit}\nwhile charge > 0:\n    print(charge)\n    charge -= 2\nprint("OK")`;
-      variables={charge:v.limit};frame([0],variables,t('loopInitial'));
-      while(variables.charge>0){frame([1],variables,t('loopConditionTrue'));emit(variables.charge);frame([2],variables,t('loopPrinted'));variables.charge-=2;frame([3],variables,t('loopUpdated'));}
-      frame([1],variables,t('loopConditionFalse'));emit('OK');frame([4],variables,t('loopFinished'));
+      code=`number = 1\nwhile number <= ${v.repeatCount}:\n    print(${JSON.stringify(t('loopHello'))})\n    number = number + 1\nprint(${JSON.stringify(t('loopWhileDone'))})`;
+      variables={number:1};frame([0],variables,t('loopWhileStart'));
+      while(variables.number<=v.repeatCount){
+        frame([1],variables,t('loopWhileTrue',{number:variables.number,limit:v.repeatCount}));
+        emit(t('loopHello'));frame([2],variables,t('loopWhilePrinted'));
+        const before=variables.number;variables.number=variables.number+1;
+        frame([3],variables,t('loopWhileUpdated',{before,after:variables.number}));
+      }
+      frame([1],variables,t('loopWhileFalse',{number:variables.number,limit:v.repeatCount}));
+      emit(t('loopWhileDone'));frame([4],variables,t('loopWhileFinished'));
     }else if(id==='for'){
       code=`for number in range(${v.start}, ${v.stop}, ${v.step}):\n    print(number)\nprint("OK")`;
       frame([],{},t('loopRangeReady'));
@@ -47,7 +53,8 @@
     const nextSignature=id+':'+language+':'+JSON.stringify(values);if(signature!==nextSignature){signature=nextSignature;attempt=null;position=0;model=build(id,values,t);}
     const number=(key,label,min,max)=>`<label class="loop-value">${escape(t(label))}<input type="number" min="${min}" max="${max}" step="1" value="${values[key]}" data-loop-value="${key}" aria-label="${escape(t(label))}"><small>${min}…${max}</small></label>`;
     let controls='';
-    if(id==='while'||id==='accumulator')controls=number('limit',id==='while'?'loopInitialCharge':'loopRepeatCount',0,8);
+    if(id==='while')controls=number('repeatCount','loopRepeatCount',0,8);
+    else if(id==='accumulator')controls=number('limit','loopRepeatCount',0,8);
     else if(id==='for')controls=number('start','loopStart',-4,8)+number('stop','loopStop',-4,8)+`<label class="loop-value">${escape(t('loopStep'))}<select data-loop-value="step" aria-label="${escape(t('loopStep'))}">${[-2,-1,1,2].map(v=>`<option value="${v}" ${values.step===v?'selected':''}>${v}</option>`).join('')}</select></label>`;
     else if(id==='control')controls=number('skip','loopSkip',1,8)+number('halt','loopHalt',1,8);
     else controls=number('rows','loopRows',0,3)+number('columns','loopColumns',0,3);
