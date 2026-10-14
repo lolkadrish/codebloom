@@ -3,10 +3,10 @@
   const $=id=>document.getElementById(id),languages=['ru','uk','en'],preferenceKey='python-learning-preferences-v1';
   let language='ru',theme='system';
   try{const saved=JSON.parse(localStorage.getItem(preferenceKey))||JSON.parse(localStorage.getItem('python-first-step-v1'))||{};if(languages.includes(saved.language))language=saved.language;if(['system','light','dark','lavender'].includes(saved.theme))theme=saved.theme;}catch{}
-  const topics=[['basics','basicsTopic'],['update','topicUpdate'],['if','topicIf'],['else','topicElse'],['elif','topicElif'],['nested','topicNested'],['ternary','topicTernary'],['logic','topicLogic'],['boundaries','topicBoundaries'],['ordering','topicOrdering'],['while','topicWhile'],['for','topicFor'],['accumulator','topicAccumulator'],['control','topicControl'],['nested-loops','topicNestedLoops']];
+  const topics=[['basics','basicsTopic'],['update','topicUpdate'],['if','topicIf'],['else','topicElse'],['elif','topicElif'],['nested','topicNested'],['ternary','topicTernary'],['logic','topicLogic'],['boundaries','topicBoundaries'],['ordering','topicOrdering'],['integer-parts','topicIntegerParts'],['clean-text','topicCleanText'],['saved-conditions','topicSavedConditions'],['several-actions','topicSeveralActions'],['while','topicWhile'],['for','topicFor'],['accumulator','topicAccumulator'],['control','topicControl'],['nested-loops','topicNestedLoops']];
   const loc=value=>Array.isArray(value)?value[languages.indexOf(language)]:value;
   const t=key=>loc(UI[key])||key,escape=GUIDE_RENDERER.escape;
-  const lesson=id=>LEARNING_GUIDE.lessons.loops?.[id]||(['logic','boundaries','ordering'].includes(id)?LEARNING_GUIDE.lessons.next[id]:LEARNING_GUIDE.lessons.first[id]);
+  const lesson=id=>LEARNING_GUIDE.lessons.continuation?.[id]||LEARNING_GUIDE.lessons.loops?.[id]||(['logic','boundaries','ordering'].includes(id)?LEARNING_GUIDE.lessons.next[id]:LEARNING_GUIDE.lessons.first[id]);
   const media=matchMedia('(prefers-color-scheme:dark)');
   function savePreferences(){try{localStorage.setItem(preferenceKey,JSON.stringify({language,theme}));}catch{}}
   function applyTheme(){const mode=theme==='system'?(media.matches?'dark':'light'):theme;document.documentElement.dataset.theme=mode;$('theme').value=theme;$('theme-icon').textContent=mode==='dark'?'☾':mode==='lavender'?'✦':'◐';document.querySelector('meta[name="theme-color"]').content=mode==='dark'?'#1d1e2b':'#7255db';}
@@ -38,6 +38,7 @@
     const firstTasks={basics:'positive',if:'positive',else:'admission',elif:'grade',nested:'login',ternary:'maximum'};
     const nextTasks={update:'tariff',ternary:'label',logic:'weekend',boundaries:'divisible',ordering:'robot'};
     const loopTasks={while:'count-up',for:'repeat-word',accumulator:'sum',control:'skip','nested-loops':'pairs'};const links=[];if(loopTasks[id])links.push(['loops.html#'+loopTasks[id],'thirdCourse']);
+    const continuationTasks={'integer-parts':'time-parts','clean-text':'command-word','saved-conditions':'club-flag','several-actions':'delivery-price'};if(continuationTasks[id])links.push(['continuation.html#'+continuationTasks[id],'continuationCourse']);
     if(firstTasks[id])links.push(['branching/#'+firstTasks[id],'firstCourse']);
     if(nextTasks[id])links.push(['./#'+nextTasks[id],'secondCourse']);
     if(!links.length)links.push(['branching/','firstCourse'],['./','secondCourse']);
