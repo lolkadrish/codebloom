@@ -188,7 +188,16 @@ function processResult(data,finished){
   const firstError=checks.find(c=>c.error);if(firstError){showError(firstError.error);return;}
   $('execution-label').textContent=t('testsCount',{n:passed,total:checks.length});$('output').className='output-box';$('output').innerHTML='<pre>'+escapeHTML(normalOutput(checks[0].output)||t('noOutput'))+'</pre>';
   if(passed===checks.length){if(item.requiresFeatures?.some(name=>!data.features?.[name])){feedback('info',t('loopStructureTitle'),t('loopStructureHelp',{names:item.requiresFeatures.map(name=>name==='nestedFor'?t('nestedForLabel'):name).join(', ')}));return;}if(item.requiresTernary&&!data.hasIfExp){feedback('info',t('ternaryTitle'),t('ternaryHelp'));return;}state.solved[keyOf(item.id)]=finished.code;state.verifiedRevisions[keyOf(item.id)]=item.revision||1;persist();renderNavigation();if(courseStage==='first'&&courseComplete()){window.location.assign(courseHref('next')+'#museum');return;}if(courseStage==='next'&&courseComplete()){window.location.assign(courseHref('loops')+'#count-up');return;}if(courseStage==='first'&&LESSON_TASKS.every(isSolved)&&!requiredExperimentDone()){feedback('info',t('experimentNeededTitle'),t('experimentNeededBody'),`<button class="secondary-button" id="finish-experiment">${escapeHTML(t('experimentReturn'))}</button>`);$('finish-experiment').onclick=openRequiredExperiment;return;}feedback('success','✓ '+t('allPassed',{n:checks.length}),t(current===LESSON_TASKS.length-1?'lastSuccess':'successText'),current<LESSON_TASKS.length-1?`<button class="secondary-button" id="continue">${escapeHTML(t('continue'))}</button>`:'');if($('continue'))$('continue').onclick=()=>showTask(current+1,{scroll:true});}
-  else{const first=checks.findIndex(c=>!c.passed),actual=normalOutput(checks[first].output),expected=cases[first].out;let message=t('mismatch');if(!actual&&expected)message=t('missingOutput');else if(actual&&!expected)message=t('unexpectedOutput');else if(actual.trim()===expected.trim())message=t('whitespace');feedback('',t('passedCount',{n:passed,total:checks.length}),message);}
+  else{
+    const first=checks.findIndex(c=>!c.passed),actual=normalOutput(checks[first].output),expected=cases[first].out;
+    const formatOnly=actual.trim()===expected.trim(),title=t(formatOnly?'formatMismatchTitle':'logicMismatchTitle');
+    let message=t(formatOnly?'whitespace':'logicMismatchHelp');
+    if(!actual&&expected)message+=' '+t('missingOutput');else if(actual&&!expected)message+=' '+t('unexpectedOutput');
+    const example=`<div class="mismatch-example"><p>${escapeHTML(t('failedCaseTitle',{n:first+1}))}</p><div class="mismatch-values">${[['input',cases[first].input.join('\n')],['expected',expected],['actual',actual]].map(([label,value])=>`<div><strong>${escapeHTML(t(label))}</strong><pre>${escapeHTML(value||t('noOutput'))}</pre></div>`).join('')}</div></div><p class="mismatch-count">${escapeHTML(t('passedCount',{n:passed,total:checks.length}))}</p>`;
+    $('execution-label').textContent=t(formatOnly?'formatMismatchTitle':'logicMismatchStatus')+' · '+t('test')+' '+(first+1);
+    $('output').className='output-box error';$('output').innerHTML=`<p class="error-summary">${escapeHTML(title)}</p><pre>${escapeHTML(actual||t('noOutput'))}</pre>`;
+    feedback('mismatch','⚠ '+title,message,example);
+  }
 }
 function execute(kind){
   if(busy||!ready||kind==='check'&&experimentBlocksCheck())return;const code=$('code').value;if(!code.trim()){feedback('info',t('emptyCode'),t('emptyCodeHelp'));return;}
