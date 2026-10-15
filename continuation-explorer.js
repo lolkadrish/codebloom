@@ -2,10 +2,18 @@
 (() => {
 const values={fruit:17,text:'  HELLO  ',age:17,member:'yes',items:3,wrap:'no'};
 let context=null,model=null,signature='',attempt=null,invalid=false,installed=false;
-function build(id,v,t){
+function build(id,v,t,taskId='normalize-word'){
  const quote=value=>JSON.stringify(value);
  if(id==='integer-parts')return `fruit = ${v.fruit}\nbox_size = 5\nfull = fruit // box_size\nleft = fruit % box_size\nprint(full, left)`;
- if(id==='clean-text')return `raw = ${quote(v.text)}\ntrimmed = raw.strip()\nclean = trimmed.lower()\nprint(${quote(t('exampleRaw'))}, "→" + raw + "←")\nprint(${quote(t('exampleStripped'))}, "→" + trimmed + "←")\nprint(${quote(t('exampleLower'))}, "→" + clean + "←")`;
+ if(id==='clean-text'){
+   const first=`note = ${quote(v.text)}\n`;
+   if(taskId==='echo-text')return first+'print(note)';
+   if(taskId==='copy-text')return first+'result = note\nprint(result)';
+   if(['print-prepared','trim-message'].includes(taskId))return first+'result = note.strip()\nprint(result)';
+   if(taskId==='lowercase-message')return first+'result = note.lower()\nprint(result)';
+   if(taskId==='keep-original')return first+'result = note.strip()\nprint(note)\nprint(result)';
+   return first+'tidy = note.strip()\nresult = tidy.lower()\nprint(result)';
+ }
  if(id==='saved-conditions')return `age = ${v.age}\ncard = ${quote(v.member)}\nallowed = age >= 18 and card == "yes"\nprint(allowed)\nif allowed:\n    print(${quote(t('exampleAllowed'))})\nelse:\n    print(${quote(t('exampleBlocked'))})`;
  return `items = ${v.items}\ncard = ${quote(v.member)}\nwrap = ${quote(v.wrap)}\nprice = items * 25\nif card == "yes":\n    price = price - 10\nif wrap == "yes":\n    price = price + 8\nprint(price)`;
 }
@@ -13,7 +21,11 @@ function render(ctx,preserve=false){
  preserve=preserve||!!(context&&context.id===ctx.id&&context.language===ctx.language&&ctx.$('explorer-controls').querySelector('[data-continuation-value]'));
  if(!context||context.id!==ctx.id||context.language!==ctx.language)invalid=false;
  context=ctx;const {$,t,escape,traceCode,id,language,busy,ready}=ctx;
- const next=id+':'+language+':'+JSON.stringify(values);if(signature!==next){signature=next;model=build(id,values,t);attempt=null;}
+ const next=id+':'+ctx.taskId+':'+language+':'+JSON.stringify(values);if(signature!==next){signature=next;model=build(id,values,t,ctx.taskId);attempt=null;}
+ if(id==='clean-text'){
+   const prompts={'echo-text':'textDemoRead','copy-text':'textDemoCopy','print-prepared':'textDemoStrip','trim-message':'textDemoStrip','lowercase-message':'textDemoLower','keep-original':'textDemoOriginal'};
+   $('explorer-prompt').textContent=t(prompts[ctx.taskId]||'textDemoBoth');
+ }
  const number=(key,label,min,max)=>`<label class="loop-value">${escape(t(label))}<input type="number" min="${min}" max="${max}" step="1" value="${values[key]}" data-continuation-value="${key}" aria-label="${escape(t(label))}"><small>${min}…${max}</small></label>`;
  const choice=(key,label)=>`<label class="loop-value">${escape(t(label))}<select data-continuation-value="${key}" aria-label="${escape(t(label))}">${['yes','no'].map(value=>`<option value="${value}"${values[key]===value?' selected':''}>${escape(t(value==='yes'?'exampleYes':'exampleNo'))}</option>`).join('')}</select></label>`;
  const controls=id==='integer-parts'?number('fruit','fruitAmount',0,50):id==='clean-text'?`<label class="loop-value example-text">${escape(t('rawText'))}<input type="text" maxlength="48" value="${escape(values.text)}" data-continuation-value="text" aria-label="${escape(t('rawText'))}"></label>`:id==='saved-conditions'?number('age','exampleAge',0,120)+choice('member','exampleMember'):number('items','exampleItems',1,8)+choice('member','exampleMember')+choice('wrap','exampleWrap');
@@ -21,6 +33,7 @@ function render(ctx,preserve=false){
  traceCode(model.split('\n'),[]);
  $('explorer-output').textContent=attempt?(attempt.error||attempt.output||t('noOutput')):t('exampleWaiting');
  $('explorer-explanation').textContent=invalid?t('exampleInvalid'):attempt?(attempt.error||t('exampleDone')):t('exampleInstructions');
+ if(id==='clean-text'&&attempt&&!attempt.error&&!invalid&&!attempt.output.includes('\n'))$('explorer-explanation').textContent=t('textQuotedOutput',{value:JSON.stringify(attempt.output)});
  sync(busy,ready);
  if(!installed){installed=true;const change=event=>{
    if(!event.target.closest('[data-continuation-value]'))return;
