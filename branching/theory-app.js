@@ -11,16 +11,18 @@
   function savePreferences(){try{localStorage.setItem(preferenceKey,JSON.stringify({language,theme}));}catch{}}
   function applyTheme(){const mode=theme==='system'?(media.matches?'dark':'light'):theme;document.documentElement.dataset.theme=mode;$('theme').value=theme;$('theme-icon').textContent=mode==='dark'?'☾':mode==='lavender'?'✦':'◐';document.querySelector('meta[name="theme-color"]').content=mode==='dark'?'#1d1e2b':'#7255db';}
   function bindWalkthrough(model){
+    for(const section of model?.sections||[])bindWalkthrough(section);
     if(!model?.walkthrough)return;
+    const prefix='guide-'+(model.walkthrough.id||'walk');
     let position=0;
     const update=()=>{
       const view=GUIDE_RENDERER.walkthroughState(model,LEARNING_GUIDE.labels,language,position);
-      $('guide-walk-code').innerHTML=view.code;$('guide-walk-variables').innerHTML=view.variables;
-      $('guide-walk-output').textContent=view.output;$('guide-walk-note').textContent=view.note;$('guide-walk-count').textContent=view.count;
-      $('guide-walk-reset').disabled=view.first;$('guide-walk-next').disabled=view.last;
+      $(prefix+'-code').innerHTML=view.code;$(prefix+'-variables').innerHTML=view.variables;
+      $(prefix+'-output').textContent=view.output;$(prefix+'-note').textContent=view.note;$(prefix+'-count').textContent=view.count;
+      $(prefix+'-reset').disabled=view.first;$(prefix+'-next').disabled=view.last;
     };
-    $('guide-walk-next').onclick=()=>{position=Math.min(position+1,model.walkthrough.frames.length-1);update();};
-    $('guide-walk-reset').onclick=()=>{position=0;update();};
+    $(prefix+'-next').onclick=()=>{position=Math.min(position+1,model.walkthrough.frames.length-1);update();};
+    $(prefix+'-reset').onclick=()=>{position=0;update();};
     update();
   }
   function render({focus=false}={}){
@@ -38,7 +40,7 @@
     const firstTasks={basics:'positive',if:'positive',else:'admission',elif:'grade',nested:'login',ternary:'maximum'};
     const nextTasks={update:'tariff',ternary:'label',logic:'weekend',boundaries:'divisible',ordering:'robot'};
     const loopTasks={while:'count-up',for:'repeat-word',accumulator:'sum',control:'skip','nested-loops':'pairs'};const links=[];if(loopTasks[id])links.push(['loops.html#'+loopTasks[id],'thirdCourse']);
-    const continuationTasks={'integer-parts':'full-packs','clean-text':'trim-message','saved-conditions':'age-check','several-actions':'add-fee'};if(continuationTasks[id])links.push(['continuation.html#'+continuationTasks[id],'continuationCourse']);
+    const continuationTasks={'integer-parts':'full-packs','clean-text':'echo-text','saved-conditions':'age-check','several-actions':'add-fee'};if(continuationTasks[id])links.push(['continuation.html#'+continuationTasks[id],'continuationCourse']);
     if(firstTasks[id])links.push(['branching/#'+firstTasks[id],'firstCourse']);
     if(nextTasks[id])links.push(['./#'+nextTasks[id],'secondCourse']);
     if(!links.length)links.push(['branching/','firstCourse'],['./','secondCourse']);
