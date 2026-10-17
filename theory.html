@@ -4,15 +4,16 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#7255db"><meta name="description" content="Python с нуля: программы, переменные, ввод, условия и циклы с разбором каждой строки. Русский, українська, English.">
   <title>Теория · Условия в Python</title><link rel="icon" href="branching/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="branching/styles.css?v=12">
+  <link rel="stylesheet" href="branching/styles.css?v=13">
   <script>try{const s=JSON.parse(localStorage.getItem('python-learning-preferences-v1'))||{};const mode=s.theme||'system';document.documentElement.dataset.theme=mode==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):mode;}catch{}</script>
+  <script src="branching/account-config.js?v=1" defer></script><script src="branching/progress-store.js?v=1" defer></script><script src="branching/account-text.js?v=1" defer></script><script src="branching/cloud-sync.js?v=1" defer></script>
   <script src="branching/content.js?v=16" defer></script><script src="branching/learning-guide.js?v=3" defer></script><script src="loops-guide.js?v=2" defer></script><script src="continuation-guide.js?v=3" defer></script><script src="branching/guide-renderer.js?v=5" defer></script><script src="branching/theory-app.js?v=7" defer></script>
 </head>
 <body><a class="skip" href="#theory-title" data-i18n="skipTheory">К объяснению</a>
   <header class="topbar">
     <a class="brand" href="branching/"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 5v14m0-7h7m0 0 5-5m-5 5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-i18n="brand">первый этап<span>.</span></span></a>
     <span class="top-caption">PYTHON <span>/</span> <span data-i18n="topCaption">НАЧАЛО</span></span>
-    <div class="top-controls">
+    <div class="top-controls"><a id="account-open" class="account-link" href="account.html" hidden>Аккаунт</a>
       <label class="select-wrap language"><span aria-hidden="true">◎</span><select id="language" data-i18n-aria="languageLabel"><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option></select></label>
       <label class="select-wrap theme"><span id="theme-icon" aria-hidden="true">◐</span><select id="theme" data-i18n-aria="theme"><option value="system" data-i18n="themeSystem">Как в системе</option><option value="light" data-i18n="themeLight">Светлая</option><option value="dark" data-i18n="themeDark">Тёмная</option><option value="lavender" data-i18n="themeLavender">Лавандовая</option></select></label>
       <button id="practice-open" class="icon-button" data-i18n-title="toPractice" data-i18n-aria="toPractice">↗</button>
