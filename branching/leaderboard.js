@@ -2,14 +2,14 @@
 (() => {
   const $=id=>document.getElementById(id),cloud=window.LEARNING_CLOUD,t=window.LEARNING_RANK_TEXT;
   let profile=null,rows=[],loading=false,saving=false,dirty=false,requestedOwner=null,loaded=false,message='';
-  let prefs={language:'ru',theme:'system'};try{prefs={...prefs,...JSON.parse(localStorage.getItem('python-learning-preferences-v1'))};}catch{}
-  if(!['ru','uk','en'].includes(prefs.language))prefs.language='ru';
+  let prefs={language:'en',theme:'system'};try{prefs={...prefs,...JSON.parse(localStorage.getItem('python-learning-preferences-v1'))};}catch{}
+  if(!['ru','uk','en'].includes(prefs.language))prefs.language='en';
   function duration(value){const seconds=Math.max(0,Number(value)||0),minutes=Math.floor(seconds/60);return !seconds?t('minutes',{n:0}):!minutes?t('underMinute'):minutes<60?t('minutes',{n:minutes}):t('hours',{h:Math.floor(minutes/60),m:minutes%60});}
   const owner=()=>cloud.getStatus().verified?window.LEARNING_STORE?.owner()?.id:null;
   function render(){
     document.documentElement.lang=prefs.language;$('rank-language').value=prefs.language;
     const theme=prefs.theme==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):prefs.theme;
-    document.documentElement.dataset.theme=['light','dark','lavender'].includes(theme)?theme:'light';document.title=t('title')+' · Python';
+    document.documentElement.dataset.theme=['light','dark','lavender'].includes(theme)?theme:'light';document.title=t('title')+' · CodeBloom';
     document.querySelectorAll('[data-rank-text]').forEach(el=>el.textContent=t(el.dataset.rankText));
     $('rank-language').setAttribute('aria-label',window.LEARNING_ACCOUNT_TEXT('language'));
     const signed=!!owner();$('rank-member').hidden=!signed;$('rank-guest').hidden=signed;$('rank-unavailable').hidden=cloud.enabled;

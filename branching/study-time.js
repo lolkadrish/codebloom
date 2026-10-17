@@ -33,7 +33,7 @@ if(typeof window!=='undefined'&&window.LEARNING_CLOUD){
   const cloud=window.LEARNING_CLOUD;
   const timer=createLearningStudyClock({now:()=>performance.now(),random:()=>crypto.randomUUID(),
     owner:()=>cloud.getStatus().verified?window.LEARNING_STORE?.owner()?.id:null,
-    eligible:()=>['first','next','continuation','loops','theory'].includes(document.documentElement.dataset.course),
+    eligible:()=>['first','next','continuation','loops','theory','javascript','javascript-theory'].includes(document.documentElement.dataset.course),
     visible:()=>document.visibilityState==='visible',focused:()=>document.hasFocus(),online:()=>navigator.onLine!==false,
     request:args=>cloud.studyRequest('record_study_time',args)});
   window.LEARNING_STUDY_TIME=timer;

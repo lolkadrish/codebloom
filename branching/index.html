@@ -1,26 +1,27 @@
 <!doctype html>
-<html lang="ru" data-theme="light" data-course="first">
+<html lang="en" data-theme="light" data-course="first">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#7255db">
   <meta name="description" content="Условия в Python с нуля: подробная теория, 9 задач и обязательный эксперимент. Русский, українська, English.">
-  <title>Первый этап · Python с нуля</title>
+  <title>CodeBloom · Python</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css?v=14">
   <script>try{const s=JSON.parse(localStorage.getItem('python-learning-preferences-v1'))||JSON.parse(localStorage.getItem('python-first-step-v1'));const mode=s?.theme||'system';document.documentElement.dataset.theme=mode==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):mode;}catch{}</script>
-  <script src="account-config.js?v=1" defer></script><script src="progress-store.js?v=1" defer></script><script src="account-text.js?v=1" defer></script><script src="cloud-sync.js?v=2" defer></script>
-  <script src="leaderboard-text.js?v=1" defer></script><script src="study-time.js?v=1" defer></script>
+  <script src="account-config.js?v=1" defer></script><script src="progress-store.js?v=2" defer></script><script src="account-text.js?v=2" defer></script><script src="cloud-sync.js?v=2" defer></script>
+  <script src="leaderboard-text.js?v=1" defer></script><script src="study-time.js?v=2" defer></script>
   <script src="content.js?v=16" defer></script>
   <script src="error-help.js?v=2" defer></script>
-  <script src="app.js?v=16" defer></script>
+  <script src="app.js?v=17" defer></script>
   <link rel="stylesheet" href="start-choice.css?v=1">
-  <script src="start-choice.js?v=2" defer></script>
+  <script src="start-choice.js?v=3" defer></script>
+<link rel="stylesheet" href="../platform.css?v=1">
 </head>
 <body>
   <a class="skip" href="#task-heading" data-i18n="skip">К заданию</a>
-  <header class="topbar">
-    <a class="brand" href="#positive"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 5v14m0-7h7m0 0 5-5m-5 5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-i18n="brand">первый этап<span>.</span></span></a>
+  <header class="topbar cb-topbar">
+    <a class="brand cb-brand" href="../index.html"><span class="bloom-symbol" aria-hidden="true">✳</span><span>CodeBloom</span></a>
     <span class="top-caption">PYTHON <span>/</span> <span data-i18n="topCaption">НАЧАЛО</span></span>
     <div class="top-controls"><a id="account-open" class="account-link" href="../account.html" hidden>Аккаунт</a>
       <label class="select-wrap language"><span aria-hidden="true">◎</span><select id="language" data-i18n-aria="languageLabel"><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option></select></label>
@@ -31,13 +32,13 @@
   <div class="layout">
     <aside class="sidebar" data-i18n-aria="navigation">
       <div class="sidebar-intro"><p class="eyebrow" data-i18n="yourRoute">ТВОЙ МАРШРУТ</p><h2 data-i18n="courseHeading">Первый<br>этап<span>.</span></h2><p class="muted" data-i18n="courseIntro">От первого «если»<br>до собственных решений.</p></div>
-      <nav class="stage-nav" data-i18n-aria="courseSelection"><a id="course-first" class="stage-link" href="./"><span class="stage-number">01</span><span><strong data-i18n="firstCourse">Первый этап</strong><small data-i18n="firstCourseCount">9 задач · основы</small></span></a><a id="course-next" class="stage-link" href="../"><span class="stage-number">02</span><span><strong data-i18n="secondCourse">Второй этап</strong><small data-i18n="secondCourseCount">12 задач · практика</small></span></a><a id="course-continuation" class="stage-link" href="../continuation.html"><span class="stage-number">03</span><span><strong data-i18n="continuationCourse">Третий этап</strong><small data-i18n="continuationCourseCount">28 задач · от простого к сложному</small></span></a><a id="course-loops" class="stage-link" href="../loops.html"><span class="stage-number">04</span><span><strong data-i18n="thirdCourse">Четвёртый этап</strong><small data-i18n="thirdCourseCount">12 задач · циклы</small></span></a></nav>
+      <nav class="stage-nav" data-i18n-aria="courseSelection"><a id="course-first" class="stage-link" href="./"><span class="stage-number">01</span><span><strong data-i18n="firstCourse">Первый этап</strong><small data-i18n="firstCourseCount">9 задач · основы</small></span></a><a id="course-next" class="stage-link" href="../python.html"><span class="stage-number">02</span><span><strong data-i18n="secondCourse">Второй этап</strong><small data-i18n="secondCourseCount">12 задач · практика</small></span></a><a id="course-continuation" class="stage-link" href="../continuation.html"><span class="stage-number">03</span><span><strong data-i18n="continuationCourse">Третий этап</strong><small data-i18n="continuationCourseCount">28 задач · от простого к сложному</small></span></a><a id="course-loops" class="stage-link" href="../loops.html"><span class="stage-number">04</span><span><strong data-i18n="thirdCourse">Четвёртый этап</strong><small data-i18n="thirdCourseCount">12 задач · циклы</small></span></a></nav>
       <a id="basics-link" class="basics-link" href="../theory.html#basics" data-i18n="theoryLibrary">Теория · от самого начала →</a>
       <a class="basics-link leaderboard-link" href="../leaderboard.html" data-rank-text="nav">◷ Рейтинг занятий</a>
       <nav id="course-nav"></nav>
       <div class="progress-card"><div><span data-i18n="progress">Твой прогресс</span><strong id="progress-count">0 / 9</strong></div><div class="progress-track"><span id="progress-bar"></span></div><p id="progress-scope" class="progress-scope"></p><p data-i18n="savedLocally">Код и прогресс сохраняются в этом браузере.</p></div>
       <div class="sidebar-note"><span>✦</span><p data-i18n="sidebarNote">Не спеши. Одна понятная строка лучше десяти случайных.</p></div>
-      <a class="next-course" id="related-course" href="../"><span id="related-course-label">Ко второму этапу →</span><span aria-hidden="true">↗</span></a>
+      <a class="next-course" id="related-course" href="../python.html"><span id="related-course-label">Ко второму этапу →</span><span aria-hidden="true">↗</span></a>
     </aside>
     <main>
       <div class="breadcrumbs"><span data-i18n="courseName">Первый этап</span><span>/</span><span id="module-name"></span><div class="pager"><button id="previous" data-i18n-aria="previous">←</button><span id="task-position"></span><button id="next" data-i18n-aria="next">→</button></div></div>
@@ -54,7 +55,7 @@
       <section id="feedback" class="feedback" aria-live="polite" hidden></section>
       <div class="hint-row"><div><span class="hint-icon">?</span><div><h2 data-i18n="hintHeading">Нужна маленькая подсказка?</h2><p data-i18n="hintIntro">По одной мысли. Без готового решения.</p></div></div><button id="hint" class="secondary-button"><span data-i18n="hint">Подсказка</span><span id="hint-count"></span><span aria-hidden="true">↗</span></button></div><div id="hints" aria-live="polite"></div>
       <section class="tests" id="test-section" hidden><details open><summary><span data-i18n="testResults">Результаты проверки</span><span id="test-summary"></span></summary><div class="table-wrap"><table><thead><tr><th data-i18n="test">Тест</th><th data-i18n="input">Ввод</th><th data-i18n="expected">Ожидается</th><th data-i18n="actual">Твой вывод</th><th data-i18n="verdict">Итог</th></tr></thead><tbody id="test-rows"></tbody></table></div></details></section>
-      <section id="completion" class="completion" hidden><span>✦</span><h2 data-i18n="completeTitle">Первый этап пройден.</h2><p data-i18n="completeText">Ты прошёл все девять задач. Теперь можно попробовать задания чуть сложнее.</p><a class="primary-button" id="completion-course-link" href="../" data-i18n="nextCourseLink">Ко второму этапу →</a></section>
+      <section id="completion" class="completion" hidden><span>✦</span><h2 data-i18n="completeTitle">Первый этап пройден.</h2><p data-i18n="completeText">Ты прошёл все девять задач. Теперь можно попробовать задания чуть сложнее.</p><a class="primary-button" id="completion-course-link" href="../python.html" data-i18n="nextCourseLink">Ко второму этапу →</a></section>
       <footer><span data-i18n="footer">Первый этап · учимся через практику</span><a href="https://proginschool.github.io/tutorial/branching.html" target="_blank" rel="noopener" data-i18n="originalLesson">Исходный урок ↗</a><span data-i18n="footerFacts">5 тем · 9 задач · в своём темпе</span></footer>
     </main>
   </div>

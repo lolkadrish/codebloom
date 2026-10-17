@@ -2,15 +2,15 @@
 (() => {
   const $=id=>document.getElementById(id),store=window.LEARNING_STORE,cloud=window.LEARNING_CLOUD,t=window.LEARNING_ACCOUNT_TEXT;
   let email='',working=false,cooldownUntil=0;
-  let preferences={language:'ru',theme:'system'};try{preferences={...preferences,...JSON.parse(localStorage.getItem('python-learning-preferences-v1'))};}catch{}
-  if(!['ru','uk','en'].includes(preferences.language))preferences.language='ru';
-  const home=new URL('../branching/',new URL('.',document.currentScript.src));
-  let returnURL=home.href;try{const url=new URL(sessionStorage.getItem('python-account-return-v1'));if(url.origin===home.origin&&url.pathname.startsWith(new URL('../',new URL('.',document.currentScript.src)).pathname)&&/\/(?:branching\/|index\.html|loops\.html|continuation\.html|theory\.html|leaderboard\.html)?$/.test(url.pathname)){url.search='';returnURL=url.href;}}catch{}
+  let preferences={language:'en',theme:'system'};try{preferences={...preferences,...JSON.parse(localStorage.getItem('python-learning-preferences-v1'))};}catch{}
+  if(!['ru','uk','en'].includes(preferences.language))preferences.language='en';
+  const home=new URL('../index.html',new URL('.',document.currentScript.src)),siteRoot=new URL('.',home);
+  let returnURL=home.href;try{const url=new URL(sessionStorage.getItem('python-account-return-v1'));if(url.origin===home.origin){if(url.pathname.startsWith('/python-next-step/'))url.pathname=siteRoot.pathname+url.pathname.slice('/python-next-step/'.length);const route=url.pathname.slice(siteRoot.pathname.length);if(url.pathname.startsWith(siteRoot.pathname)&&['','index.html','python.html','python-path.html','branching/','loops.html','continuation.html','theory.html','leaderboard.html','javascript.html','javascript/','javascript/theory.html'].includes(route)){url.search='';returnURL=url.href;}}}catch{}
   const message=key=>$('account-message').textContent=t(key);
   function render(){
     document.documentElement.lang=preferences.language;$('account-language').value=preferences.language;
     const theme=preferences.theme==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):preferences.theme;document.documentElement.dataset.theme=['light','dark','lavender'].includes(theme)?theme:'light';
-    document.title=t('account')+' · Python';document.querySelectorAll('[data-account-text]').forEach(el=>el.textContent=t(el.dataset.accountText));
+    document.title=t('account')+' · CodeBloom';document.querySelectorAll('[data-account-text]').forEach(el=>el.textContent=t(el.dataset.accountText));
     $('account-language').setAttribute('aria-label',t('language'));const {status,verified,enabled}=cloud.getStatus(),user=store?.owner();
     $('account-unavailable').hidden=enabled;$('account-auth-card').hidden=!enabled||verified;
     $('account-profile').hidden=!user;$('account-import-panel').hidden=!user||!verified||!store.guestSummary().some(course=>course.hasData);

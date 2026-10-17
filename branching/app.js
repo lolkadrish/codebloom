@@ -6,14 +6,16 @@ const courseStage=['next','continuation','loops'].includes(document.documentElem
 const assetRoot=new URL('.',document.currentScript.src);
 const STORAGE_KEY={first:'python-first-step-v1',next:'python-next-step-v1',continuation:'python-continuation-step-v1',loops:'python-loops-step-v1'}[courseStage];
 const PREFERENCES_KEY='python-learning-preferences-v1';
-let state = {language:'ru',theme:'system',current:0,currentTaskId:null,drafts:{},inputs:{},solved:{},hints:{},quizzes:{},answers:{},verifiedRevisions:{},experiments:{}};
+let state = {language:'en',theme:'system',current:0,currentTaskId:null,drafts:{},inputs:{},solved:{},hints:{},quizzes:{},answers:{},verifiedRevisions:{},experiments:{}};
 let hadSavedCourse=false;
 try{const saved=JSON.parse(window.LEARNING_STORE?LEARNING_STORE.readCourse(STORAGE_KEY):localStorage.getItem(STORAGE_KEY));hadSavedCourse=!!saved&&typeof saved==='object'&&!Array.isArray(saved);if(saved&&typeof saved==='object'&&!Array.isArray(saved))for(const key of Object.keys(state))if(key in saved)state[key]=saved[key];}catch{}
 for(const key of ['drafts','inputs','solved','hints','quizzes','answers','verifiedRevisions','experiments'])if(!state[key]||typeof state[key]!=='object'||Array.isArray(state[key]))state[key]={};
+// Older saves omitted language and implicitly used Russian. Keep those visible.
+if(hadSavedCourse){try{const saved=JSON.parse(window.LEARNING_STORE?LEARNING_STORE.readCourse(STORAGE_KEY):localStorage.getItem(STORAGE_KEY));if(saved&&!saved.language){const keys=Object.keys(saved.solved||{}).concat(Object.keys(saved.drafts||{})),hint=keys.find(key=>/^(ru|uk|en):/.test(key));if(hint)state.language=hint.slice(0,2);else if(keys.length)state.language='ru';}}catch{}}
 // Preserve the original Russian next-step drafts and verified progress.
 if(courseStage==='next')for(const item of LESSON_TASKS)for(const field of ['drafts','inputs','solved','hints','verifiedRevisions']){const legacy=item.id,key='ru:'+item.id;if(legacy in state[field]&&!(key in state[field]))state[field][key]=state[field][legacy];}
 try{const preferences=JSON.parse(localStorage.getItem(PREFERENCES_KEY))||JSON.parse(localStorage.getItem('python-first-step-v1'));if(preferences&&typeof preferences==='object'){if(languageIds.includes(preferences.language))state.language=preferences.language;if(['system','light','dark','lavender'].includes(preferences.theme))state.theme=preferences.theme;}}catch{}
-if(!languageIds.includes(state.language))state.language='ru';
+if(!languageIds.includes(state.language))state.language='en';
 if(!['system','light','dark','lavender'].includes(state.theme))state.theme='system';
 const savedTaskId=state.currentTaskId||(courseStage==='continuation'&&hadSavedCourse?window.LESSON_LEGACY_ORDER?.[state.current]:null);
 if(savedTaskId){const index=LESSON_TASKS.findIndex(item=>item.id===savedTaskId);if(index>=0)state.current=index;}
@@ -36,12 +38,12 @@ const requiredExperimentDone=()=>{const record=state.experiments[keyOf('if-tempe
 const isRequiredExperiment=()=>courseStage==='first'&&task().module===0;
 const experimentBlocksCheck=()=>isRequiredExperiment()&&!requiredExperimentDone();
 const courseComplete=()=>LESSON_TASKS.every(isSolved)&&(courseStage!=='first'||requiredExperimentDone());
-const courseHref = stage => new URL({first:'branching/',next:'./',continuation:'continuation.html',loops:'loops.html'}[stage],new URL('../',assetRoot)).href;
+const courseHref = stage => new URL({first:'branching/',next:'python.html',continuation:'continuation.html',loops:'loops.html'}[stage],new URL('../',assetRoot)).href;
 function persist(){try{if(window.LEARNING_STORE)LEARNING_STORE.writeCourse(STORAGE_KEY,state);else localStorage.setItem(STORAGE_KEY,JSON.stringify(state));localStorage.setItem(PREFERENCES_KEY,JSON.stringify({language:state.language,theme:state.theme}));$('save-status').textContent=t('saved');}catch{$('save-status').textContent=t('notSaved');}}
 function applyTheme(){const mode=state.theme==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):state.theme;document.documentElement.dataset.theme=mode;$('theme').value=state.theme;$('theme-icon').textContent=mode==='dark'?'☾':mode==='lavender'?'✦':'◐';document.querySelector('meta[name="theme-color"]').content=mode==='dark'?'#1d1e2b':'#7255db';}
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(state.theme==='system')applyTheme();});
 function applyLocale(){
-  document.documentElement.lang=state.language;document.title=t('courseName')+' · '+t('theoryCourseName');
+  document.documentElement.lang=state.language;document.title=t('courseName')+' · Python · CodeBloom';
   document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
   document.querySelectorAll('[data-i18n-aria]').forEach(el=>el.setAttribute('aria-label',t(el.dataset.i18nAria)));
   document.querySelectorAll('[data-i18n-title]').forEach(el=>el.title=t(el.dataset.i18nTitle));
@@ -229,7 +231,7 @@ $('share-task').onclick=async()=>{const url=shareHref();try{await navigator.clip
 $('theme').onchange=()=>{state.theme=$('theme').value;applyTheme();persist();};
 function renderReference(){const parts=[['referenceInputs','word = input()\nnumber = int(input())'],['referenceDecisions','if condition:\n    action_a()\nelif other_condition:\n    action_b()\nelse:\n    action_c()'],['referenceCompare',t('referenceOperators')],['referenceLogic',t('referenceLogicText')],['referenceShort','result = yes_value if condition else no_value']];if(courseStage==='continuation')parts.push(['referenceParts','whole = amount // group_size\nleft = amount % group_size'],['referenceText','clean = raw.strip()\nclean = clean.lower()'],['referenceFlags','allowed = age >= 18 and card == "yes"\nif not allowed:\n    print("No")']);if(courseStage==='loops')parts.push(['loopWhileReference','counter = 0\nwhile counter < 3:\n    counter += 1'],['loopForReference','for item in range(start, stop, step):\n    print(item)'],['loopControlReference','break\ncontinue']);$('reference-content').innerHTML=parts.map(([heading,code])=>`<h3>${escapeHTML(t(heading))}</h3><pre>${escapeHTML(code)}</pre>`).join('')+'<p>'+escapeHTML(t('referenceIndent'))+'</p>';}
 $('reference-open').onclick=()=>$('reference-dialog').showModal();$('reference-close').onclick=()=>$('reference-dialog').close();$('reference-dialog').addEventListener('click',event=>{if(event.target===$('reference-dialog')){const rect=$('reference-dialog').getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)$('reference-dialog').close();}});
-document.querySelector('.brand').onclick=event=>{event.preventDefault();showTask(0,{scroll:true});};
+// The CodeBloom brand returns to the language chooser.
 for(const stage of ['first','next','continuation','loops'])$('course-'+stage).addEventListener('click',event=>{if(stage===courseStage)event.preventDefault();});
 window.addEventListener('hashchange',()=>{const index=LESSON_TASKS.findIndex(item=>item.id===location.hash.slice(1));if(index>=0&&!busy)showTask(index);});
 applyLocale();const hashIndex=LESSON_TASKS.findIndex(item=>item.id===location.hash.slice(1));showTask(hashIndex>=0?hashIndex:current);createWorker();

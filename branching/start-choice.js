@@ -31,7 +31,7 @@
   function dismiss(){if(!dialog)return;if(dialog.open)dialog.close();document.documentElement.classList.remove('start-choice-open');}
   function chooseLocal(){remember('local');dismiss();}
   function render(){
-    const index={ru:0,uk:1,en:2}[document.documentElement.lang]??0;
+    const index={ru:0,uk:1,en:2}[document.documentElement.lang]??2;
     dialog.querySelectorAll('[data-start-text]').forEach(el=>el.textContent=texts[el.dataset.startText][index]);
     dialog.querySelector('#start-choice-close').setAttribute('aria-label',texts.localButton[index]);
   }

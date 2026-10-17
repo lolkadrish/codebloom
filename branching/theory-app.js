@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const $=id=>document.getElementById(id),languages=['ru','uk','en'],preferenceKey='python-learning-preferences-v1';
-  let language='ru',theme='system';
+  let language='en',theme='system';
   try{const saved=JSON.parse(localStorage.getItem(preferenceKey))||JSON.parse(localStorage.getItem('python-first-step-v1'))||{};if(languages.includes(saved.language))language=saved.language;if(['system','light','dark','lavender'].includes(saved.theme))theme=saved.theme;}catch{}
   const topics=[['basics','basicsTopic'],['update','topicUpdate'],['if','topicIf'],['else','topicElse'],['elif','topicElif'],['nested','topicNested'],['ternary','topicTernary'],['logic','topicLogic'],['boundaries','topicBoundaries'],['ordering','topicOrdering'],['integer-parts','topicIntegerParts'],['clean-text','topicCleanText'],['saved-conditions','topicSavedConditions'],['several-actions','topicSeveralActions'],['while','topicWhile'],['for','topicFor'],['accumulator','topicAccumulator'],['control','topicControl'],['nested-loops','topicNestedLoops']];
   const loc=value=>Array.isArray(value)?value[languages.indexOf(language)]:value;
@@ -27,7 +27,7 @@
   }
   function render({focus=false}={}){
     const requested=location.hash.slice(1),index=Math.max(0,topics.findIndex(([id])=>id===requested)),[id,title]=topics[index];
-    document.documentElement.lang=language;document.title=t('theoryLibraryTitle')+' · '+t(title);
+    document.documentElement.lang=language;document.title=t('theoryLibraryTitle')+' · '+t(title)+' · CodeBloom';
     document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
     document.querySelectorAll('[data-i18n-aria]').forEach(el=>el.setAttribute('aria-label',t(el.dataset.i18nAria)));
     document.querySelectorAll('[data-i18n-title]').forEach(el=>el.title=t(el.dataset.i18nTitle));
@@ -42,8 +42,8 @@
     const loopTasks={while:'count-up',for:'repeat-word',accumulator:'sum',control:'skip','nested-loops':'pairs'};const links=[];if(loopTasks[id])links.push(['loops.html#'+loopTasks[id],'thirdCourse']);
     const continuationTasks={'integer-parts':'full-packs','clean-text':'echo-text','saved-conditions':'age-check','several-actions':'add-fee'};if(continuationTasks[id])links.push(['continuation.html#'+continuationTasks[id],'continuationCourse']);
     if(firstTasks[id])links.push(['branching/#'+firstTasks[id],'firstCourse']);
-    if(nextTasks[id])links.push(['./#'+nextTasks[id],'secondCourse']);
-    if(!links.length)links.push(['branching/','firstCourse'],['./','secondCourse']);
+    if(nextTasks[id])links.push(['python.html#'+nextTasks[id],'secondCourse']);
+    if(!links.length)links.push(['branching/','firstCourse'],['python.html','secondCourse']);
     $('theory-practice-links').innerHTML=links.map(([url,label])=>'<a class="primary-button" href="'+url+'">'+escape(t(label))+' →</a>').join('');
     if(focus){$('theory-title').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}
   }
