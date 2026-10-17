@@ -4,13 +4,14 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#7255db"><meta name="description" content="Необязательный аккаунт для сохранения прогресса Python между устройствами. Можно учиться и без входа.">
   <meta name="referrer" content="no-referrer"><title>Аккаунт · Python с нуля</title>
-  <link rel="icon" href="branching/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="branching/styles.css?v=13">
-  <script src="branching/account-config.js?v=1" defer></script><script src="branching/progress-store.js?v=1" defer></script><script src="branching/account-text.js?v=1" defer></script><script src="branching/cloud-sync.js?v=1" defer></script><script src="branching/account.js?v=1" defer></script>
+  <link rel="icon" href="branching/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="branching/styles.css?v=14">
+  <script src="branching/account-config.js?v=1" defer></script><script src="branching/progress-store.js?v=1" defer></script><script src="branching/account-text.js?v=1" defer></script><script src="branching/cloud-sync.js?v=2" defer></script>
+  <script src="branching/leaderboard-text.js?v=1" defer></script><script src="branching/study-time.js?v=1" defer></script><script src="branching/account.js?v=2" defer></script>
 </head>
 <body>
   <header class="topbar"><a class="brand" href="branching/">Python с нуля.</a><span class="top-caption">PYTHON / ACCOUNT</span><div class="top-controls"><label class="select-wrap language"><span aria-hidden="true">◎</span><select id="account-language" aria-label="Язык сайта"><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option></select></label></div></header>
   <main class="account-page">
-    <div class="eyebrow"><span class="tag">PYTHON / ACCOUNT</span></div><h1 data-account-text="title">Твой прогресс — с тобой</h1><p class="account-lead" data-account-text="intro"></p>
+    <div class="eyebrow"><span class="tag">PYTHON / ACCOUNT</span></div><h1 data-account-text="title">Твой прогресс — с тобой</h1><p class="account-lead" data-account-text="intro"></p><a class="secondary-button rank-entry" href="leaderboard.html" data-rank-text="nav">◷ Рейтинг занятий</a>
     <div id="account-unavailable" class="account-notice" role="status" hidden data-account-text="unavailable"></div>
     <div class="account-grid">
       <section class="account-card"><span class="summary-icon" aria-hidden="true">⌂</span><h2 data-account-text="localTitle"></h2><p data-account-text="localHelp"></p><a id="guest-continue" class="secondary-button" href="branching/" data-account-text="localTitle"></a></section>

@@ -7,9 +7,10 @@
   <meta name="description" content="Циклы в Python с нуля: while, for, range, накопители, break и continue. 12 задач, пошаговые эксперименты и личный прогресс.">
   <title>Четвёртый этап · Python с нуля</title>
   <link rel="icon" href="branching/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="branching/styles.css?v=13">
+  <link rel="stylesheet" href="branching/styles.css?v=14">
   <script>try{const s=JSON.parse(localStorage.getItem('python-learning-preferences-v1'))||JSON.parse(localStorage.getItem('python-first-step-v1'));const mode=s?.theme||'system';document.documentElement.dataset.theme=mode==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):mode;}catch{}</script>
-  <script src="branching/account-config.js?v=1" defer></script><script src="branching/progress-store.js?v=1" defer></script><script src="branching/account-text.js?v=1" defer></script><script src="branching/cloud-sync.js?v=1" defer></script>
+  <script src="branching/account-config.js?v=1" defer></script><script src="branching/progress-store.js?v=1" defer></script><script src="branching/account-text.js?v=1" defer></script><script src="branching/cloud-sync.js?v=2" defer></script>
+  <script src="branching/leaderboard-text.js?v=1" defer></script><script src="branching/study-time.js?v=1" defer></script>
   <script src="branching/content.js?v=16" defer></script>
   <script src="loops-content.js?v=3" defer></script>
   <script src="loop-explorer.js?v=3" defer></script>
@@ -32,6 +33,7 @@
       <div class="sidebar-intro"><p class="eyebrow" data-i18n="yourRoute">ТВОЙ МАРШРУТ</p><h2 data-i18n="courseHeading">Четвёртый<br>этап<span>.</span></h2><p class="muted" data-i18n="courseIntro">От первого «если»<br>до собственных решений.</p></div>
       <nav class="stage-nav" data-i18n-aria="courseSelection"><a id="course-first" class="stage-link" href="branching/"><span class="stage-number">01</span><span><strong data-i18n="firstCourse">Первый этап</strong><small data-i18n="firstCourseCount">9 задач · основы</small></span></a><a id="course-next" class="stage-link" href="./"><span class="stage-number">02</span><span><strong data-i18n="secondCourse">Второй этап</strong><small data-i18n="secondCourseCount">12 задач · практика</small></span></a><a id="course-continuation" class="stage-link" href="continuation.html"><span class="stage-number">03</span><span><strong data-i18n="continuationCourse">Третий этап</strong><small data-i18n="continuationCourseCount">28 задач · от простого к сложному</small></span></a><a id="course-loops" class="stage-link" href="loops.html"><span class="stage-number">04</span><span><strong data-i18n="thirdCourse">Четвёртый этап</strong><small data-i18n="thirdCourseCount">12 задач · циклы</small></span></a></nav>
       <a id="basics-link" class="basics-link" href="theory.html#basics" data-i18n="theoryLibrary">Теория · от самого начала →</a>
+      <a class="basics-link leaderboard-link" href="leaderboard.html" data-rank-text="nav">◷ Рейтинг занятий</a>
       <nav id="course-nav"></nav>
       <div class="progress-card"><div><span data-i18n="progress">Твой прогресс</span><strong id="progress-count">0 / 9</strong></div><div class="progress-track"><span id="progress-bar"></span></div><p id="progress-scope" class="progress-scope"></p><p data-i18n="savedLocally">Код и прогресс сохраняются в этом браузере.</p></div>
       <div class="sidebar-note"><span>✦</span><p data-i18n="sidebarNote">Не спеши. Одна понятная строка лучше десяти случайных.</p></div>

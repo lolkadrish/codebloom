@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru" data-theme="light" data-course="leaderboard">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#7255db"><meta name="description" content="Рейтинг активного времени занятий Python. Добровольное участие под псевдонимом.">
+  <meta name="referrer" content="no-referrer"><title>Рейтинг занятий · Python с нуля</title>
+  <link rel="icon" href="branching/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="branching/styles.css?v=14">
+  <script src="branching/account-config.js?v=1" defer></script><script src="branching/progress-store.js?v=1" defer></script><script src="branching/account-text.js?v=1" defer></script><script src="branching/cloud-sync.js?v=2" defer></script>
+  <script src="branching/leaderboard-text.js?v=1" defer></script><script src="branching/study-time.js?v=1" defer></script><script src="branching/leaderboard.js?v=1" defer></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="branching/">Python с нуля.</a><span class="top-caption">PYTHON / COMMUNITY</span><div class="top-controls"><a id="account-open" class="account-link" href="account.html" hidden>Аккаунт</a><label class="select-wrap language"><span aria-hidden="true">◎</span><select id="rank-language" aria-label="Язык сайта"><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option></select></label></div></header>
+  <main class="account-page leaderboard-page">
+    <div class="eyebrow"><span class="tag" data-rank-text="allTime"></span><span>PYTHON / COMMUNITY</span></div>
+    <h1 data-rank-text="title">Кто больше занимался</h1><p class="account-lead" data-rank-text="intro"></p>
+    <div id="rank-unavailable" class="account-notice" hidden data-rank-text="unavailable"></div>
+    <div class="leaderboard-grid">
+      <section class="account-card rank-personal"><span class="summary-icon" aria-hidden="true">◷</span><h2 data-rank-text="personal"></h2>
+        <div id="rank-guest"><p data-rank-text="guest"></p><a id="rank-sign-in" class="primary-button" href="account.html" data-rank-text="signIn"></a></div>
+        <div id="rank-member" hidden><p class="rank-total" id="rank-own-time">0 мин</p><p class="muted" id="rank-own-place"></p>
+          <form id="rank-profile-form"><label for="rank-nickname" data-rank-text="nickname"></label><input id="rank-nickname" name="nickname" autocomplete="nickname" minlength="2" maxlength="24" aria-describedby="rank-name-help"><p id="rank-name-help" class="muted" data-rank-text="nameHelp"></p>
+            <label class="rank-checkbox"><input type="checkbox" id="rank-public"><span data-rank-text="participate"></span></label><p class="account-privacy" data-rank-text="privacy"></p><button class="primary-button" id="rank-save" type="submit" data-rank-text="save"></button>
+          </form>
+        </div><p id="rank-profile-message" class="account-message" role="status" aria-live="polite"></p>
+      </section>
+      <section class="account-card rank-board"><div class="rank-board-heading"><div><h2 data-rank-text="top"></h2><p class="muted" data-rank-text="topHelp"></p></div><button id="rank-refresh" class="secondary-button" data-rank-text="refresh"></button></div>
+        <p id="rank-list-status" class="muted" role="status" aria-live="polite"></p><p id="rank-empty" class="rank-empty" hidden data-rank-text="empty"></p>
+        <div class="table-wrap" id="rank-table-wrap" hidden><table class="rank-table"><thead><tr><th data-rank-text="place"></th><th data-rank-text="learner"></th><th data-rank-text="time"></th></tr></thead><tbody id="rank-rows"></tbody></table></div>
+      </section>
+    </div>
+    <section class="account-card rank-rules"><h2 data-rank-text="rules"></h2><ol><li data-rank-text="rule1"></li><li data-rank-text="rule2"></li><li data-rank-text="rule3"></li><li data-rank-text="rule4"></li></ol><a href="branching/" class="secondary-button" data-rank-text="back"></a></section>
+  </main>
+</body></html>
