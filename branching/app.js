@@ -8,7 +8,7 @@ const STORAGE_KEY={first:'python-first-step-v1',next:'python-next-step-v1',conti
 const PREFERENCES_KEY='python-learning-preferences-v1';
 let state = {language:'ru',theme:'system',current:0,currentTaskId:null,drafts:{},inputs:{},solved:{},hints:{},quizzes:{},answers:{},verifiedRevisions:{},experiments:{}};
 let hadSavedCourse=false;
-try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));hadSavedCourse=!!saved&&typeof saved==='object'&&!Array.isArray(saved);if(saved&&typeof saved==='object'&&!Array.isArray(saved))for(const key of Object.keys(state))if(key in saved)state[key]=saved[key];}catch{}
+try{const saved=JSON.parse(window.LEARNING_STORE?LEARNING_STORE.readCourse(STORAGE_KEY):localStorage.getItem(STORAGE_KEY));hadSavedCourse=!!saved&&typeof saved==='object'&&!Array.isArray(saved);if(saved&&typeof saved==='object'&&!Array.isArray(saved))for(const key of Object.keys(state))if(key in saved)state[key]=saved[key];}catch{}
 for(const key of ['drafts','inputs','solved','hints','quizzes','answers','verifiedRevisions','experiments'])if(!state[key]||typeof state[key]!=='object'||Array.isArray(state[key]))state[key]={};
 // Preserve the original Russian next-step drafts and verified progress.
 if(courseStage==='next')for(const item of LESSON_TASKS)for(const field of ['drafts','inputs','solved','hints','verifiedRevisions']){const legacy=item.id,key='ru:'+item.id;if(legacy in state[field]&&!(key in state[field]))state[field][key]=state[field][legacy];}
@@ -18,6 +18,7 @@ if(!['system','light','dark','lavender'].includes(state.theme))state.theme='syst
 const savedTaskId=state.currentTaskId||(courseStage==='continuation'&&hadSavedCourse?window.LESSON_LEGACY_ORDER?.[state.current]:null);
 if(savedTaskId){const index=LESSON_TASKS.findIndex(item=>item.id===savedTaskId);if(index>=0)state.current=index;}
 if(!Number.isInteger(state.current)||state.current<0||state.current>=LESSON_TASKS.length)state.current=0;
+let cloudRefreshPending=false;
 let current=state.current,worker,ready=false,busy=false,job=null,sequence=0,timer,initTimer,errorLine=null,runtimeKey='loading',runtimeKind='';
 const runtimeSources=['site','cdn'];
 let runtimeSourceIndex=0,loadingErrors=[];
@@ -36,7 +37,7 @@ const isRequiredExperiment=()=>courseStage==='first'&&task().module===0;
 const experimentBlocksCheck=()=>isRequiredExperiment()&&!requiredExperimentDone();
 const courseComplete=()=>LESSON_TASKS.every(isSolved)&&(courseStage!=='first'||requiredExperimentDone());
 const courseHref = stage => new URL({first:'branching/',next:'./',continuation:'continuation.html',loops:'loops.html'}[stage],new URL('../',assetRoot)).href;
-function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));localStorage.setItem(PREFERENCES_KEY,JSON.stringify({language:state.language,theme:state.theme}));$('save-status').textContent=t('saved');}catch{$('save-status').textContent=t('notSaved');}}
+function persist(){try{if(window.LEARNING_STORE)LEARNING_STORE.writeCourse(STORAGE_KEY,state);else localStorage.setItem(STORAGE_KEY,JSON.stringify(state));localStorage.setItem(PREFERENCES_KEY,JSON.stringify({language:state.language,theme:state.theme}));$('save-status').textContent=t('saved');}catch{$('save-status').textContent=t('notSaved');}}
 function applyTheme(){const mode=state.theme==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):state.theme;document.documentElement.dataset.theme=mode;$('theme').value=state.theme;$('theme-icon').textContent=mode==='dark'?'☾':mode==='lavender'?'✦':'◐';document.querySelector('meta[name="theme-color"]').content=mode==='dark'?'#1d1e2b':'#7255db';}
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(state.theme==='system')applyTheme();});
 function applyLocale(){
@@ -66,7 +67,7 @@ function renderNavigation(){
   if($('experiment-run'))$('experiment-run').disabled=busy||!ready;
   $('previous').disabled=busy||current===0;$('next').disabled=busy||current===LESSON_TASKS.length-1;if(courseStage==='loops')LOOP_EXPLORER.sync(busy,ready);if(courseStage==='continuation')NEXT_EXPLORER.sync(busy,ready);
 }
-function showTask(index,{scroll=false}={}){
+function showTask(index,{scroll=false,persistState=true}={}){
   if(busy||index<0||index>=LESSON_TASKS.length)return;
   if(index!==current)experimentAttempt=null;
   current=index;state.current=index;const item=task(),module=LESSON_MODULES[item.module],cases=casesOf(item);state.currentTaskId=item.id;
@@ -74,7 +75,7 @@ function showTask(index,{scroll=false}={}){
   $('module-symbol').textContent=module.symbol;$('topic-theory-link').href=theoryHref(module.id);$('topic-theory-link').textContent=t('readTheory')+' '+loc(module.title)+' →';$('explorer-prompt').textContent=loc(module.explorerPrompt);renderExplorer();renderQuiz();$('share-status').textContent='';$('share-address').hidden=true;
   $('requirements').innerHTML=item.requirements.map(line=>'<li>'+rich(line)+'</li>').join('');$('input-rule').innerHTML=`<strong>${escapeHTML(t('input'))}:</strong> ${escapeHTML(loc(item.input))}<span class="language-note">${escapeHTML(t('languageNotice'))}</span>`;if(item.preparation)$('input-rule').innerHTML+='<a class="task-preparation" href="'+escapeHTML(theoryHref(item.preparation.topic))+'">'+escapeHTML(loc(item.preparation.text))+' →</a>';
   $('examples').innerHTML=cases.slice(0,2).map((c,i)=>`<div class="example"><div><span>${escapeHTML(t('exampleInput',{n:i+1}))}</span><pre>${escapeHTML(c.input.join('\n'))}</pre></div><div class="example-arrow">→</div><div><span>${escapeHTML(t('output'))}</span><pre>${escapeHTML(c.out||t('noOutput'))}</pre></div><button data-example="${i}" aria-label="${escapeHTML(t('exampleUse',{n:i+1}))}" title="${escapeHTML(t('exampleUse',{n:i+1}))}">↗</button></div>`).join('');
-  $('code').value=codeOf(item);$('code').scrollTop=0;$('code').scrollLeft=0;$('stdin').value=typeof state.inputs[keyOf(item.id)]==='string'?state.inputs[keyOf(item.id)]:cases[0].input.join('\n');errorLine=null;paintEditor();resetResult();renderHints();renderNavigation();persist();
+  $('code').value=codeOf(item);$('code').scrollTop=0;$('code').scrollLeft=0;$('stdin').value=typeof state.inputs[keyOf(item.id)]==='string'?state.inputs[keyOf(item.id)]:cases[0].input.join('\n');errorLine=null;paintEditor();resetResult();renderHints();renderNavigation();if(persistState)persist();
   if(scroll){$('task-heading').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}
 }
 const theoryTopic = id => ({warmup:'elif',boundaries:'boundaries',compact:'ternary'}[id]||id);
@@ -154,7 +155,7 @@ function renderHints(){const count=Math.min(3,Math.max(0,Number(state.hints[keyO
 function saveCode(){state.drafts[keyOf(task().id)]=$('code').value;errorLine=null;paintEditor();persist();renderNavigation();$('feedback').hidden=true;$('test-section').hidden=true;}
 function replaceSelection(text){const editor=$('code');editor.setRangeText(text,editor.selectionStart,editor.selectionEnd,'end');saveCode();}
 function shiftIndent(reverse=false){const editor=$('code'),text=editor.value,start=editor.selectionStart,end=editor.selectionEnd,lineStart=text.lastIndexOf('\n',start-1)+1,blockEnd=start===end?(text.indexOf('\n',start)===-1?text.length:text.indexOf('\n',start)):(end>start&&text[end-1]==='\n'?end-1:end);let firstDelta=0,totalDelta=0;const changed=text.slice(lineStart,blockEnd).split('\n').map((line,i)=>{const remove=reverse?(line.match(/^ {1,4}/)?.[0].length||0):0,delta=reverse?-remove:4;if(i===0)firstDelta=delta;totalDelta+=delta;return reverse?line.slice(remove):'    '+line;}).join('\n');editor.setRangeText(changed,lineStart,blockEnd,'preserve');editor.setSelectionRange(Math.max(lineStart,start+firstDelta),Math.max(lineStart,end+totalDelta));editor.focus();saveCode();}
-function setBusy(value){busy=value;$('run').disabled=value||!ready;$('check').disabled=value||!ready||experimentBlocksCheck();if($('experiment-run'))$('experiment-run').disabled=value||!ready;$('explorer-controls').querySelectorAll('input,select,button').forEach(el=>el.disabled=value);$('reset-code').disabled=value;$('language').disabled=value;$('code').readOnly=value;$('stdin').readOnly=value;$('stop').hidden=!value;$('indent').disabled=value;$('outdent').disabled=value;renderNavigation();}
+function setBusy(value){busy=value;$('run').disabled=value||!ready;$('check').disabled=value||!ready||experimentBlocksCheck();if($('experiment-run'))$('experiment-run').disabled=value||!ready;$('explorer-controls').querySelectorAll('input,select,button').forEach(el=>el.disabled=value);$('reset-code').disabled=value;$('language').disabled=value;$('code').readOnly=value;$('stdin').readOnly=value;$('stop').hidden=!value;$('indent').disabled=value;$('outdent').disabled=value;renderNavigation();if(!value&&typeof cloudRefreshPending!=='undefined'&&cloudRefreshPending)setTimeout(refreshCloudProgress,0);}
 function renderRuntime(){$('runtime').className='runtime '+runtimeKind;$('runtime').innerHTML=`<span>${escapeHTML(t(runtimeKey))}</span>${runtimeKind==='error'?`<button id="retry-python">${escapeHTML(t('retry'))}</button>`:''}`;if($('retry-python'))$('retry-python').onclick=()=>createWorker();}
 function setRuntime(kind,key){runtimeKind=kind;runtimeKey=key;renderRuntime();}
 function createWorker(fallback=false){
@@ -232,3 +233,18 @@ document.querySelector('.brand').onclick=event=>{event.preventDefault();showTask
 for(const stage of ['first','next','continuation','loops'])$('course-'+stage).addEventListener('click',event=>{if(stage===courseStage)event.preventDefault();});
 window.addEventListener('hashchange',()=>{const index=LESSON_TASKS.findIndex(item=>item.id===location.hash.slice(1));if(index>=0&&!busy)showTask(index);});
 applyLocale();const hashIndex=LESSON_TASKS.findIndex(item=>item.id===location.hash.slice(1));showTask(hashIndex>=0?hashIndex:current);createWorker();
+
+// Cloud refreshes wait while typing or running code. Writes diff against the last
+// rendered state, so a stale tab cannot overwrite unrelated remote changes.
+
+function refreshCloudProgress(){
+  if(!window.LEARNING_STORE?.owner())return;
+  if(busy||document.activeElement===$('code')||document.activeElement===$('stdin')){cloudRefreshPending=true;return;}
+  cloudRefreshPending=false;
+  let saved;try{saved=JSON.parse(LEARNING_STORE.readCourse(STORAGE_KEY));}catch{return;}if(!saved)return;
+  for(const field of ['drafts','inputs','solved','hints','quizzes','answers','verifiedRevisions','experiments'])state[field]=saved[field]&&typeof saved[field]==='object'?saved[field]:{};
+  showTask(current,{persistState:false});
+}
+window.addEventListener('learning-store-synced',event=>{if(event.detail?.changed&&(!event.detail.courses||event.detail.courses.includes(courseStage)))refreshCloudProgress();});
+$('code').addEventListener('blur',()=>{if(cloudRefreshPending)setTimeout(refreshCloudProgress,0);});
+$('stdin').addEventListener('blur',()=>{if(cloudRefreshPending)setTimeout(refreshCloudProgress,0);});

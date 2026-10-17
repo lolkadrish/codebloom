@@ -7,18 +7,19 @@
   <meta name="description" content="Условия в Python с нуля: подробная теория, 9 задач и обязательный эксперимент. Русский, українська, English.">
   <title>Первый этап · Python с нуля</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=12">
+  <link rel="stylesheet" href="styles.css?v=13">
   <script>try{const s=JSON.parse(localStorage.getItem('python-learning-preferences-v1'))||JSON.parse(localStorage.getItem('python-first-step-v1'));const mode=s?.theme||'system';document.documentElement.dataset.theme=mode==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):mode;}catch{}</script>
+  <script src="account-config.js?v=1" defer></script><script src="progress-store.js?v=1" defer></script><script src="account-text.js?v=1" defer></script><script src="cloud-sync.js?v=1" defer></script>
   <script src="content.js?v=16" defer></script>
   <script src="error-help.js?v=2" defer></script>
-  <script src="app.js?v=15" defer></script>
+  <script src="app.js?v=16" defer></script>
 </head>
 <body>
   <a class="skip" href="#task-heading" data-i18n="skip">К заданию</a>
   <header class="topbar">
     <a class="brand" href="#positive"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 5v14m0-7h7m0 0 5-5m-5 5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-i18n="brand">первый этап<span>.</span></span></a>
     <span class="top-caption">PYTHON <span>/</span> <span data-i18n="topCaption">НАЧАЛО</span></span>
-    <div class="top-controls">
+    <div class="top-controls"><a id="account-open" class="account-link" href="../account.html" hidden>Аккаунт</a>
       <label class="select-wrap language"><span aria-hidden="true">◎</span><select id="language" data-i18n-aria="languageLabel"><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option></select></label>
       <label class="select-wrap theme"><span id="theme-icon" aria-hidden="true">◐</span><select id="theme" data-i18n-aria="theme"><option value="system" data-i18n="themeSystem">Как в системе</option><option value="light" data-i18n="themeLight">Светлая</option><option value="dark" data-i18n="themeDark">Тёмная</option><option value="lavender" data-i18n="themeLavender">Лавандовая</option></select></label>
       <button id="reference-open" class="icon-button" data-i18n-title="reference" data-i18n-aria="reference">?</button>
