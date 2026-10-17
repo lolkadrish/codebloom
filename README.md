@@ -1,122 +1,49 @@
-# Python с нуля — условия и циклы на одном сайте
+# CodeBloom
 
-Первый этап: https://lolkadrish.github.io/python-next-step/branching/
+Learn programming through small, progressive exercises, clear explanations, and projects you can run in your browser.
 
-Второй этап: https://lolkadrish.github.io/python-next-step/
+**[Open CodeBloom](https://lolkadrish.github.io/codebloom/)**
 
-Третий этап: https://lolkadrish.github.io/python-next-step/continuation.html#full-packs
+## Choose a language
 
-Четвёртый этап (циклы): https://lolkadrish.github.io/python-next-step/loops.html
+| Path | What you will practice | Open |
+| --- | --- | --- |
+| Python | Four stages: conditions, combined decisions, working with data, and loops. 61 exercises and one required introductory experiment. | [Python path](https://lolkadrish.github.io/codebloom/python-path.html) |
+| JavaScript | Twelve stages, 77 exercises: first lines, decisions, loops, functions, arrays, objects, reliability and modules, DOM events, async work, deeper language concepts, tests and tools, and projects. | [JavaScript path](https://lolkadrish.github.io/codebloom/javascript.html) |
 
-## Учебный маршрут
+English is the default for new visitors. Switch to Russian or Ukrainian to change the explanations, exercise statements, hints and interface. Previous language and theme preferences are respected. JavaScript solutions are retained when the explanation language changes.
 
-1. Первый этап: пять тем, девять задач — if, else, elif, вложенные условия и короткая запись выбора.
-2. Второй этап: шесть тем, двенадцать задач — границы, and/or, остаток от деления, порядок проверок, вложенный ввод и короткие выражения.
-3. Третий этап: четыре темы, двадцать восемь задач — целая часть и остаток, подготовка текста, логические значения и последовательные расчёты.
-4. Четвёртый этап — циклы: пять тем, двенадцать задач — while, for/range, накопители, break/continue и вложенные циклы.
+The JavaScript path ends with six projects: a bill calculator, order summary, bounded counter, live search, task app, and asynchronous product dashboard. Every stage is available; the later stages are working exercises, not placeholders. The path is a foundation for independent development and continued learning.
 
-После успешной проверки эксперимента и всех девяти задач первого курса автоматически открывается первая задача второго. Решение только финальной задачи не завершает курс, если другие задания пропущены. Меню позволяет переключаться между курсами и возвращаться к уже пройденным темам.
+## Learn by doing
 
-Все четыре курса имеют русский, украинский и английский языки; светлую, тёмную, лавандовую и системную темы; интерактивные примеры с подсветкой веток; мини-тесты; три постепенные подсказки на задачу; редактор с подсветкой, отступами и пояснениями ошибок.
+- Read a small explanation and a worked example of the new tool.
+- Write your own code, run it, then check all supplied cases.
+- Compare the real input, expected result, and your output when something fails.
+- Use the shared theory page and task hints whenever you need them.
 
-Язык и тема общие для всех курсов. Код, ввод, подсказки, ответы на вопросы и прогресс сохраняются отдельно для каждого курса и языка в localStorage браузера. Сохранения первоначальной русской версии второго курса переносятся автоматически, включая версии проверенных задач. Изменение языка показывает его собственные черновики; старые решения не удаляются.
+Python executes in the bundled Pyodide worker, with a CDN fallback. JavaScript executes in an isolated sandbox; ordinary exercises use a worker, page exercises use real DOM elements, and ES module lessons use real module execution. API lessons use visible, reproducible response fixtures. See [platform implementation notes](backend/PLATFORM.md).
 
-Python через Pyodide 0.27.7 выполняется в отдельном Web Worker в браузере. Код не отправляется на сервер для проверки. Есть кнопка остановки, ограничение выполнения 12 секунд и ограничение вывода. Интернет нужен для загрузки среды Python и необязательных веб-шрифтов.
+## Keep your progress
 
-## Локальный запуск
+An account is optional. Continue locally in the current browser, or sign in with an email code to sync Python and JavaScript work across devices. Guest and account saves remain separate. Import your own guest progress using the explicit account-page action. A shared exercise link contains the task address, not a session or another person's progress.
 
-Из папки с этим README запусти `python -m http.server 8000`. Открой http://localhost:8000/branching/ и выбери любой из четырёх курсов. Для полной работы маршрута нужны и корневые файлы, и папка branching.
+The account offer is shown once, with persistent browser storage and a site-scoped cookie fallback. Clearing all site data or blocking every form of storage prevents remembering earlier visits.
 
-Общий интерфейс и Python worker находятся в branching. content.js содержит первый курс и общий перевод интерфейса; course.js сохраняет первоначальные данные второго курса; advanced-content.js добавляет его переводы и интерактивные примеры. Корневой index.html загружает тот же интерфейс для второго этапа.
+The optional [study leaderboard](https://lolkadrish.github.io/codebloom/leaderboard.html) counts active learning time. Public participation requires an explicit pseudonym and opt-in; emails remain private. Hidden tabs and long idle periods do not count.
 
-## Проверка
+## Existing Python links and saves
 
-Первые 21 задача проверены на 357 вариантах ввода и вывода: 119 вариантов в каждом из трёх языков. Проверены 22 вопроса, совместимость русских тестов, перенос старых сохранений и версий задач, общие настройки, переход только после полного завершения первого курса и сохранение результата перед переходом. В браузере проверены реальный автопереход, исполнение Python во втором курсе, английские и украинские ответы, перенос кириллицы и старых подсказок.
+The four original Python save keys and all task IDs are preserved. The former root second-stage course now lives at `python.html`; old root task hashes route to it. Compatibility pages at the previous GitHub Pages address forward existing learning links. The origin remains `lolkadrish.github.io`, so browser saves remain accessible after the path change.
 
-Учебная последовательность первого курса основана на https://proginschool.github.io/tutorial/branching.html. Интерфейс, объяснения, переводы и реализация написаны заново. Готовые решения и QA-данные не включены в опубликованные файлы.
+## Run locally
 
-Среда Python размещена в runtime/pyodide на том же GitHub Pages. Первичная загрузка больше не зависит от внешнего CDN. Загрузчик показывает подготовку среды, ждёт до двух минут без прогресса и предлагает повтор прямо в панели результата. Содержимое официального архива Pyodide 0.27.7 проверено по SHA-256. Полный архив исходников включает файлы среды для локального запуска.
-Если загрузка с GitHub Pages завершается ошибкой или превышает две минуты, автоматически запускается новый worker с той же версией Pyodide из официального jsDelivr CDN. Ошибки обоих источников отображаются в панели результата; повтор начинает новую попытку, код и прогресс сохраняются.
+Serve this directory with any static HTTP server, for example `python -m http.server 8765`, then open `http://localhost:8765/`. A direct `file://` URL cannot provide the worker environment. No frontend build step is required.
 
-Подробные объяснения для человека без опыта: 7 вводных разделов, словарь сравнений, разбор каждой строки, таблицы вариантов, ошибки и вопросы перед задачей. Объяснения доступны на трёх языках в общей библиотеке для всех курсов. Примеры отличаются от заданий, поэтому решения не раскрываются.
+## Accounts and verification
 
-Первый интерактивный пример начинается с temp = +5. Это обязательный эксперимент: выбрать температуру, при которой сработает if, и нажать «Выполнить». Программа действительно запускается через Python worker. Пока эксперимент не выполнен, проверка двух заданий первой темы закрыта. Галочка темы требует и эксперимент, и оба задания. Прогресс первого курса включает 9 задач и 1 эксперимент; переход ко второму требует все десять шагов. Сохранённые решения не удаляются.
+Account setup: [backend/ACCOUNT_SETUP.md](backend/ACCOUNT_SETUP.md), original schema: [backend/001_account_progress.sql](backend/001_account_progress.sql), JavaScript upgrade: [backend/javascript-progress.sql](backend/javascript-progress.sql). Use a publishable frontend key; never put a service key or SMTP credentials in client files.
 
+The JavaScript curriculum was checked with 261 real browser cases across all 77 reference solutions, including DOM interactions, async callbacks and modules. Unsolved starters, syntax feedback, execution bounds, sandbox separation, language switching and saved work were also checked. Existing Python controllers and private account merging remain covered by regression checks.
 
-Теория находится на отдельной странице theory.html: семь вводных разделов и восемнадцать тем для четырёх курсов. В задачах остаются практика, эксперименты и ссылка на нужное объяснение. Язык и тема общие с курсами; чтение теории не отмечает задания выполненными.
-
-Кнопка «Поделиться заданием» копирует обычную ссылку с идентификатором задачи. Ссылка не содержит код или прогресс. Другой браузер начинает со своими пустыми сохранениями; перезагрузка сохраняет собственные решения. Для необязательных аккаунтов добавлена синхронизация между устройствами через Supabase; вход выполняется по коду на почту. Без входа сохраняется прежний локальный режим. Люди, использующие один профиль браузера на одном устройстве, используют одно локальное сохранение.
-
-Ошибки после запуска или проверки объясняются простым языком: отмечается строка, показывается причина и ссылка на правило. Проверены двадцать реальных ошибок Python на трёх языках, включая смешанные условие и print, двоеточия, скобки, кавычки, отступы, опечатки в командах и неизвестные переменные. Точное сообщение Python можно раскрыть отдельно. Код не исправляется автоматически, решения задач не подставляются.
-
-
-Курс циклов — loops.html: пять тем и двенадцать задач про while, for/range, накопители, break/continue и вложенные циклы. Он доступен через меню; полное завершение «Третьего этапа» открывает первую задачу циклов. Курс доступен также напрямую, без закрытых тем.
-
-Эксперименты выполняются в настоящем Python. После выполнения доступны «Сначала» и «Шаг» с подсветкой строк, значениями переменных и промежуточным выводом. Это учебный разбор заданного примера; код учащегося находится в отдельном редакторе. Просмотр примера не увеличивает прогресс.
-
-Прогресс циклов хранится отдельно в python-loops-step-v1; прежние ключи и сохранения двух курсов сохранены. Язык и тема общие. Все задачи доступны на русском, украинском и английском языках. Объяснения циклов находятся в общей библиотеке theory.html; разобранные примеры отличаются от заданий.
-
-Для задач, где требуется конкретная конструкция цикла, worker проверяет её наличие по AST Python. Правильный вывод без требуемого while, for, break или continue показывает учебную подсказку и не завершает задачу. Запуск длится не более 12 секунд и ограничивает объём вывода; бесконечный цикл можно остановить вручную.
-
-За основу последовательности тем взят https://proginschool.github.io/tutorial/loops.html. Объяснения, интерфейс, пошаговые эксперименты и переводы написаны заново.
-
-Курс циклов проверен на 156 вариантах ввода и вывода в трёх языках, 774 вариантах параметров экспериментов и 21 запуске примеров из теории. Старые 357 тестов заданий и 84 примера теории также проходят. Проверены 27 реальных ошибок Python и сохранение прежнего прогресса.
-
-Продолжение второго курса: https://lolkadrish.github.io/python-next-step/continuation.html#time-parts
-
-После завершения «Второго этапа» открывается «Третий этап», после его двадцати восьми задач — «Четвёртый этап». У продолжения собственный ключ сохранения python-continuation-step-v1. Существующий прогресс первых трёх курсов сохраняется. Четыре новых темы доступны в общей библиотеке теории; готовые примеры запускаются настоящим Python и не решают задания автоматически.
-
-Продолжение проверено на 483 тестовых запусках задач, 72 примерах теории и 297 вариантах интерактивных примеров на трёх языках. Проверены отдельное сохранение, общие настройки, запрет некорректного ввода в пример, сохранение черновика и переход к циклам только после всех двадцати восьми задач.
-
-Третий этап содержит 28 задач: десять по работе с текстом и по шесть в остальных темах. В каждой теме сначала отрабатывается один приём, затем его применение и сочетание с другими. Первые восемь задач сохранили свои адреса, условия, тесты, черновики и результаты. Позиция в курсе сохраняется по идентификатору задачи; старое сохранение номера переносится автоматически. Новая начальная задача: continuation.html#full-packs.
-
-Тема текста начинается с ввода и вывода, сохранения в другую переменную и вывода уже обработанного значения. Затем идут strip(), lower(), сохранение исходного текста, сочетание операций и условия. В теории пять последовательных разборов с отдельными пошаговыми примерами; готовый эксперимент показывает только приём текущего задания. Прежние адреса, тесты и сохранения остаются действительными.
-
-
-## Необязательные аккаунты
-
-Страница account.html позволяет продолжить без входа или войти по одноразовому
-коду на почту. После входа синхронизируются все четыре этапа: решения, черновики,
-ввод, подсказки, ответы на вопросы и обязательный эксперимент. Вычисления и
-проверка кода по-прежнему выполняются локально в Python Web Worker; сохранения
-аккаунта отправляются в Supabase только для синхронизации.
-
-У гостя и каждого аккаунта отдельное сохранение. Старые локальные ключи не
-удаляются и не перезаписываются аккаунтом. Перенос в аккаунт запускается
-отдельной кнопкой «Добавить мой локальный прогресс» и не заменяет имеющиеся
-данные аккаунта. Выход возвращает прежнее локальное прохождение. Общая ссылка
-не содержит сессию или прогресс.
-
-Офлайн-правки остаются в очереди на устройстве. При восстановлении связи
-изменения объединяются по отдельным задачам и полям; свежие правки во время
-запроса не теряются. Предыдущие варианты конфликтующих черновиков можно
-скопировать со страницы аккаунта. Код в активном редакторе не заменяется во
-время ввода или выполнения Python.
-
-Backend: backend/001_account_progress.sql. Подключение и почтовые шаблоны:
-backend/ACCOUNT_SETUP.md. Публичный URL и publishable key находятся в
-branching/account-config.js; service-role ключи и настройки SMTP туда не входят.
-До готовности SMTP вход выключается флагом enabled, локальное прохождение
-продолжает работать. Официальный Supabase JS SDK 2.118.0 включён с лицензией,
-его архив проверен по NPM SHA-512, файл — по SHA-256.
-
-Проверены изоляция двух аккаунтов, объединение двух устройств, запоздалые
-ответы после смены аккаунта, очередь новых правок во время запроса, перезагрузка
-офлайн и восстановление гостевых сохранений. SQL проверен в настоящем
-PostgreSQL и в созданном Supabase-проекте; тестовые строки на сервере откатились
-транзакцией. Анонимному пользователю запрещены чтение и синхронизация прогресса,
-прямые клиентские INSERT/UPDATE запрещены, доступ к строкам ограничен владельцем.
-
-
-## Рейтинг активного времени
-
-[Рейтинг занятий](https://lolkadrish.github.io/python-next-step/leaderboard.html) показывает первые 50 участников по активному времени в заданиях и теории. Вошедшие пользователи могут выбрать публичный псевдоним и включить участие; по умолчанию время остаётся личным. Почта и идентификатор аккаунта не публикуются.
-
-Таймер приостанавливается в свёрнутой или неактивной вкладке, без интернета и через две минуты без действий. Сервер ограничивает начисление своим временем; несколько вкладок или устройств не умножают результат. Прошлые посещения и локальное время без аккаунта не восстанавливаются. Рейтинг доступен из всех четырёх этапов, теории и аккаунта. Схема и правила доступа описаны в `backend/STUDY_TIME.md`.
-
-
-## Выбор сохранения при первом посещении
-
-При первом открытии курса, теории или рейтинга появляется окно с двумя вариантами: продолжить в этом браузере или войти в аккаунт для синхронизации между устройствами. Факт показа запоминается сразу: окно предлагается только один раз, даже если посетитель закрыл вкладку без выбора. Выбор сохраняется в localStorage и sessionStorage; резервная cookie на пути сайта помогает сохранить его между вкладками и посещениями, когда localStorage недоступен. Ранее сделанный выбор также переносится в резервное сохранение. Cookie содержит только local, account или seen и не содержит личных данных. Если посетитель очистит все данные сайта или браузер запретит все способы сохранения, определить прошлое посещение невозможно. Уже вошедшие пользователи его не видят. Страница аккаунта сразу предлагает оба варианта без дополнительного окна.
-
-Без аккаунта прежние сохранения остаются локальными. Кнопка входа сохраняет адрес открытого задания или темы, чтобы после входа вернуться к нему. Закрытие окна и Escape позволяют продолжить без аккаунта. Позже вход доступен в верхней панели, перенос локального прогресса выполняется отдельной кнопкой. Ключ python-learning-start-choice-v1 хранит только выбранный вариант или отметку о показе окна; код, прогресс и настройки не изменяются. Окно переведено на русский, украинский и английский языки и использует текущую тему оформления.
+Original Python topic sequence reference: [ProgInSchool](https://proginschool.github.io/tutorial/branching.html). CodeBloom explanations, interface, gradual practice and JavaScript curriculum are authored for this site. Acorn is distributed under its included MIT license.
