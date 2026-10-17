@@ -5,7 +5,7 @@
   let preferences={language:'ru',theme:'system'};try{preferences={...preferences,...JSON.parse(localStorage.getItem('python-learning-preferences-v1'))};}catch{}
   if(!['ru','uk','en'].includes(preferences.language))preferences.language='ru';
   const home=new URL('../branching/',new URL('.',document.currentScript.src));
-  let returnURL=home.href;try{const url=new URL(sessionStorage.getItem('python-account-return-v1'));if(url.origin===home.origin&&url.pathname.startsWith(new URL('../',new URL('.',document.currentScript.src)).pathname)&&/\/(?:branching\/|index\.html|loops\.html|continuation\.html|leaderboard\.html)?$/.test(url.pathname)){url.search='';returnURL=url.href;}}catch{}
+  let returnURL=home.href;try{const url=new URL(sessionStorage.getItem('python-account-return-v1'));if(url.origin===home.origin&&url.pathname.startsWith(new URL('../',new URL('.',document.currentScript.src)).pathname)&&/\/(?:branching\/|index\.html|loops\.html|continuation\.html|theory\.html|leaderboard\.html)?$/.test(url.pathname)){url.search='';returnURL=url.href;}}catch{}
   const message=key=>$('account-message').textContent=t(key);
   function render(){
     document.documentElement.lang=preferences.language;$('account-language').value=preferences.language;
