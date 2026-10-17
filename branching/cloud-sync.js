@@ -32,6 +32,7 @@
   async function ensureClient(){
     if(!enabled)throw new Error('Accounts unavailable');if(client)return client;
     const sdk=await loadSDK();
+    if(client)return client;
     client=sdk.createClient(config.url,config.publishableKey,{auth:{storageKey:AUTH_KEY,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,flowType:'pkce'}});
     authSubscription=client.auth.onAuthStateChange(event=>{if(signingOut)return;if(['SIGNED_IN','TOKEN_REFRESHED','SIGNED_OUT'].includes(event))setTimeout(()=>{if(!signingOut)connect();},0);}).data.subscription;
     return client;
@@ -75,6 +76,14 @@
     const auth=await ensureClient(),result=await auth.auth.verifyOtp({email,token,type:'email'});
     if(result.error)return result;await connect();return result;
   }
+  async function studyRequest(name,args={}){
+    if(!['study_profile','save_study_profile','record_study_time','study_leaderboard'].includes(name))throw new Error('Unknown study request');
+    const publicRead=name==='study_leaderboard',who=store?.owner()?.id;
+    if(!publicRead&&(!verified||!who||signingOut))return {data:null,error:{code:'AUTH_REQUIRED'}};
+    const api=await ensureClient(),result=await api.rpc(name,args).abortSignal(AbortSignal.timeout(15000));
+    if(!publicRead&&(signingOut||!verified||store.owner()?.id!==who))return {data:null,error:{code:'AUTH_REQUIRED'}};
+    return result;
+  }
   async function signOut(){
     signingOut=true;verified=false;clearTimeout(timer);authSubscription?.unsubscribe();
     try{client?.auth.stopAutoRefresh();if(client)await client.auth.signOut({scope:'local'});}catch{}
@@ -82,7 +91,7 @@
     localStorage.removeItem(AUTH_KEY);localStorage.removeItem(AUTH_KEY+'-code-verifier');
     store.useLocal();setStatus('local');
   }
-  window.LEARNING_CLOUD={enabled,connect,sync,requestCode,verifyCode,signOut,renderNav,getStatus:()=>({status,verified,enabled})};
+  window.LEARNING_CLOUD={enabled,connect,sync,requestCode,verifyCode,signOut,studyRequest,renderNav,getStatus:()=>({status,verified,enabled})};
   window.addEventListener('learning-store-write',()=>{setStatus(store.owner()?'pending':'local');if(store.owner())schedule();});
   window.addEventListener('learning-store-scope',()=>{renderNav();if(document.documentElement.dataset.course!=='account')location.reload();});
   window.addEventListener('online',()=>{if(store?.owner())connect();});
@@ -96,6 +105,6 @@
   document.addEventListener('DOMContentLoaded',()=>{
     renderNav();document.getElementById('account-open')?.addEventListener('click',()=>{try{sessionStorage.setItem('python-account-return-v1',location.href);}catch{}});
     new MutationObserver(renderNav).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
-    if(enabled&&(store.owner()||document.documentElement.dataset.course==='account'))connect();
+    if(enabled&&(store.owner()||['account','leaderboard'].includes(document.documentElement.dataset.course)))connect();
   });
 })();
