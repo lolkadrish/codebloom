@@ -35,7 +35,7 @@
     const consoleView={log:(...values)=>{const line=values.map(format).join(' ');if(output.join('\n').length+line.length>10000||output.length>=1000)throw new Error('OUTPUT_LIMIT');output.push(line);},warn:(...values)=>consoleView.log(...values),error:(...values)=>consoleView.log(...values)};
     const input=()=>{if(lines>=(test.input||[]).length)throw new Error('INPUT_EMPTY');return String(test.input[lines++]);};
     const wait=ms=>new Promise(resolve=>nativeTimer(resolve,Math.min(50,Math.max(0,Number(ms)||0))));
-    const fetchFixture=async path=>{const fixture=test.responses?.[path];if(!fixture)throw new Error('NETWORK_NOT_AVAILABLE');return {ok:fixture.status!==404&&fixture.status!==500,status:fixture.status||200,json:async()=>JSON.parse(JSON.stringify(fixture.body))};};
+    const fetchFixture=async path=>{const fixture=test.responses?.[path];if(!fixture)throw new Error('NETWORK_NOT_AVAILABLE');const status=fixture.status??200;return {ok:status>=200&&status<300,status,json:async()=>JSON.parse(JSON.stringify(fixture.body))};};
     const assert=(condition,message='Assertion failed')=>{assertions++;if(!condition)throw new Error(String(message));};
     let error=null;
     try{
