@@ -16,6 +16,9 @@ if(hadSavedCourse){try{const saved=JSON.parse(window.LEARNING_STORE?LEARNING_STO
 if(courseStage==='next')for(const item of LESSON_TASKS)for(const field of ['drafts','inputs','solved','hints','verifiedRevisions']){const legacy=item.id,key='ru:'+item.id;if(legacy in state[field]&&!(key in state[field]))state[field][key]=state[field][legacy];}
 try{const preferences=JSON.parse(localStorage.getItem(PREFERENCES_KEY))||JSON.parse(localStorage.getItem('python-first-step-v1'));if(preferences&&typeof preferences==='object'){if(languageIds.includes(preferences.language))state.language=preferences.language;if(['system','light','dark','lavender'].includes(preferences.theme))state.theme=preferences.theme;}}catch{}
 if(!languageIds.includes(state.language))state.language='en';
+// Resume links select the language that owns the existing draft, not an empty translation.
+const resumeLanguage=new URL(location.href).searchParams.get('resume-language');
+if(languageIds.includes(resumeLanguage))state.language=resumeLanguage;
 if(!['system','light','dark','lavender'].includes(state.theme))state.theme='system';
 const savedTaskId=state.currentTaskId||(courseStage==='continuation'&&hadSavedCourse?window.LESSON_LEGACY_ORDER?.[state.current]:null);
 if(savedTaskId){const index=LESSON_TASKS.findIndex(item=>item.id===savedTaskId);if(index>=0)state.current=index;}
@@ -79,6 +82,8 @@ function showTask(index,{scroll=false,persistState=true}={}){
   $('module-symbol').textContent=module.symbol;$('topic-theory-link').href=theoryHref(module.id);$('topic-theory-link').textContent=t('readTheory')+' '+loc(module.title)+' →';$('explorer-prompt').textContent=loc(module.explorerPrompt);renderExplorer();renderQuiz();$('share-status').textContent='';$('share-address').hidden=true;
   $('requirements').innerHTML=item.requirements.map(line=>'<li>'+rich(line)+'</li>').join('');$('input-rule').innerHTML=`<strong>${escapeHTML(t('input'))}:</strong> ${escapeHTML(loc(item.input))}<span class="language-note">${escapeHTML(t('languageNotice'))}</span>`;if(item.preparation)$('input-rule').innerHTML+='<a class="task-preparation" href="'+escapeHTML(theoryHref(item.preparation.topic))+'">'+escapeHTML(loc(item.preparation.text))+' →</a>';
   $('examples').innerHTML=cases.slice(0,2).map((c,i)=>`<div class="example"><div><span>${escapeHTML(t('exampleInput',{n:i+1}))}</span><pre>${escapeHTML(c.input.join('\n'))}</pre></div><div class="example-arrow">→</div><div><span>${escapeHTML(t('output'))}</span><pre>${escapeHTML(c.out||t('noOutput'))}</pre></div><button data-example="${i}" aria-label="${escapeHTML(t('exampleUse',{n:i+1}))}" title="${escapeHTML(t('exampleUse',{n:i+1}))}">↗</button></div>`).join('');
+  const otherLanguages=languageIds.filter(language=>language!==state.language&&typeof state.drafts[language+':'+item.id]==='string');
+  for(const language of otherLanguages){const url=new URL(courseHref(courseStage));url.hash=item.id;url.searchParams.set('resume-language',language);const label={ru:'Открыть сохранённый код: ',uk:'Відкрити збережений код: ',en:'Open saved code: '}[state.language]+{ru:'Русский',uk:'Українська',en:'English'}[language];$('input-rule').innerHTML+='<a class="task-preparation" href="'+escapeHTML(url.href)+'">'+escapeHTML(label)+' →</a>';}
   $('code').value=codeOf(item);$('code').scrollTop=0;$('code').scrollLeft=0;$('stdin').value=typeof state.inputs[keyOf(item.id)]==='string'?state.inputs[keyOf(item.id)]:cases[0].input.join('\n');errorLine=null;paintEditor();resetResult();renderHints();renderNavigation();if(persistState)persist();
   if(scroll){$('task-heading').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}
 }
@@ -228,7 +233,7 @@ $('hint').onclick=()=>{const key=keyOf(task().id);state.hints[key]=Math.min(3,(N
 $('previous').onclick=()=>showTask(current-1,{scroll:true});$('next').onclick=()=>showTask(current+1,{scroll:true});
 $('course-nav').onclick=event=>{if(event.target.closest('[data-experiment]')){openRequiredExperiment();return;}const taskButton=event.target.closest('[data-task]'),moduleButton=event.target.closest('[data-module]');if(taskButton)showTask(Number(taskButton.dataset.task),{scroll:true});else if(moduleButton){const mi=Number(moduleButton.dataset.module),first=LESSON_TASKS.findIndex(item=>item.module===mi&&!isSolved(item));showTask(first===-1?LESSON_TASKS.findIndex(item=>item.module===mi):first,{scroll:true});}};
 $('examples').onclick=event=>{const button=event.target.closest('[data-example]');if(button&&!busy){$('stdin').value=casesOf(task())[Number(button.dataset.example)].input.join('\n');state.inputs[keyOf(task().id)]=$('stdin').value;persist();}};
-$('language').onchange=()=>{experimentAttempt=null;state.language=$('language').value;applyLocale();showTask(current);};
+$('language').onchange=()=>{experimentAttempt=null;state.language=$('language').value;const url=new URL(location.href);url.searchParams.delete('resume-language');history.replaceState(null,'',url.pathname+url.search+url.hash);applyLocale();showTask(current);};
 $('share-task').onclick=async()=>{const url=shareHref();try{await navigator.clipboard.writeText(url);$('share-status').textContent=t('linkCopied');}catch{$('share-address').value=url;$('share-address').hidden=false;$('share-address').focus();$('share-address').select();$('share-status').textContent=t('copyLinkManually');}};
 $('theme').onchange=()=>{state.theme=$('theme').value;applyTheme();persist();};
 function renderReference(){const parts=[['referenceInputs','word = input()\nnumber = int(input())'],['referenceDecisions','if condition:\n    action_a()\nelif other_condition:\n    action_b()\nelse:\n    action_c()'],['referenceCompare',t('referenceOperators')],['referenceLogic',t('referenceLogicText')],['referenceShort','result = yes_value if condition else no_value']];if(courseStage==='continuation')parts.push(['referenceParts','whole = amount // group_size\nleft = amount % group_size'],['referenceText','clean = raw.strip()\nclean = clean.lower()'],['referenceFlags','allowed = age >= 18 and card == "yes"\nif not allowed:\n    print("No")']);if(courseStage==='loops')parts.push(['loopWhileReference','counter = 0\nwhile counter < 3:\n    counter += 1'],['loopForReference','for item in range(start, stop, step):\n    print(item)'],['loopControlReference','break\ncontinue']);$('reference-content').innerHTML=parts.map(([heading,code])=>`<h3>${escapeHTML(t(heading))}</h3><pre>${escapeHTML(code)}</pre>`).join('')+'<p>'+escapeHTML(t('referenceIndent'))+'</p>';}
@@ -236,7 +241,8 @@ $('reference-open').onclick=()=>$('reference-dialog').showModal();$('reference-c
 // The CodeBloom brand returns to the language chooser.
 for(const stage of ['first','next','continuation','loops'])$('course-'+stage).addEventListener('click',event=>{if(stage===courseStage)event.preventDefault();});
 window.addEventListener('hashchange',()=>{const index=LESSON_TASKS.findIndex(item=>item.id===location.hash.slice(1));if(index>=0&&!busy)showTask(index);});
-applyLocale();const hashIndex=LESSON_TASKS.findIndex(item=>item.id===location.hash.slice(1));showTask(hashIndex>=0?hashIndex:current);createWorker();
+// Opening a page is a read. Do not replace the cloud position before it has loaded.
+applyLocale();const hashIndex=LESSON_TASKS.findIndex(item=>item.id===location.hash.slice(1));showTask(hashIndex>=0?hashIndex:current,{persistState:false});createWorker();
 
 // Cloud refreshes wait while typing or running code. Writes diff against the last
 // rendered state, so a stale tab cannot overwrite unrelated remote changes.
