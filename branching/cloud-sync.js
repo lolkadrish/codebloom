@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const store=window.LEARNING_STORE,config=window.LEARNING_ACCOUNT_CONFIG||{},assetRoot=new URL('.',document.currentScript.src),AUTH_KEY='python-learning-auth-v1';
-  let client=null,verified=false,status='local',connecting=null,sdkPromise=null,running=false,again=false,timer=null,signingOut=false,authSubscription=null;
+  let client=null,verified=false,status='local',connecting=null,sdkPromise=null,syncing=null,syncUser=null,timer=null,signingOut=false,authSubscription=null;
   const text=(key,values)=>window.LEARNING_ACCOUNT_TEXT(key,values);
   function configurationValid(){
     if(!config.enabled)return false;
@@ -48,7 +48,7 @@
         if(signingOut)return false;
         const previous=store.owner()?.id,user=checked.data.user;verified=true;
         if(previous!==user.id)store.activate(user);
-        await sync();return true;
+        return await sync();
       }catch{verified=false;setStatus(store.owner()?'offline':'error');return false;}
       finally{connecting=null;}
     })();return connecting;
@@ -56,17 +56,45 @@
   async function sync(){
     const user=store?.owner();if(!enabled||!user||signingOut)return false;
     if(!verified){setStatus('reauth');return false;}
-    if(running){again=true;return false;}if(navigator.onLine===false){setStatus('offline');return false;}
-    running=true;setStatus('syncing');let ok=false;
-    try{
-      const sent=store.pending(user.id),request=client.rpc('sync_learning_progress',{changes:sent});
-      const result=await request.abortSignal(AbortSignal.timeout(15000));
-      if(result.error)throw result.error;
-      if(signingOut||store.owner()?.id!==user.id)return false;
-      store.accept(user.id,result.data,sent);setStatus(Object.keys(store.pending(user.id)).length?'pending':'synced');ok=true;
-    }catch(error){if(!signingOut)setStatus(error?.code==='PGRST301'||error?.status===401?'reauth':navigator.onLine===false?'offline':'pending');}
-    finally{running=false;if(again){again=false;if(ok)schedule();}}
-    return ok;
+    // Every caller waits for the same queue, including changes added during a request.
+    if(syncing){const previous=syncing,owner=syncUser,result=await previous;return owner===user.id?result:sync();}
+    if(navigator.onLine===false){setStatus('offline');return false;}
+    clearTimeout(timer);syncUser=user.id;
+    const current=()=>!signingOut&&verified&&store.owner()?.id===user.id;
+    syncing=(async()=>{
+      setStatus('syncing');
+      try{
+        // Limit a continuously edited page to four batches, then let autosave continue.
+        for(let batch=0;batch<4;batch++){
+          if(!current())return false;
+          const sent=store.pending(user.id);let result;
+          for(let attempt=0;attempt<2;attempt++){
+            try{
+              result=await client.rpc('sync_learning_progress',{changes:sent}).abortSignal(AbortSignal.timeout(15000));
+              if(result.error)throw Object.assign(new Error(result.error.message||'Sync failed'),result.error,{status:result.status||result.error.status});
+              break;
+            }catch(error){
+              const retryable=error?.status>=500||error?.status===408||error?.name==='AbortError'||error instanceof TypeError||(!error?.status&&!error?.code);
+              if(attempt||!retryable||!current()||navigator.onLine===false)throw error;
+              await new Promise(resolve=>setTimeout(resolve,600));
+              if(!current())return false;
+            }
+          }
+          if(!current())return false;
+          store.accept(user.id,result.data,sent);
+          if(!Object.keys(store.pending(user.id)).length){setStatus('synced');return true;}
+        }
+        setStatus('pending');schedule();return false;
+      }catch(error){
+        if(!signingOut&&store.owner()?.id===user.id){
+          const expired=error?.code==='PGRST301'||error?.status===401;
+          if(expired)verified=false;
+          setStatus(expired?'reauth':navigator.onLine===false?'offline':'pending');
+        }
+        return false;
+      }
+    })();
+    try{return await syncing;}finally{syncing=null;syncUser=null;}
   }
   function schedule(){clearTimeout(timer);timer=setTimeout(()=>{if(verified)sync();else if(store?.owner())connect();},900);}
   async function requestCode(email){

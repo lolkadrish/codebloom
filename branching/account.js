@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const $=id=>document.getElementById(id),store=window.LEARNING_STORE,cloud=window.LEARNING_CLOUD,t=window.LEARNING_ACCOUNT_TEXT;
-  let email='',working=false,cooldownUntil=0;
+  let email='',working=false,importing=false,pendingImportOwner=null,cooldownUntil=0;
   let preferences={language:'en',theme:'system'};try{preferences={...preferences,...JSON.parse(localStorage.getItem('python-learning-preferences-v1'))};}catch{}
   if(!['ru','uk','en'].includes(preferences.language))preferences.language='en';
   const home=new URL('../index.html',new URL('.',document.currentScript.src)),siteRoot=new URL('.',home);
@@ -12,8 +12,12 @@
     const theme=preferences.theme==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):preferences.theme;document.documentElement.dataset.theme=['light','dark','lavender'].includes(theme)?theme:'light';
     document.title=t('account')+' · CodeBloom';document.querySelectorAll('[data-account-text]').forEach(el=>el.textContent=t(el.dataset.accountText));
     $('account-language').setAttribute('aria-label',t('language'));const {status,verified,enabled}=cloud.getStatus(),user=store?.owner();
+    if(pendingImportOwner&&pendingImportOwner!==user?.id)pendingImportOwner=null;
+    if(pendingImportOwner&&status==='synced'){message('imported');pendingImportOwner=null;}
     $('account-unavailable').hidden=enabled;$('account-auth-card').hidden=!enabled||verified;
-    $('account-profile').hidden=!user;$('account-import-panel').hidden=!user||!verified||!store.guestSummary().some(course=>course.hasData);
+    $('account-profile').hidden=!user;
+    const canImport=!!user&&verified&&store.guestSummary().some(course=>course.hasData);
+    $('account-import-panel').hidden=!canImport;$('account-import').hidden=!canImport;
     if(user){
       $('account-identity').textContent=t('signedIn',{email:user.email});$('account-sync-state').textContent=t(status);
       const cache=store.cache();$('account-last-sync').textContent=cache.lastSynced?t('lastSync',{time:new Intl.DateTimeFormat(preferences.language,{dateStyle:'short',timeStyle:'short'}).format(new Date(cache.lastSynced))}):'';
@@ -24,6 +28,7 @@
     }else $('account-history').hidden=true;
     $('account-continue').href=returnURL;$('guest-continue').href=returnURL;
     for(const id of ['account-email','account-code','account-send','account-verify','account-sync','account-import','account-signout'])$(id).disabled=working||!enabled||(id==='account-import'&&!verified);
+    if(importing)$('account-import').textContent=t('importing');
     if(email)$('account-sent').textContent=t('sent',{email});updateCooldown();
   }
   function updateCooldown(){const seconds=Math.max(0,Math.ceil((cooldownUntil-Date.now())/1000));$('account-resend').disabled=working||seconds>0;$('account-send').disabled=working||!cloud.enabled||seconds>0;$('account-cooldown').textContent=seconds?t('wait',{n:seconds}):'';}
@@ -41,8 +46,22 @@
     try{const result=await cloud.verifyCode(email,$('account-code').value.trim());if(result.error)message(errorKey(result.error));else{$('account-code').value='';$('account-message').textContent='';}}catch{message('error');}finally{working=false;render();}
   };
   $('account-resend').onclick=send;
-  $('account-sync').onclick=async()=>{working=true;render();try{await cloud.connect();}finally{working=false;render();}};
-  $('account-import').onclick=async()=>{if(!cloud.getStatus().verified)return;working=true;render();try{store.importLocal();message('imported');await cloud.sync();}catch{message('error');}finally{working=false;render();}};
+  $('account-sync').onclick=async()=>{if(working)return;working=true;render();$('account-message').textContent='';try{await cloud.connect();}finally{working=false;render();}};
+  $('account-import').onclick=async()=>{
+    if(working||!cloud.getStatus().verified)return;
+    const owner=store.owner()?.id;working=true;importing=true;render();message('importing');
+    try{
+      // Load the account first so an older device cache cannot replace existing work.
+      const ready=await cloud.connect();
+      if(store.owner()?.id!==owner)return;
+      if(!ready){message('importWaiting');return;}
+      store.importLocal();
+      pendingImportOwner=owner;
+      const saved=await cloud.sync();
+      if(store.owner()?.id===owner)message(saved?'imported':'importPending');
+    }catch{if(store.owner()?.id===owner)message('error');}
+    finally{working=false;importing=false;render();}
+  };
   $('account-signout').onclick=async()=>{working=true;render();await cloud.signOut();location.reload();};
   $('guest-continue').onclick=async event=>{if(!store?.owner())return;event.preventDefault();working=true;render();await cloud.signOut();location.assign(returnURL);};
   $('account-language').onchange=()=>{preferences.language=$('account-language').value;try{localStorage.setItem('python-learning-preferences-v1',JSON.stringify(preferences));}catch{}render();};
