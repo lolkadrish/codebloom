@@ -658,5 +658,35 @@ window.CB_TEXT = {
     "en": "Check the value’s type, the list index, dictionary key or object attribute. Read the original Python error below.",
     "ru": "Проверь тип значения, индекс списка, ключ словаря или поле объекта. Ниже есть исходное сообщение Python.",
     "uk": "Перевір тип значення, індекс списку, ключ словника або поле об’єкта. Нижче є початкове повідомлення Python."
+  },
+  "loadingProgress": {
+    "en": "Loading your account progress…",
+    "ru": "Загружаем прогресс аккаунта…",
+    "uk": "Завантажуємо прогрес акаунта…"
+  },
+  "resumeSavedLanguage": {
+    "en": "Continue with your saved code in {language}. Stage totals include completed exercises in every language.",
+    "ru": "Продолжить с сохранённым кодом: {language}. Счётчики этапов учитывают пройденные задания на всех языках.",
+    "uk": "Продовжити зі збереженим кодом: {language}. Лічильники етапів враховують виконані завдання всіма мовами."
+  },
+  "resumeSavedLesson": {
+    "en": "Continue from your saved exercise.",
+    "ru": "Продолжить с сохранённого задания.",
+    "uk": "Продовжити зі збереженого завдання."
+  },
+  "resumeSignIn": {
+    "en": "Sign in to load your account progress. Your downloaded saves are still available in this browser.",
+    "ru": "Войди в аккаунт, чтобы загрузить облачный прогресс. Уже загруженные сохранения остаются в этом браузере.",
+    "uk": "Увійди в акаунт, щоб завантажити хмарний прогрес. Уже завантажені збереження залишаються в цьому браузері."
+  },
+  "resumeUnavailable": {
+    "en": "Could not load your account progress. Check your connection and try again; no saves were reset.",
+    "ru": "Не удалось загрузить прогресс аккаунта. Проверь соединение и попробуй ещё раз; сохранения не сбрасывались.",
+    "uk": "Не вдалося завантажити прогрес акаунта. Перевір з’єднання та спробуй ще раз; збереження не скидалися."
+  },
+  "openAccount": {
+    "en": "Open account →",
+    "ru": "Открыть аккаунт →",
+    "uk": "Відкрити акаунт →"
   }
 };

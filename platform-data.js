@@ -24,7 +24,18 @@ window.CODEBLOOM_PYTHON = [
       "login",
       "cinema",
       "maximum"
-    ]
+    ],
+    "revisions": {
+      "positive": 1,
+      "secret": 1,
+      "admission": 1,
+      "parity": 1,
+      "grade": 1,
+      "traffic": 1,
+      "login": 1,
+      "cinema": 1,
+      "maximum": 1
+    }
   },
   {
     "id": "next",
@@ -53,7 +64,21 @@ window.CODEBLOOM_PYTHON = [
       "robot",
       "label",
       "tariff"
-    ]
+    ],
+    "revisions": {
+      "museum": 1,
+      "sign": 1,
+      "range": 1,
+      "weekend": 2,
+      "delivery": 1,
+      "divisible": 1,
+      "club": 1,
+      "coupon": 1,
+      "grade": 1,
+      "robot": 2,
+      "label": 1,
+      "tariff": 1
+    }
   },
   {
     "id": "continuation",
@@ -98,7 +123,37 @@ window.CODEBLOOM_PYTHON = [
       "delivery-price",
       "two-adjustments",
       "parking-final"
-    ]
+    ],
+    "revisions": {
+      "full-packs": 1,
+      "leftover-pieces": 1,
+      "time-parts": 1,
+      "digit-parts": 1,
+      "share-sweets": 1,
+      "boxes-needed": 1,
+      "echo-text": 1,
+      "copy-text": 1,
+      "print-prepared": 1,
+      "trim-message": 1,
+      "lowercase-message": 1,
+      "keep-original": 1,
+      "normalize-word": 1,
+      "empty-message": 1,
+      "clean-coupon": 1,
+      "command-word": 1,
+      "age-check": 1,
+      "pass-check": 1,
+      "invert-flag": 1,
+      "club-flag": 1,
+      "either-door": 1,
+      "connection": 1,
+      "add-fee": 1,
+      "discount-only": 1,
+      "member-price": 1,
+      "delivery-price": 1,
+      "two-adjustments": 1,
+      "parking-final": 1
+    }
   },
   {
     "id": "loops",
@@ -127,7 +182,21 @@ window.CODEBLOOM_PYTHON = [
       "until-zero",
       "skip-and-stop",
       "pairs"
-    ]
+    ],
+    "revisions": {
+      "count-up": 1,
+      "count-down": 1,
+      "repeat-word": 1,
+      "multiples": 1,
+      "backwards": 1,
+      "sum": 1,
+      "factorial": 1,
+      "positive-sum": 1,
+      "skip": 1,
+      "until-zero": 1,
+      "skip-and-stop": 1,
+      "pairs": 1
+    }
   },
   {
     "id": "pythonadvanced",

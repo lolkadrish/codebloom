@@ -13,6 +13,8 @@ Learn programming through small, progressive exercises, clear explanations, and 
 
 English is the default for new visitors. Switch to Russian or Ukrainian to change the explanations, exercise statements, hints and interface. Previous language and theme preferences are respected. JavaScript solutions are retained when the explanation language changes.
 
+The Python path counts each completed exercise once across explanation languages. The first four stages keep separate code for each language; Start / continue opens the saved exercise in the language that contains its code, and other saved versions can be opened from the exercise. Account continuation waits for cloud progress before choosing a lesson. If no account save has been downloaded and the connection or session fails, the page explains the problem instead of opening an apparently empty course. Opening an original Python lesson does not overwrite the saved position during cloud loading.
+
 The JavaScript path ends with six projects: a bill calculator, order summary, bounded counter, live search, task app, and asynchronous product dashboard. Every stage is available; the later stages are working exercises, not placeholders. The path is a foundation for independent development and continued learning.
 
 ## Continue with Python
