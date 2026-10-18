@@ -38,7 +38,7 @@ const requiredExperimentDone=()=>{const record=state.experiments[keyOf('if-tempe
 const isRequiredExperiment=()=>courseStage==='first'&&task().module===0;
 const experimentBlocksCheck=()=>isRequiredExperiment()&&!requiredExperimentDone();
 const courseComplete=()=>LESSON_TASKS.every(isSolved)&&(courseStage!=='first'||requiredExperimentDone());
-const courseHref = stage => new URL({first:'branching/',next:'python.html',continuation:'continuation.html',loops:'loops.html',pythonadvanced:'python-advanced/'}[stage],new URL('../',assetRoot)).href;
+const courseHref = stage => new URL({first:'branching/',next:'python.html',continuation:'continuation.html',loops:'loops.html',pythonadvanced:'python-advanced/#call-function'}[stage],new URL('../',assetRoot)).href;
 function persist(){try{if(window.LEARNING_STORE)LEARNING_STORE.writeCourse(STORAGE_KEY,state);else localStorage.setItem(STORAGE_KEY,JSON.stringify(state));localStorage.setItem(PREFERENCES_KEY,JSON.stringify({language:state.language,theme:state.theme}));$('save-status').textContent=t('saved');}catch{$('save-status').textContent=t('notSaved');}}
 function applyTheme(){const mode=state.theme==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):state.theme;document.documentElement.dataset.theme=mode;$('theme').value=state.theme;$('theme-icon').textContent=mode==='dark'?'☾':mode==='lavender'?'✦':'◐';document.querySelector('meta[name="theme-color"]').content=mode==='dark'?'#1d1e2b':'#7255db';}
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(state.theme==='system')applyTheme();});
