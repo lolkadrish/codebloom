@@ -1,0 +1,152 @@
+/* Code DNA: shared learning, reference and account surfaces. */
+:root:root{color-scheme:dark;--bg:#030303;--panel:#0b0c0a;--surface:#0b0c0a;--sidebar:#080907;--ink:#f3f5ef;--muted:#a2a89a;--faint:#818877;--line:#ffffff20;--accent:#d7fc70;--accent-hover:#e5ff9e;--soft:#d7fc700d;--soft-ink:#d7fc70;--input:#11130e;--green:#b9eb85;--green-bg:#b9eb850e;--red:#ff9e9e;--red-bg:#ff80800d;--amber:#e5ca8c;--amber-bg:#e5ca8c0d;--editor:#060705;--editor-foot:#0c0e09;--code:#e3e9d9;--code-bg:#060705;--selection:#d7fc7038}
+html:has(.bloom-app){scroll-padding-top:115px;scrollbar-color:#42483a #030303}
+.bloom-app{background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif;overflow-x:clip}
+.bloom-app *{scrollbar-color:#42483a #080907}
+.bloom-app :where(a,button,input,select,textarea,summary):focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.bloom-app ::selection{background:#d7fc7038;color:#f3f5ef}
+.bloom-app .skip{background:var(--accent);color:#151d0b;z-index:100}
+.bloom-app .topbar{position:fixed;inset:18px 24px auto;height:66px;min-height:0;padding:0 22px;gap:28px;border:1px solid var(--line);border-radius:16px;background:#080908e8;backdrop-filter:blur(22px);z-index:30;display:flex;flex-wrap:nowrap;align-items:center}
+.bloom-app .brand{display:inline-flex;gap:10px;align-items:center;font-size:23px;font-weight:650;letter-spacing:-1px;flex:none}
+.bloom-app .brand>span:last-child::after{content:none}
+.bloom-app .bloom-symbol{width:29px;height:32px;background:transparent;border-radius:0;color:var(--accent);display:flex;align-items:center}
+.bloom-symbol svg{width:100%;height:100%;stroke:currentColor;stroke-width:3.5;stroke-linecap:round;fill:none}
+.bloom-app .top-caption{display:none}
+.bloom-app .cb-header-links,.bloom-app .bloom-app-nav{display:flex;align-items:center;gap:23px;font-size:11px;color:var(--muted);white-space:nowrap}
+.bloom-app-nav a[aria-current=page]{color:var(--accent)}
+.bloom-app .top-controls{position:static;margin-left:auto;display:flex;flex-wrap:nowrap;align-items:center;gap:13px}
+.bloom-app .topbar:has(.account-link:not([hidden])){padding-bottom:0}
+.bloom-app .topbar:has(.account-link:not([hidden])) .top-controls{position:static;margin-top:0}
+.bloom-app .top-controls .select-wrap{border:0;background:none;padding:0;display:flex;min-width:0}
+.bloom-app .top-controls .language>span{display:none}
+.bloom-app .top-controls select{background:transparent;border:0;padding:8px 4px;color:var(--ink);font-size:11px;min-width:53px;max-width:100px}
+.bloom-app select option{background:#11130e;color:var(--ink)}
+.bloom-app .top-controls .account-link{border:1px solid var(--line);border-radius:30px;padding:9px 16px;font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+.bloom-app .account-link:hover{border-color:var(--accent);color:var(--accent);background:var(--soft)}
+.bloom-app .top-controls .theme,.bloom-app label:has(>#site-theme){display:none}
+.bloom-app .top-controls>.icon-button{width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:50%;color:var(--muted);background:transparent}
+.bloom-app .layout,.bloom-app .cb-course-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:30px;padding:108px 24px 0;max-width:1720px;margin:0 auto}
+.bloom-app .sidebar,.bloom-app .cb-course-sidebar{top:108px;height:calc(100svh - 130px);position:sticky;align-self:start;padding:26px 18px;background:var(--sidebar);border:1px solid var(--line);border-radius:14px;overflow:auto;scrollbar-width:thin}
+.bloom-outline-toggle{display:none}.bloom-app .bloom-outline-content>.secondary-button{display:flex;margin:18px 0;font-size:11px}
+.bloom-app .sidebar-intro{padding:0 9px 19px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.bloom-app .sidebar-intro h2,.bloom-app .cb-course-sidebar h2{font-size:24px;letter-spacing:-1px;font-weight:500;margin:12px 0}
+.bloom-app .sidebar-intro h2 span{color:var(--accent)}
+.bloom-app .sidebar-intro .muted{font-size:11px;line-height:1.85}
+.bloom-app .eyebrow{font:9px/1.8 Consolas,monospace;letter-spacing:1.4px;color:var(--faint)}
+.bloom-app .sidebar .eyebrow,.bloom-app .cb-course-sidebar>.eyebrow{color:var(--accent);font-size:8px}
+.bloom-app .stage-nav{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0 0 15px;margin-bottom:20px}
+.bloom-app .stage-link{border:1px solid transparent;border-radius:8px;padding:11px 9px;gap:12px;background:transparent}
+.bloom-app .stage-link.active{background:var(--soft);border-color:#d7fc7026;color:var(--accent)}
+.bloom-app .stage-link strong{font-size:11px;font-weight:500}
+.bloom-app .stage-link small{font-size:9px;color:var(--faint);line-height:1.8}
+.bloom-app .stage-number{font:9px/1.8 Consolas,monospace;color:var(--faint)}
+.bloom-app .basics-link{font-size:10px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;padding:12px 8px;margin:0 0 12px;color:var(--muted)}
+.bloom-app .basics-link:hover{color:var(--accent)}
+.bloom-app .module-button,.bloom-app .cb-stage-nav summary{font-size:11px;font-weight:500;border:1px solid transparent;padding:12px 9px;border-radius:8px}
+.bloom-app .module.active .module-button,.bloom-app .cb-stage-nav details[open]>summary{background:var(--soft);border-color:#d7fc7022;color:var(--accent)}
+.bloom-app .module-num{background:transparent;border:1px solid var(--line);border-radius:5px;color:var(--faint)}
+.bloom-app .module.active .module-num{background:var(--accent);color:#142008;border-color:var(--accent)}
+.bloom-app .task-link,.bloom-app .cb-stage-nav button{font-size:10px;line-height:1.8;padding-top:8px;padding-bottom:8px}
+.bloom-app .task-link.current,.bloom-app .cb-stage-nav button.active{color:var(--accent)}
+.bloom-app .progress-card{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:18px 8px;margin-top:24px}
+.bloom-app .progress-track{height:3px;background:#ffffff16}.bloom-app .progress-track>span{background:var(--accent)}
+.bloom-app .progress-card strong{color:var(--accent)}
+.bloom-app .sidebar-note{font-size:10px;line-height:1.8;color:var(--faint)}
+.bloom-app .layout>main,.bloom-app .cb-course-main{width:100%;min-width:0;max-width:1320px;margin:0 auto;padding:8px 0 60px}
+.bloom-app .breadcrumbs,.bloom-app .cb-breadcrumb{font-size:10px;line-height:1.8;color:var(--faint)}
+.bloom-app .breadcrumbs .pager{margin-left:auto}
+.bloom-app .pager button,.bloom-app .cb-pager button{background:#0b0c0a;border:1px solid var(--line);border-radius:50%;width:31px;height:31px;padding:0;color:var(--muted)}
+.bloom-app .pager button:hover,.bloom-app .cb-pager button:hover{border-color:var(--accent);color:var(--accent)}
+.bloom-app .share-row{margin-top:20px;min-height:0}
+.bloom-app .share-row button{border:0;background:transparent;padding:3px 0;color:var(--faint);font-size:10px}
+.bloom-app .lesson-heading{margin:28px 0}.bloom-app .lesson-heading h1,.bloom-app .cb-course-main>h1{font-size:clamp(32px,3.3vw,48px);font-weight:500;line-height:1.16;letter-spacing:-1.8px;margin:18px 0}
+.bloom-app .lesson-heading>p{font-size:13px;line-height:1.9;color:var(--muted);max-width:850px}
+.bloom-app .tag{border:1px solid #d7fc7028;background:var(--soft);color:var(--accent);border-radius:4px;padding:4px 7px;font:8px/1.5 Consolas,monospace;letter-spacing:1px}
+.bloom-app .theory-shortcut{padding:14px 0;margin:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:none;border-radius:0;font-size:11px;gap:20px}
+.bloom-app .theory-card,.bloom-app .quiz-card,.bloom-app .task-card,.bloom-app .cb-assignment,.bloom-app .theory-reading,.bloom-app .theory-practice,.bloom-app .cb-theory article{background:var(--panel);border:1px solid var(--line);border-radius:13px;box-shadow:none}
+.bloom-app .theory-card>summary,.bloom-app .quiz-card>summary{padding:20px 23px;font-size:13px}
+.bloom-app .summary-icon{background:var(--soft);color:var(--accent);border:1px solid #d7fc7022;border-radius:6px}
+.bloom-app .quiz-card .summary-icon{background:var(--green-bg);color:var(--green)}
+.bloom-app .theory-body{padding:0 24px 23px}
+.bloom-app .task-card,.bloom-app .cb-assignment{padding:25px;margin:22px 0}
+.bloom-app .task-card h2,.bloom-app .cb-assignment h2{font-size:15px;font-weight:500}
+.bloom-app #requirements,.bloom-app #js-requirements{font-size:13px;line-height:2.1}
+.bloom-app .practice-label{font:8px/1.8 Consolas,monospace;letter-spacing:1.5px;color:var(--faint)}
+.bloom-app .examples,.bloom-app .cb-case-row{gap:12px;margin-top:20px}
+.bloom-app .example,.bloom-app .cb-case{background:#080a06;border:1px solid var(--line);border-radius:8px;padding:15px}
+.bloom-app .input-rule{border-color:var(--line);color:var(--muted)}
+.bloom-app .cb-preparation{padding:20px 23px;background:linear-gradient(100deg,#d7fc700b,#0b0c0a 80%);border:1px solid #d7fc7026;border-left:2px solid #d7fc70;border-radius:0 12px 12px 0;margin:24px 0;color:var(--muted)}
+.bloom-app .cb-preparation h2{color:var(--accent);font-size:12px;font-weight:500}
+.bloom-app .cb-preparation p{font-size:13px;line-height:1.9}
+.bloom-app .cb-preparation a{color:var(--accent);font-size:11px}
+.bloom-app .workspace,.bloom-app .cb-js-workspace{gap:18px;margin:24px 0;align-items:stretch}
+.bloom-app .editor-panel,.bloom-app .console-panel,.bloom-app .cb-js-editor,.bloom-app .cb-input-output{border:1px solid var(--line);border-radius:13px;background:#0b0c0a;box-shadow:none}
+.bloom-app .panel-heading,.bloom-app .cb-editor-title{min-height:60px;background:#0c0e09;padding:16px 19px;border-bottom:1px solid var(--line)}
+.bloom-app .panel-heading h2,.bloom-app .cb-editor-title{font-size:12px;font-weight:500}
+.bloom-app .python-icon,.bloom-app .code-label{background:var(--soft);color:var(--accent);border:1px solid #d7fc7025;border-radius:5px}
+.bloom-app .file-label,.bloom-app .cb-editor-title small{font-size:8px;color:var(--faint)}
+.bloom-app .editor-shell,.bloom-app .cb-code-wrap{background:#060705}
+.bloom-app .line-numbers,.bloom-app .cb-gutter{color:#707966;background:#060705}
+.bloom-app .editor-tools,.bloom-app .editor-actions,.bloom-app .cb-editor-actions{background:var(--editor-foot);border-color:var(--line)}
+.bloom-app .editor-tools{font-size:9px;color:var(--faint)}
+.bloom-app .editor-tools button{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.bloom-app .editor-actions,.bloom-app .cb-editor-actions{padding:17px 19px}
+.bloom-app .console-body{padding:22px 20px}
+.bloom-app .console-body label,.bloom-app .output-heading,.bloom-app .cb-input-output label{font-size:11px;color:var(--muted)}
+.bloom-app .console-body textarea,.bloom-app .output-box,.bloom-app .cb-input-output textarea,.bloom-app .cb-output{background:#060705;border:1px solid var(--line);border-radius:7px;color:var(--ink)}
+.bloom-app .console-tip{border-color:var(--line);background:none;color:var(--faint)}
+.bloom-app .console-tip>span{color:var(--accent)}
+.bloom-app .primary-button,dialog.start-choice .primary-button{background:var(--accent);border:1px solid var(--accent);color:#17200b;border-radius:30px;box-shadow:none;padding:11px 20px;font-size:11px;font-weight:600;line-height:1.6}
+.bloom-app .primary-button:hover,dialog.start-choice .primary-button:hover{background:var(--accent-hover);border-color:var(--accent-hover);box-shadow:0 0 24px #d7fc7010}
+.bloom-app .secondary-button,dialog.start-choice .secondary-button{border:1px solid var(--line);border-radius:30px;background:transparent;color:var(--ink);box-shadow:none;padding:10px 18px;font-size:11px;line-height:1.6}
+.bloom-app .secondary-button:hover,dialog.start-choice .secondary-button:hover{background:var(--soft);border-color:#d7fc7055;color:var(--accent)}
+.bloom-app button:disabled{opacity:.45}.bloom-app .solved-badge{color:var(--green);background:var(--green-bg);border-color:#b9eb8533}
+.bloom-app .feedback,.bloom-app .cb-feedback,.bloom-app .completion{border-radius:12px;box-shadow:none}
+.bloom-app .tests,.bloom-app .cb-tests{border-radius:12px;background:var(--panel);border-color:var(--line)}
+.bloom-app .tests th,.bloom-app .cb-tests th{background:#10120d;color:var(--muted)}
+.bloom-app .hint-icon{background:var(--amber-bg);border:1px solid #e5ca8c30;color:var(--amber)}
+.bloom-app .hint-row h2{font-size:12px;font-weight:500}
+.bloom-app .hint-row p{font-size:10px;color:var(--faint)}
+.bloom-app .hint,.bloom-app .hint-card,.bloom-app .cb-hints summary{border:1px solid #e5ca8c25;border-radius:8px}
+.bloom-app .mini-code,.bloom-app .theory-reading pre,.bloom-app .cb-theory pre,.bloom-app .cb-local-guide pre{background:#050604;border:1px solid var(--line);border-radius:8px;color:var(--code);font-size:12px;line-height:1.9}
+.bloom-app .tok-key{color:#c1d6a4}.bloom-app .tok-string{color:#e4ca8b}.bloom-app .tok-num{color:#90d0ce}.bloom-app .tok-func{color:#b0cbe2}.bloom-app .tok-comment{color:#79866c}
+.bloom-app .theory-reading{padding:28px}.bloom-app .theory-reading h2{font-weight:500;letter-spacing:-.5px}
+.bloom-app .theory-reading p{font-size:14px;line-height:1.95;color:var(--muted)}
+.bloom-app .theory-bottom-nav{gap:15px;flex-wrap:wrap}
+.bloom-app .theory-practice{padding:25px}.bloom-app .theory-practice h2{font-size:20px;font-weight:500}
+.bloom-app .theory-library-layout .sidebar{top:108px;height:calc(100svh - 130px)}
+.bloom-app>.cb-container{padding-top:110px;max-width:1080px}
+.bloom-app .path-hero{padding:35px 0 30px;max-width:900px}
+.bloom-app .path-hero h1{font-size:clamp(36px,4.5vw,62px);font-weight:500;letter-spacing:-2.5px;line-height:1.1}
+.bloom-app #js-theory-stage{display:block;width:min(100%,500px);background:var(--input);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:13px;margin-top:13px;font-size:12px}
+.bloom-app .cb-theory article{padding:28px;margin:24px 0;scroll-margin-top:115px}
+.bloom-app .cb-theory article h2{font-weight:500;font-size:24px;letter-spacing:-.6px}
+.bloom-app .cb-local-guide article{background:var(--panel)}
+.bloom-app .account-page{max-width:1190px;padding:145px 40px 70px}
+.bloom-app .account-page>h1{font-size:clamp(40px,5vw,68px);font-weight:500;letter-spacing:-2.8px;line-height:1.1;margin:25px 0}
+.bloom-app .account-lead{max-width:680px;font-size:14px;line-height:1.9;color:var(--muted);margin-bottom:28px}
+.bloom-app .account-card{border-radius:14px;background:var(--panel);padding:29px;box-shadow:none}
+.bloom-app .account-card h2{font-size:22px;font-weight:500;letter-spacing:-.6px}
+.bloom-app .account-card p{font-size:12px;line-height:1.95}
+.bloom-app .account-card input{padding:14px;border-radius:8px;background:#060705}
+.bloom-app .account-card input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
+.bloom-app .account-card .primary-button,.bloom-app .account-card .secondary-button{justify-self:start}
+.bloom-app .account-privacy{padding-top:17px;border-top:1px solid var(--line);color:var(--faint)}
+.bloom-app .rank-own-time{font-size:45px;color:var(--accent);font-weight:500;letter-spacing:-2px}
+.bloom-app .rank-table th{font:9px/1.8 Consolas,monospace;color:var(--faint);text-transform:uppercase;letter-spacing:1px;background:transparent}
+.bloom-app .rank-table td{border-color:var(--line)}
+.bloom-app .rank-rules{background:var(--soft);border-color:#d7fc7025}
+.bloom-app footer{border-color:var(--line);font-size:10px;color:var(--faint);line-height:1.8}
+.bloom-app dialog{background:#0b0c0a;border:1px solid var(--line);border-radius:16px;color:var(--ink)}
+.bloom-app dialog::backdrop,dialog.start-choice::backdrop{background:#000b;backdrop-filter:blur(8px)}
+dialog.start-choice{background:#0b0c0a;border:1px solid #ffffff2b;border-radius:19px;color:#f3f5ef;padding:30px;box-shadow:0 30px 140px #000}
+dialog.start-choice h2{font-weight:500;letter-spacing:-1px;font-size:30px}
+dialog.start-choice .start-choice-options section{background:#070805;border:1px solid #ffffff20;border-radius:12px}
+dialog.start-choice .start-choice-options p{color:#a2a89a}
+dialog.start-choice .start-choice-options h3{font-weight:500}
+@media(min-width:1450px){.bloom-app .layout,.bloom-app .cb-course-layout{grid-template-columns:270px minmax(0,1fr);gap:44px;padding-left:32px;padding-right:32px}.bloom-app .topbar{left:32px;right:32px}}
+@media(max-width:1100px){.bloom-app .topbar{gap:22px}.bloom-app .bloom-app-nav{gap:18px}.bloom-app .bloom-app-nav a[data-bloom-nav=leaderboard]{display:none}.bloom-app .layout,.bloom-app .cb-course-layout{grid-template-columns:220px minmax(0,1fr);gap:23px}.bloom-app .sidebar,.bloom-app .cb-course-sidebar{padding:23px 13px}.bloom-app .workspace,.bloom-app .cb-js-workspace{grid-template-columns:1fr}.bloom-app .cb-input-output{padding:22px}.bloom-app .cb-course-main{padding:8px 0 50px}}
+@media(max-width:800px){.bloom-app .topbar{inset:14px 16px auto;height:61px;padding:0 17px;gap:15px}.bloom-app .brand{font-size:21px}.bloom-app .bloom-app-nav{gap:15px;font-size:10px}.bloom-app .bloom-app-nav a[data-bloom-nav=languages]{display:none}.bloom-app .top-controls{gap:9px}.bloom-app .top-controls .account-link{padding:8px 12px;max-width:110px}.bloom-app .layout,.bloom-app .cb-course-layout{padding:96px 16px 0;grid-template-columns:195px minmax(0,1fr);gap:20px}.bloom-app .sidebar,.bloom-app .cb-course-sidebar{top:96px;height:calc(100svh - 114px)}.bloom-app .lesson-heading h1,.bloom-app .cb-course-main>h1{font-size:33px}.bloom-app .task-card,.bloom-app .cb-assignment{padding:21px}.bloom-app .theory-library-layout .sidebar{top:96px;height:calc(100svh - 114px)}}
+@media(max-width:650px){html:has(.bloom-app){scroll-padding-top:95px}.bloom-app .topbar{inset:12px 12px auto;height:59px;padding:0 14px;gap:8px;border-radius:13px}.bloom-app .brand{font-size:19px;gap:7px;letter-spacing:-.8px}.bloom-app .bloom-symbol{width:23px;height:27px}.bloom-app .bloom-app-nav{display:none}.bloom-app .top-controls{gap:7px}.bloom-app .top-controls select{font-size:10px;padding:8px 0;min-width:42px;max-width:55px}.bloom-app .top-controls .account-link{font-size:10px;padding:7px 10px;max-width:94px}.bloom-app .top-controls>.icon-button{display:none}.bloom-app .layout,.bloom-app .cb-course-layout{display:block;padding:86px 13px 0}.bloom-app .sidebar,.bloom-app .cb-course-sidebar,.bloom-app .theory-library-layout .sidebar{position:relative;top:auto;height:auto;max-height:245px;padding:16px;border-radius:12px;overflow:auto;margin-bottom:26px}.bloom-app .sidebar-intro{display:none}.bloom-app .stage-nav{display:flex;overflow:auto;gap:8px;padding:0 0 13px;margin-bottom:14px}.bloom-app .stage-link{flex:none;width:auto;min-width:130px;max-width:175px;padding:9px}.bloom-app .stage-link small{display:none}.bloom-app .sidebar>.basics-link,.bloom-app .sidebar>.progress-card,.bloom-app .sidebar>.sidebar-note,.bloom-app .sidebar>.next-course{display:none}.bloom-app #course-nav,.bloom-app #theory-nav,.bloom-app .cb-stage-nav{display:flex;overflow:auto;gap:12px;max-height:155px}.bloom-app #course-nav>.module{flex:none;min-width:210px;max-width:240px}.bloom-app #theory-nav>*{flex:none;min-width:200px;max-width:240px}.bloom-app .module-header{padding:9px 8px}.bloom-app .cb-course-sidebar>.eyebrow{margin:0;font-size:8px}.bloom-app .cb-course-sidebar h2{font-size:18px;margin:6px 0 13px}.bloom-app .cb-course-sidebar>.secondary-button,.bloom-app .cb-scope{display:none}.bloom-app .cb-stage-nav details{min-width:205px;max-width:235px}.bloom-app .layout>main,.bloom-app .cb-course-main{padding:0 0 40px}.bloom-app .breadcrumbs{flex-wrap:wrap;gap:9px;font-size:9px}.bloom-app .cb-breadcrumb{font-size:9px;gap:8px;flex-wrap:wrap}.bloom-app .share-row{margin-top:15px}.bloom-app .lesson-heading{margin:22px 0}.bloom-app .lesson-heading h1,.bloom-app .cb-course-main>h1{font-size:32px;letter-spacing:-1.4px;margin:16px 0}.bloom-app .lesson-heading>p{font-size:12px}.bloom-app .theory-shortcut{font-size:10px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}.bloom-app .task-card,.bloom-app .cb-assignment{padding:20px 17px}.bloom-app #requirements,.bloom-app #js-requirements{font-size:12px;line-height:2}.bloom-app .examples,.bloom-app .cb-case-row{grid-template-columns:1fr}.bloom-app .cb-preparation{padding:18px}.bloom-app .cb-preparation p{font-size:12px}.bloom-app .theory-card>summary,.bloom-app .quiz-card>summary{padding:17px;font-size:12px}.bloom-app .theory-body{padding:0 17px 18px}.bloom-app .panel-heading,.bloom-app .cb-editor-title{padding:15px 13px;min-height:55px}.bloom-app .editor-actions,.bloom-app .cb-editor-actions{padding:15px 13px;gap:9px;flex-wrap:wrap}.bloom-app .editor-actions button,.bloom-app .cb-editor-actions button{font-size:10px;padding:10px 14px}.bloom-app .console-body{padding:20px 17px}.bloom-app .theory-reading{padding:20px}.bloom-app .theory-reading p{font-size:13px}.bloom-app>.cb-container{padding:96px 18px 40px}.bloom-app .path-hero{padding:14px 0 20px}.bloom-app .path-hero h1{font-size:38px;letter-spacing:-1.6px}.bloom-app .cb-theory article{padding:21px 18px}.bloom-app .cb-theory article h2{font-size:22px}.bloom-app .account-page{padding:112px 18px 45px}.bloom-app .account-page>h1{font-size:40px;letter-spacing:-1.8px}.bloom-app .account-lead{font-size:13px}.bloom-app .account-grid,.bloom-app .leaderboard-grid{grid-template-columns:1fr}.bloom-app .account-card{padding:23px 20px}.bloom-app .rank-table-wrap{overflow:auto}.bloom-app footer{flex-wrap:wrap}dialog.start-choice{padding:23px}dialog.start-choice h2{font-size:26px}}
+@media(prefers-reduced-motion:reduce){.bloom-app *{scroll-behavior:auto;transition:none}}
+@media(max-width:650px){.bloom-app .sidebar,.bloom-app .cb-course-sidebar,.bloom-app .theory-library-layout .sidebar{max-height:none;padding:0;overflow:visible;margin-bottom:25px}.bloom-app .bloom-outline-toggle{display:flex;align-items:center;gap:11px;list-style:none;padding:16px;color:var(--muted);font-size:11px;cursor:pointer}.bloom-outline-toggle::-webkit-details-marker{display:none}.bloom-outline-toggle>span:first-child{font:11px Consolas,monospace;color:var(--accent)}.bloom-outline-toggle::after{content:'+';font:18px Consolas,monospace;margin-left:auto;color:var(--accent)}.bloom-outline[open]>.bloom-outline-toggle::after{content:'−'}.bloom-app .bloom-outline-content{max-height:305px;overflow:auto;padding:0 16px 16px}.bloom-app .bloom-outline-content>.eyebrow,.bloom-app .bloom-outline-content>h2{display:none}.bloom-app .bloom-outline-content>.secondary-button{margin:0 0 15px;display:inline-flex;font-size:10px}.bloom-app .sidebar .progress-card,.bloom-app .sidebar .sidebar-note,.bloom-app .sidebar .next-course,.bloom-app .sidebar .basics-link{display:none}.bloom-app .module-button{padding:9px 8px}.bloom-app .module-tasks{display:block;margin-left:10px;padding-left:10px}.bloom-app .module-title{white-space:normal}.bloom-app .cb-stage-nav{max-height:220px}.bloom-app .theory-topic-link{white-space:normal}}

@@ -53,9 +53,19 @@
     const pyLabel=document.getElementById('python-progress'),jsLabel=document.getElementById('javascript-progress');if(pyLabel)pyLabel.textContent=t('progressCount',{done:pyDone,total:pyTotal});if(jsLabel)jsLabel.textContent=t('progressCount',{done:jsDone,total:jsTotal});
     const grid=document.getElementById('path-stages');if(!grid)return;
     const python=kind==='python-path',items=python?courses:stages,progress=python?py:js;
-    grid.innerHTML=items.map((item,index)=>{const p=progress[index],href=python?new URL(item.url,root):new URL('javascript/#'+item.tasks[0].id,root),title=loc(item.title),description=python?loc(item.intro):loc(item.intro).split('. ')[0]+'.';return `<a class="path-stage ${p.done===p.total?'finished':''}" href="${escape(href)}"><span class="path-number">${String(index+1).padStart(2,'0')}</span><div><p class="eyebrow">${escape(t('stage',{n:index+1}))}</p><h2>${escape(title)}</h2><p>${escape(description)}</p><span class="path-count">${escape(t('progressCount',{done:p.done,total:p.total}))}</span></div><span aria-hidden="true">↗</span></a>`;}).join('');
+    grid.innerHTML=items.map((item,index)=>{
+      const p=progress[index],href=python?new URL(item.url,root):new URL('javascript/#'+item.tasks[0].id,root),title=loc(item.title),description=python?loc(item.intro):loc(item.intro).split('. ')[0]+'.';
+      const percent=p.total?Math.round(p.done/p.total*100):0;
+      return `<a class="path-stage ${p.done===p.total?'finished':''}" href="${escape(href)}" data-stage-index="${index}" style="--stage-progress:${percent}%"><div class="route-card-top"><p class="eyebrow">${escape(t('stage',{n:index+1}))}</p><span class="route-current-label">${escape(t('routeContinueHere'))}</span></div><div class="route-card-main"><span class="path-number">${String(index+1).padStart(2,'0')}</span><div><h2>${escape(title)}</h2><p>${escape(description)}</p></div></div><div class="route-card-bottom"><span class="path-count">${escape(t('progressCount',{done:p.done,total:p.total}))}</span><span class="route-card-go">${escape(t('routeOpenStage'))} <span aria-hidden="true">↗</span></span></div><span class="route-card-meter" aria-hidden="true"><span></span></span></a>`;
+    }).join('');
+    const total=python?pyTotal:jsTotal,done=python?pyDone:jsDone,percent=total?Math.round(done/total*100):0;
+    const totalLabel=document.getElementById('route-total-label');if(totalLabel)totalLabel.textContent=t('progressCount',{done,total});
+    const percentLabel=document.getElementById('route-percent');if(percentLabel)percentLabel.textContent=percent+'%';
+    const meter=document.getElementById('route-total-meter');if(meter){meter.style.setProperty('--route-progress',percent+'%');meter.setAttribute('aria-valuenow',String(percent));meter.setAttribute('aria-valuetext',t('progressCount',{done,total}));}
     const resume=document.getElementById('path-resume');if(!resume)return;
     const target=python?pythonResume(py):{url:new URL('javascript/#'+(stages.flatMap(s=>s.tasks).some(x=>x.id===read('javascript-learning-v1').currentTaskId)?read('javascript-learning-v1').currentTaskId:stages[0].tasks[0].id),root)};
+    const currentIndex=python?target.index:items.findIndex(stage=>stage.tasks.some(task=>task.id===target.url.hash.slice(1)));
+    const currentCard=grid.querySelector(`[data-stage-index="${currentIndex}"]`);if(currentCard){currentCard.classList.add('current');currentCard.setAttribute('aria-current','step');}
     resume.href=target.url;resume.textContent=waiting?t('loadingProgress'):t('startResume');resume.setAttribute('aria-busy',String(waiting));resume.setAttribute('aria-disabled',String(waiting));
     const note=document.getElementById('path-resume-note');
     if(note){
