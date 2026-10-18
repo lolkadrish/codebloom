@@ -5,12 +5,18 @@
   <meta name="theme-color" content="#030303"><meta name="description" content="Необязательный аккаунт для сохранения прогресса Python между устройствами. Можно учиться и без входа.">
   <meta name="referrer" content="no-referrer"><title>CodeBloom · Your learning</title>
   <link rel="icon" href="branching/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="branching/styles.css?v=14">
-  <script src="branching/account-config.js?v=1" defer></script><script src="branching/progress-store.js?v=3" defer></script><script src="branching/account-text.js?v=2" defer></script><script src="branching/cloud-sync.js?v=2" defer></script>
-  <script src="branching/leaderboard-text.js?v=1" defer></script><script src="branching/study-time.js?v=3" defer></script><script src="branching/account.js?v=5" defer></script>
+  <script src="branching/account-config.js?v=1" defer></script><script src="branching/progress-store.js?v=3" defer></script><script src="branching/account-text.js?v=3" defer></script><script src="branching/cloud-sync.js?v=3" defer></script>
+  <script src="branching/leaderboard-text.js?v=1" defer></script><script src="branching/study-time.js?v=3" defer></script><script src="branching/account.js?v=6" defer></script>
   <link rel="stylesheet" href="branching/start-choice.css?v=1">
   <script src="branching/start-choice.js?v=3" defer></script>
 <link rel="stylesheet" href="platform.css?v=2">
 <link rel="stylesheet" href="bloom-ui.css?v=1"><script src="bloom-ui.js?v=1" defer></script>
+<style>
+  .account-import-help{border-top:1px solid var(--line);margin-top:22px;padding-top:16px}
+  .account-import-help h3{font-size:13px;font-weight:500;margin:0 0 5px}
+  .account-import-help p{margin:0;color:var(--muted)}
+  .account-actions [hidden]{display:none}
+</style>
 </head>
 <body class="bloom-app">
   <header class="topbar cb-topbar"><a class="brand cb-brand" href="index.html"><span class="bloom-symbol" aria-hidden="true">✳</span><span>CodeBloom</span></a><span class="top-caption">CODEBLOOM / ACCOUNT</span><div class="top-controls"><label class="select-wrap language"><span aria-hidden="true">◎</span><select id="account-language" aria-label="Язык сайта"><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option></select></label></div></header>
@@ -26,8 +32,7 @@
         <p class="account-privacy" data-account-text="consent"></p>
       </section>
     </div>
-    <section class="account-card" id="account-profile" hidden><h2 id="account-identity"></h2><p data-account-text="cloudHelp"></p><p id="account-sync-state" class="account-sync-state" role="status" aria-live="polite"></p><p id="account-last-sync" class="muted"></p><div class="account-actions"><a id="account-continue" class="primary-button" href="branching/" data-account-text="continue"></a><button id="account-sync" class="secondary-button" data-account-text="sync"></button><button id="account-signout" class="secondary-button" data-account-text="signOut"></button></div></section>
-    <section class="account-card" id="account-import-panel" hidden><h2 data-account-text="importTitle"></h2><p data-account-text="importHelp"></p><button id="account-import" class="secondary-button" data-account-text="import"></button></section>
+    <section class="account-card" id="account-profile" hidden><h2 id="account-identity"></h2><p data-account-text="cloudHelp"></p><p id="account-sync-state" class="account-sync-state" role="status" aria-live="polite"></p><p id="account-last-sync" class="muted"></p><div class="account-actions"><a id="account-continue" class="primary-button" href="branching/" data-account-text="continue"></a><button id="account-sync" class="secondary-button" data-account-text="sync"></button><button id="account-import" class="secondary-button" data-account-text="import" aria-describedby="account-import-help" hidden></button><button id="account-signout" class="secondary-button" data-account-text="signOut"></button></div><div class="account-import-help" id="account-import-panel" hidden><h3 data-account-text="importTitle"></h3><p id="account-import-help" data-account-text="importHelp"></p></div></section>
     <details class="account-card" id="account-history" hidden><summary data-account-text="history"></summary><p data-account-text="historyHelp"></p><div id="account-history-list"></div></details>
     <p id="account-message" class="account-message" role="status" aria-live="polite"></p>
   </main>
