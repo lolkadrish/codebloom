@@ -5,3 +5,6 @@
 
 .hero-language-actions{display:flex;gap:12px;flex-wrap:wrap}.hero-language-actions>a{font-size:13px;padding:12px 18px}.hero-language-actions .js-start{background:#f4cf68;color:#302815;border-color:#f4cf68}
 .cb-gutter .cb-error-line{display:inline-block;width:100%;border-radius:3px;background:#a7413840;color:#ffc1a1}
+
+/* Python continuation */
+.py-stage-preparation{padding:12px 0}.py-stage-preparation summary,#py-data-help summary{cursor:pointer;font-weight:700}#py-data-help{margin:14px 0}.cb-preparation pre{white-space:pre;overflow:auto}.cb-local-guide article{padding:24px;margin:22px 0;background:var(--surface);border:1px solid var(--line);border-radius:14px}.cb-local-guide pre{overflow:auto;white-space:pre;padding:18px;background:var(--code-bg,#10121d);color:var(--ink)}

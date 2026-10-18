@@ -3,7 +3,7 @@
   const {loc,t,escape,root}=CB,kind=document.documentElement.dataset.course;
   const courses=window.CODEBLOOM_PYTHON||[],stages=window.JAVASCRIPT_COURSE||[];
   const read=key=>{try{return JSON.parse(window.LEARNING_STORE?LEARNING_STORE.readCourse(key):localStorage.getItem(key))||{};}catch{return {};}};
-  function pythonProgress(course){const data=read(course.key),prefix=CB.language+':';let done=course.ids.filter(id=>typeof data.solved?.[prefix+id]==='string'&&data.solved[prefix+id]===data.drafts?.[prefix+id]).length;if(course.first&&data.experiments?.[prefix+'if-temperature']?.revision===1)done++;return {done,total:course.ids.length+(course.first?1:0),data};}
+  function pythonProgress(course){const data=read(course.key),prefix=course.prefix||CB.language+':';let done=course.ids.filter(id=>typeof data.solved?.[prefix+id]==='string'&&data.solved[prefix+id]===data.drafts?.[prefix+id]&&(!course.revisions||data.verifiedRevisions?.[prefix+id]===course.revisions[id])).length;if(course.first&&data.experiments?.[prefix+'if-temperature']?.revision===1)done++;return {done,total:course.ids.length+(course.first?1:0),data};}
   function jsProgress(stage){const data=read('javascript-learning-v1'),prefix='js:';return {done:stage.tasks.filter(task=>typeof data.solved?.[prefix+task.id]==='string'&&data.solved[prefix+task.id]===data.drafts?.[prefix+task.id]&&data.verifiedRevisions?.[prefix+task.id]===task.revision).length,total:stage.tasks.length,data};}
   function render(){
     const py=courses.map(pythonProgress),js=stages.map(jsProgress),pyTotal=py.reduce((n,x)=>n+x.total,0),pyDone=py.reduce((n,x)=>n+x.done,0),jsTotal=js.reduce((n,x)=>n+x.total,0),jsDone=js.reduce((n,x)=>n+x.done,0);

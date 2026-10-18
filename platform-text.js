@@ -105,9 +105,9 @@ window.CB_TEXT = {
     "uk": "Дві мови. Один підхід: практика з першого уроку."
   },
   "pythonCopy": {
-    "en": "A calm start in programming: conditions, working with data, and loops. Four stages with explanations and checked exercises.",
-    "ru": "Спокойный старт в программировании: условия, работа с данными и циклы. Четыре этапа с объяснениями и проверкой решений.",
-    "uk": "Спокійний старт у програмуванні: умови, робота з даними та цикли. Чотири етапи з поясненнями та перевіркою розв’язків."
+    "en": "From your first condition to functions, collections, files, classes, testing, SQL, async work and independent projects.",
+    "ru": "От первого условия до функций, коллекций, файлов, классов, тестов, SQL, асинхронности и самостоятельных проектов.",
+    "uk": "Від першої умови до функцій, колекцій, файлів, класів, тестів, SQL, асинхронності й самостійних проєктів."
   },
   "jsCopy": {
     "en": "From your first line to interactive pages and independent projects. Twelve stages, with a little more independence at each step.",
@@ -115,9 +115,9 @@ window.CB_TEXT = {
     "uk": "Від першого рядка до інтерактивних сторінок та самостійних проєктів. Дванадцять етапів із поступовим зростанням самостійності."
   },
   "pythonStages": {
-    "en": "4 STAGES",
-    "ru": "4 ЭТАПА",
-    "uk": "4 ЕТАПИ"
+    "en": "16 STAGES · 157 EXERCISES + EXPERIMENT",
+    "ru": "16 ЭТАПОВ · 157 ЗАДАНИЙ + ЭКСПЕРИМЕНТ",
+    "uk": "16 ЕТАПІВ · 157 ЗАВДАНЬ + ЕКСПЕРИМЕНТ"
   },
   "jsStages": {
     "en": "12 STAGES · 77 EXERCISES",
@@ -235,9 +235,9 @@ window.CB_TEXT = {
     "uk": "Твій маршрут JavaScript"
   },
   "pythonPathIntro": {
-    "en": "Start with one condition, then learn to combine decisions, process data, and repeat work with loops. Your existing Python work stays right here.",
-    "ru": "Начни с одного условия, затем объединяй решения, обрабатывай данные и повторяй действия циклами. Прежняя работа по Python остаётся здесь.",
-    "uk": "Почни з однієї умови, потім поєднуй рішення, обробляй дані та повторюй дії циклами. Попередня робота з Python залишається тут."
+    "en": "Sixteen stages, from first conditions to tested projects. The first four stages are preserved; continue with small exercises on each new tool. Files and databases run in the browser. Use the local-work guide for Git, environments and real services.",
+    "ru": "Шестнадцать этапов: от первых условий до проектов с тестами. Первые четыре сохранены; дальше — небольшие упражнения на каждый новый приём. Файлы и базы работают в браузере. Git, окружения и реальные сервисы разбираем в руководстве для компьютера.",
+    "uk": "Шістнадцять етапів: від перших умов до проєктів із тестами. Перші чотири збережено; далі — невеликі вправи на кожен новий прийом. Файли й бази працюють у браузері. Git, середовища та справжні сервіси розбираємо в посібнику для комп’ютера."
   },
   "jsPathIntro": {
     "en": "A complete learning path from first instructions to browser projects: short explanations, gradually harder practice, and real code execution. Open any stage, or follow the order.",
@@ -588,5 +588,75 @@ window.CB_TEXT = {
     "en": "Include the requested assertions and check actual comparisons, not just a printed success message.",
     "ru": "Добавь требуемые assert с настоящими сравнениями, а не только сообщение об успехе.",
     "uk": "Додай потрібні assert зі справжніми порівняннями, а не лише повідомлення про успіх."
+  },
+  "fixtureFiles": {
+    "en": "Files supplied for this case",
+    "ru": "Файлы этого теста",
+    "uk": "Файли цього тесту"
+  },
+  "fixtureModules": {
+    "en": "Supplied module source",
+    "ru": "Код готовых модулей",
+    "uk": "Код готових модулів"
+  },
+  "pythonRunning": {
+    "en": "Preparing Python / running… First launch may take up to 90 seconds. You can stop it.",
+    "ru": "Подготовка Python / запуск… Первый запуск может занять до 90 секунд. Его можно остановить.",
+    "uk": "Підготовка Python / запуск… Перший запуск може тривати до 90 секунд. Його можна зупинити."
+  },
+  "pythonLoadError": {
+    "en": "Python could not finish. Check your connection, then run again. Stop ends the isolated runtime.",
+    "ru": "Python не смог завершить работу. Проверь соединение и запусти снова. Остановка завершает отдельную среду выполнения.",
+    "uk": "Python не зміг завершити роботу. Перевір з’єднання й запусти знову. Зупинка завершує окреме середовище виконання."
+  },
+  "stageBasics": {
+    "en": "The idea, step by step",
+    "ru": "Идея по шагам",
+    "uk": "Ідея крок за кроком"
+  },
+  "localGuide": {
+    "en": "Build projects on your computer →",
+    "ru": "Проекты на своём компьютере →",
+    "uk": "Проєкти на своєму комп’ютері →"
+  },
+  "dataFormat": {
+    "en": "Reading the exercise data",
+    "ru": "Как читать данные задания",
+    "uk": "Як читати дані завдання"
+  },
+  "dataFormatHelp": {
+    "en": "JSON is a text format for data. import json loads a standard Python module. json.loads(input()) reads one JSON input line into a list or dictionary; json.dumps(result) turns a Python value back into JSON for output. Read the actual input instead of copying an example. For space-separated numbers you can start with the loop below.",
+    "ru": "JSON — текстовый формат данных. import json подключает стандартный модуль Python. json.loads(input()) превращает одну строку JSON-ввода в список или словарь; json.dumps(result) превращает значение Python обратно в JSON для вывода. Читай настоящий ввод, не копируй пример. Для чисел через пробел можно начать с цикла ниже.",
+    "uk": "JSON — текстовий формат даних. import json підключає стандартний модуль Python. json.loads(input()) перетворює один рядок JSON-введення на список або словник; json.dumps(result) перетворює значення Python назад на JSON для виведення. Читай справжнє введення, не копіюй приклад. Для чисел через пробіл можна почати з циклу нижче."
+  },
+  "pythonPathComplete": {
+    "en": "All Python browser stages checked.",
+    "ru": "Все браузерные этапы Python проверены.",
+    "uk": "Усі браузерні етапи Python перевірено."
+  },
+  "pythonPathCompleteHelp": {
+    "en": "Keep building: move a project to your computer, split modules, add tests, document and extend it. Completion is a milestone, not a guarantee of professional experience.",
+    "ru": "Продолжай практику: перенеси проект на компьютер, раздели на модули, добавь тесты, документацию и новые возможности. Прохождение — важный рубеж, а опыт приходит с самостоятельной работой.",
+    "uk": "Продовжуй практику: перенеси проєкт на комп’ютер, поділи на модулі, додай тести, документацію й нові можливості. Проходження — важливий рубіж, а досвід приходить із самостійною роботою."
+  },
+  "exampleRun": {
+    "en": "Run the example",
+    "ru": "Запустить пример",
+    "uk": "Запустити приклад"
+  },
+  "exampleSeparate": {
+    "en": "This runs the small example above. Your solution below stays yours.",
+    "ru": "Запускается маленький пример выше. Твой код решения ниже сохраняется отдельно.",
+    "uk": "Запускається невеликий приклад вище. Твій код розв’язку нижче зберігається окремо."
+  },
+  "pythonSyntaxHelp": {
+    "en": "Check the highlighted line and the line before it: Python needs matching parentheses and quotes, a colon after def/if/for/with, and an indented body.",
+    "ru": "Проверь выделенную строку и строку перед ней: нужны парные скобки и кавычки, двоеточие после def/if/for/with и команды с отступом внутри блока.",
+    "uk": "Перевір виділений рядок і рядок перед ним: потрібні парні дужки й лапки, двокрапка після def/if/for/with та команди з відступом усередині блоку."
+  },
+  "pythonTypeError": {
+    "en": "Check the value’s type, the list index, dictionary key or object attribute. Read the original Python error below.",
+    "ru": "Проверь тип значения, индекс списка, ключ словаря или поле объекта. Ниже есть исходное сообщение Python.",
+    "uk": "Перевір тип значення, індекс списку, ключ словника або поле об’єкта. Нижче є початкове повідомлення Python."
   }
 };
