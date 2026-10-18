@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const KEYS={first:'python-first-step-v1',next:'python-next-step-v1',continuation:'python-continuation-step-v1',loops:'python-loops-step-v1',javascript:'javascript-learning-v1'};
+  const KEYS={first:'python-first-step-v1',next:'python-next-step-v1',continuation:'python-continuation-step-v1',loops:'python-loops-step-v1',javascript:'javascript-learning-v1',pythonadvanced:'python-advanced-learning-v1'};
   const MAPS=['drafts','inputs','solved','hints','quizzes','answers','verifiedRevisions','experiments'];
   const MODE='python-account-mode-v1',PREFIX='python-account-data-v1:';
   const safeKey=value=>typeof value==='string'&&value.length>0&&value.length<=180&&!['__proto__','constructor','prototype'].includes(value);

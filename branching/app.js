@@ -38,7 +38,7 @@ const requiredExperimentDone=()=>{const record=state.experiments[keyOf('if-tempe
 const isRequiredExperiment=()=>courseStage==='first'&&task().module===0;
 const experimentBlocksCheck=()=>isRequiredExperiment()&&!requiredExperimentDone();
 const courseComplete=()=>LESSON_TASKS.every(isSolved)&&(courseStage!=='first'||requiredExperimentDone());
-const courseHref = stage => new URL({first:'branching/',next:'python.html',continuation:'continuation.html',loops:'loops.html'}[stage],new URL('../',assetRoot)).href;
+const courseHref = stage => new URL({first:'branching/',next:'python.html',continuation:'continuation.html',loops:'loops.html',pythonadvanced:'python-advanced/'}[stage],new URL('../',assetRoot)).href;
 function persist(){try{if(window.LEARNING_STORE)LEARNING_STORE.writeCourse(STORAGE_KEY,state);else localStorage.setItem(STORAGE_KEY,JSON.stringify(state));localStorage.setItem(PREFERENCES_KEY,JSON.stringify({language:state.language,theme:state.theme}));$('save-status').textContent=t('saved');}catch{$('save-status').textContent=t('notSaved');}}
 function applyTheme(){const mode=state.theme==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):state.theme;document.documentElement.dataset.theme=mode;$('theme').value=state.theme;$('theme-icon').textContent=mode==='dark'?'☾':mode==='lavender'?'✦':'◐';document.querySelector('meta[name="theme-color"]').content=mode==='dark'?'#1d1e2b':'#7255db';}
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(state.theme==='system')applyTheme();});
@@ -51,8 +51,10 @@ function applyLocale(){
   document.querySelector('[data-i18n="courseIntro"]').style.whiteSpace='pre-line';
   $('language').value=state.language;applyTheme();renderRuntime();renderReference();
   for(const stage of ['first','next','continuation','loops']){const link=$('course-'+stage);link.href=courseHref(stage);if(stage===courseStage)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');}
-  const onward={first:'next',next:'continuation',continuation:'loops',loops:'next'}[courseStage];$('related-course').href=courseHref(onward);$('related-course-label').textContent=t(courseStage==='first'?'nextCourse':courseStage==='next'?'continuationCourseLink':courseStage==='continuation'?'loopsCourseLink':'returnConditions');
-  $('completion-course-link').href=courseHref(onward);if(courseStage==='next')$('completion-course-link').textContent=t('continuationCourseLink');$('basics-link').href=theoryHref();
+  const onward={first:'next',next:'continuation',continuation:'loops',loops:'pythonadvanced'}[courseStage];$('related-course').href=courseHref(onward);$('related-course-label').textContent=t(courseStage==='first'?'nextCourse':courseStage==='next'?'continuationCourseLink':courseStage==='continuation'?'loopsCourseLink':'returnConditions');
+  const allLabel={en:'All 16 Python stages →',ru:'Все 16 этапов Python →',uk:'Усі 16 етапів Python →'}[state.language];let allLink=$('course-all-stages');if(!allLink){allLink=document.createElement('a');allLink.id='course-all-stages';allLink.className='basics-link';document.querySelector('.stage-nav').after(allLink);}allLink.href=new URL('../python-path.html',assetRoot);allLink.textContent=allLabel;
+  if(courseStage==='loops')$('related-course-label').textContent={en:'To the fifth stage: functions →',ru:'К пятому этапу: функции →',uk:'До п’ятого етапу: функції →'}[state.language];
+  $('completion-course-link').href=courseHref(onward);if(courseStage==='next')$('completion-course-link').textContent=t('continuationCourseLink');$('basics-link').href=theoryHref();if(courseStage==='loops')$('completion-course-link').textContent={en:'To the fifth stage: functions →',ru:'К пятому этапу: функции →',uk:'До п’ятого етапу: функції →'}[state.language];
 }
 function highlight(code){
   const pattern=/(#[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:if|elif|else|and|or|not|True|False|for|while|in|break|continue)\b|\b(?:print|input|int|str|range)\b|\b\d+\b)/g;
