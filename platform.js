@@ -10,6 +10,12 @@
     if(course.first&&savedKeys(course,'if-temperature').some(key=>{const attempt=data.experiments?.[key];return attempt?.revision===1&&Number.isFinite(attempt.temperature)&&attempt.temperature>=-10&&attempt.temperature<0;}))done++;
     return {done,total:course.ids.length+(course.first?1:0),data};
   }
+  function languageFor(course,data,id,fallback=CB.language){
+    const hasDraft=(language,taskId)=>typeof data.drafts?.[language+':'+taskId]==='string'||(language==='ru'&&course.id==='next'&&typeof data.drafts?.[taskId]==='string');
+    const exact=[CB.language,data.language,...languages].find(language=>languages.includes(language)&&hasDraft(language,id));if(exact)return exact;
+    const saved=languages.map(language=>({language,count:[...course.ids,'if-temperature'].filter(id=>hasDraft(language,id)||['solved','inputs','hints','experiments'].some(field=>Object.hasOwn(data[field]||{},language+':'+id))).length})).sort((a,b)=>b.count-a.count)[0];
+    return saved.count?saved.language:fallback;
+  }
   function pythonResume(progress){
     const hasWork=(course,data)=>course.ids.some(id=>savedKeys(course,id).some(key=>['drafts','solved','inputs','hints'].some(field=>Object.hasOwn(data[field]||{},key))))||(course.first&&Object.keys(data.experiments||{}).length>0);
     // A translated interface must not send an existing learner back to stage one.
@@ -29,13 +35,12 @@
     // Several advanced stages share one save. Keep its actual saved lesson.
     const savedCourse=courses.findIndex(item=>item.key===course.key&&item.ids.includes(data.currentTaskId));
     if(savedCourse>=0){index=savedCourse;course=courses[index];data=progress[index].data;}
+    const previousLanguage=course.prefix?CB.language:languageFor(course,data,data.currentTaskId);
+    if(progress[index].done===progress[index].total){const next=progress.findIndex((p,i)=>i>index&&p.done<p.total);if(next>=0){index=next;course=courses[index];data=progress[index].data;}}
     const id=course.ids.includes(data.currentTaskId)?data.currentTaskId:course.ids.find(id=>!completed(course,data,id))||course.ids[0];
     const url=new URL(course.url,root);url.hash=id;let language=null;
     if(!course.prefix){
-      const hasDraft=(language,taskId)=>typeof data.drafts?.[language+':'+taskId]==='string'||(language==='ru'&&course.id==='next'&&typeof data.drafts?.[taskId]==='string');
-      language=[CB.language,data.language,...languages].find(language=>languages.includes(language)&&hasDraft(language,id));
-      if(!language)language=languages.map(language=>({language,count:[...course.ids,'if-temperature'].filter(id=>hasDraft(language,id)||['solved','inputs','hints','experiments'].some(field=>Object.hasOwn(data[field]||{},language+':'+id))).length})).sort((a,b)=>b.count-a.count)[0].language;
-      if(!hasWork(course,data))language=CB.language;
+      language=languageFor(course,data,id,previousLanguage);
       url.searchParams.set('resume-language',language);
     }
     return {url,language,index};
