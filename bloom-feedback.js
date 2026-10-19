@@ -1,8 +1,8 @@
 /* Explicit feedback only. No account session, editor contents or progress are read. */
 (() => {
   'use strict';
-  const root=new URL('.',document.currentScript.src),header=document.querySelector('.topbar,.home-nav');
-  const controls=header?.querySelector('.top-controls,.home-nav-tools');
+  const root=new URL('.',document.currentScript.src),header=document.querySelector('.topbar,.home-nav,.route-nav');
+  const controls=header?.querySelector('.top-controls,.home-nav-tools,.route-nav-tools');
   if(!controls||document.getElementById('bloom-feedback-dialog'))return;
   const words={
     en:{title:'Help CodeBloom grow',intro:'Found a problem, got stuck, or have an idea? Tell us.',category:'What is it about?',bug:'Something is broken',lesson:'A lesson is unclear',idea:'An idea or suggestion',other:'Something else',message:'Your message',placeholder:'What happened, and what did you expect?',email:'Email for a reply (optional)',attach:'Include a link to this page',privacy:'Your message is private. Your email is used only to reply.',send:'Send feedback',sending:'Sending…',cancel:'Cancel',close:'Close',details:'Please write at least 10 characters.',error:'Could not confirm delivery. Your text is still here. Check your connection and try again.',rate:'Too many messages from this connection. Please try again later.',unavailable:'Feedback is temporarily unavailable. Your text is still here.',thanks:'Thanks for your feedback!',saved:'Your message has been saved for the CodeBloom team.',done:'Done'},
