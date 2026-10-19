@@ -10,7 +10,9 @@
   const solved=task=>state.solved[key(task)]===codeOf(task)&&typeof state.solved[key(task)]==='string'&&state.verifiedRevisions[key(task)]===task.revision;
   function scope(){const status=window.LEARNING_CLOUD?.getStatus();$('js-scope').textContent=pendingRemote?t('remoteWaiting'):window.LEARNING_STORE?.owner()?window.LEARNING_ACCOUNT_TEXT(status?.status||'pending'):t('localSave');}
   function navigation(){
-    $('js-nav').innerHTML=stages.map((stage,index)=>`<details ${item().stage===index?'open':''}><summary><span>${String(index+5).padStart(2,'0')}</span>${escape(loc(stage.title))}</summary>${stage.tasks.map(task=>`<button type="button" data-task="${escape(task.id)}" class="${solved(task)?'done ':''}${item().id===task.id?'active':''}" ${busy?'disabled':''}>${escape(loc(task.title))}</button>`).join('')}</details>`).join('');
+    const buttons=stage=>stage.tasks.map(task=>`<button type="button" data-task="${escape(task.id)}" class="${solved(task)?'done ':''}${item().id===task.id?'active':''}" ${busy?'disabled':''}>${escape(loc(task.title))}</button>`).join('');
+    if(window.CODEBLOOM_PYTHON_NAV)window.CODEBLOOM_PYTHON_NAV.render(item().stage,buttons(stages[item().stage]));
+    else $('js-nav').innerHTML=stages.map((stage,index)=>`<details ${item().stage===index?'open':''}><summary><span>${String(index+5).padStart(2,'0')}</span>${escape(loc(stage.title))}</summary>${buttons(stage)}</details>`).join('');
     $('js-solved').hidden=!solved(item());$('js-completion').hidden=!tasks.every(solved);scope();
   }
   function paint(){const total=$('js-code').value.split('\n').length;$('js-lines').innerHTML=Array.from({length:Math.max(12,total)},(_,i)=>'<span'+(i+1===errorLine?' class="cb-error-line"':'')+'>'+(i+1)+'</span>').join('\n');$('js-lines').scrollTop=$('js-code').scrollTop;}
