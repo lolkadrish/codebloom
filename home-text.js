@@ -458,3 +458,11 @@ Object.assign(window.CB_TEXT, {
     "uk": "Використовуй перемикач EN / RU / UK зверху. Мова програмування та мова пояснень обираються окремо."
   }
 });
+
+/* COMPILED COURSES */
+Object.assign(window.CB_TEXT, {
+homeTwoPaths:{en:'Four languages. A world of things to make.',ru:'Четыре языка. Целый мир собственных проектов.',uk:'Чотири мови. Цілий світ власних проєктів.'},
+homeHeroCopy:{en:'Turn “I have no idea” into “I made this.” Learn Python, JavaScript, C# and C++, one small, understandable step at a time.',ru:'Преврати «ничего не понимаю» в «я это сделал». Изучай Python, JavaScript, C# и C++ маленькими понятными шагами.',uk:'Перетвори «нічого не розумію» на «я це зробив». Вивчай Python, JavaScript, C# та C++ маленькими зрозумілими кроками.'},
+futureIntro:{en:'More directions for the future. These languages are planned; their lessons are not available yet.',ru:'Направления на будущее. Эти языки пока в планах: задания для них ещё не доступны.',uk:'Напрями на майбутнє. Ці мови поки у планах: завдання для них ще не доступні.'},
+faqAInstall:{en:'Write code on the site. Python and JavaScript run in your browser; C# and C++ use an online compiler after your permission. Later projects also introduce local tools.',ru:'Пиши код на сайте. Python и JavaScript выполняются в браузере; C# и C++ — через онлайн-компилятор после твоего разрешения. В дальнейших проектах знакомимся и с локальными инструментами.',uk:'Пиши код на сайті. Python та JavaScript виконуються в браузері; C# та C++ — через онлайн-компілятор після твого дозволу. У подальших проєктах знайомимося й з локальними інструментами.'}
+});
