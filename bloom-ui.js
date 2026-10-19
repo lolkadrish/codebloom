@@ -18,13 +18,13 @@
   }
   nav.className = 'bloom-app-nav';
   nav.replaceChildren();
-  [['languages','index.html#languages'],['Python','python-path.html'],['JavaScript','javascript.html'],['leaderboard','leaderboard.html']].forEach(([key,path]) => {
+  [['languages','index.html#languages'],['Python','python-path.html'],['JavaScript','javascript.html'],['C#','csharp.html'],['C++','cpp.html'],['leaderboard','leaderboard.html']].forEach(([key,path]) => {
     const link = document.createElement('a');
     link.href = new URL(path, root).href;
     link.dataset.bloomNav = key;
     link.textContent = key;
     const course = document.documentElement.dataset.course || '';
-    if ((key === 'Python' && /^(first|next|continuation|loops|theory|pythonadvanced)/.test(course)) || (key === 'JavaScript' && course.startsWith('javascript')) || (key === 'leaderboard' && location.pathname.endsWith('/leaderboard.html'))) link.setAttribute('aria-current','page');
+    if ((key === 'Python' && /^(first|next|continuation|loops|theory|pythonadvanced)/.test(course)) || (key === 'JavaScript' && course.startsWith('javascript')) || (key === 'C#' && course.startsWith('csharp')) || (key === 'C++' && course.startsWith('cpp')) || (key === 'leaderboard' && location.pathname.endsWith('/leaderboard.html'))) link.setAttribute('aria-current','page');
     nav.append(link);
   });
   const sidebar = document.querySelector('.sidebar,.cb-course-sidebar');
