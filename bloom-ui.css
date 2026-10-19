@@ -2,6 +2,18 @@
 :root:root{color-scheme:dark;--bg:#030303;--panel:#0b0c0a;--surface:#0b0c0a;--sidebar:#080907;--ink:#f3f5ef;--muted:#a2a89a;--faint:#818877;--line:#ffffff20;--accent:#d7fc70;--accent-hover:#e5ff9e;--soft:#d7fc700d;--soft-ink:#d7fc70;--input:#11130e;--green:#b9eb85;--green-bg:#b9eb850e;--red:#ff9e9e;--red-bg:#ff80800d;--amber:#e5ca8c;--amber-bg:#e5ca8c0d;--editor:#060705;--editor-foot:#0c0e09;--code:#e3e9d9;--code-bg:#060705;--selection:#d7fc7038}
 html:has(.bloom-app){scroll-padding-top:115px;scrollbar-color:#42483a #030303}
 .bloom-app{background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif;overflow-x:clip}
+.bloom-app>.layout,.bloom-app>.cb-course-layout,.bloom-app>main{position:relative;z-index:1}
+.bloom-particles{position:fixed;inset:104px 0 0;z-index:0;pointer-events:none;user-select:none;overflow:hidden}
+.bloom-particle{position:absolute;left:var(--particle-x);top:var(--particle-y);width:var(--particle-size);height:var(--particle-size);border-radius:50%;background:#d7fc70;opacity:var(--particle-alpha);animation:bloom-particle-drift var(--particle-duration) ease-in-out var(--particle-delay) infinite alternate}
+.bloom-particle--cool{background:#98c9bd}
+.bloom-particle--ring{background:transparent;border:1px solid #d7fc70;opacity:calc(var(--particle-alpha) * .7)}
+.bloom-particles.is-paused .bloom-particle{animation-play-state:paused}
+@keyframes bloom-particle-drift{from{transform:translate(calc(var(--particle-dx) * -1),var(--particle-dy))}to{transform:translate(var(--particle-dx),calc(var(--particle-dy) * -1))}}
+@media(max-width:1800px){.bloom-particle:nth-child(n+37){display:none}}
+@media(max-width:800px){.bloom-particles{top:88px}}
+@media(max-width:650px){.bloom-particles{top:86px}.bloom-particle:nth-child(n+15){display:none}}
+@media(prefers-reduced-motion:reduce){.bloom-particle{animation:none;opacity:calc(var(--particle-alpha) * .7)}}
+@media print{.bloom-particles{display:none}}
 .bloom-app *{scrollbar-color:#42483a #080907}
 .bloom-app :where(a,button,input,select,textarea,summary):focus-visible{outline:2px solid var(--accent);outline-offset:4px}
 .bloom-app ::selection{background:#d7fc7038;color:#f3f5ef}
@@ -150,3 +162,39 @@ dialog.start-choice .start-choice-options h3{font-weight:500}
 @media(max-width:650px){html:has(.bloom-app){scroll-padding-top:95px}.bloom-app .topbar{inset:12px 12px auto;height:59px;padding:0 14px;gap:8px;border-radius:13px}.bloom-app .brand{font-size:19px;gap:7px;letter-spacing:-.8px}.bloom-app .bloom-symbol{width:23px;height:27px}.bloom-app .bloom-app-nav{display:none}.bloom-app .top-controls{gap:7px}.bloom-app .top-controls select{font-size:10px;padding:8px 0;min-width:42px;max-width:55px}.bloom-app .top-controls .account-link{font-size:10px;padding:7px 10px;max-width:94px}.bloom-app .top-controls>.icon-button{display:none}.bloom-app .layout,.bloom-app .cb-course-layout{display:block;padding:86px 13px 0}.bloom-app .sidebar,.bloom-app .cb-course-sidebar,.bloom-app .theory-library-layout .sidebar{position:relative;top:auto;height:auto;max-height:245px;padding:16px;border-radius:12px;overflow:auto;margin-bottom:26px}.bloom-app .sidebar-intro{display:none}.bloom-app .stage-nav{display:flex;overflow:auto;gap:8px;padding:0 0 13px;margin-bottom:14px}.bloom-app .stage-link{flex:none;width:auto;min-width:130px;max-width:175px;padding:9px}.bloom-app .stage-link small{display:none}.bloom-app .sidebar>.basics-link,.bloom-app .sidebar>.progress-card,.bloom-app .sidebar>.sidebar-note,.bloom-app .sidebar>.next-course{display:none}.bloom-app #course-nav,.bloom-app #theory-nav,.bloom-app .cb-stage-nav{display:flex;overflow:auto;gap:12px;max-height:155px}.bloom-app #course-nav>.module{flex:none;min-width:210px;max-width:240px}.bloom-app #theory-nav>*{flex:none;min-width:200px;max-width:240px}.bloom-app .module-header{padding:9px 8px}.bloom-app .cb-course-sidebar>.eyebrow{margin:0;font-size:8px}.bloom-app .cb-course-sidebar h2{font-size:18px;margin:6px 0 13px}.bloom-app .cb-course-sidebar>.secondary-button,.bloom-app .cb-scope{display:none}.bloom-app .cb-stage-nav details{min-width:205px;max-width:235px}.bloom-app .layout>main,.bloom-app .cb-course-main{padding:0 0 40px}.bloom-app .breadcrumbs{flex-wrap:wrap;gap:9px;font-size:9px}.bloom-app .cb-breadcrumb{font-size:9px;gap:8px;flex-wrap:wrap}.bloom-app .share-row{margin-top:15px}.bloom-app .lesson-heading{margin:22px 0}.bloom-app .lesson-heading h1,.bloom-app .cb-course-main>h1{font-size:32px;letter-spacing:-1.4px;margin:16px 0}.bloom-app .lesson-heading>p{font-size:12px}.bloom-app .theory-shortcut{font-size:10px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}.bloom-app .task-card,.bloom-app .cb-assignment{padding:20px 17px}.bloom-app #requirements,.bloom-app #js-requirements{font-size:12px;line-height:2}.bloom-app .examples,.bloom-app .cb-case-row{grid-template-columns:1fr}.bloom-app .cb-preparation{padding:18px}.bloom-app .cb-preparation p{font-size:12px}.bloom-app .theory-card>summary,.bloom-app .quiz-card>summary{padding:17px;font-size:12px}.bloom-app .theory-body{padding:0 17px 18px}.bloom-app .panel-heading,.bloom-app .cb-editor-title{padding:15px 13px;min-height:55px}.bloom-app .editor-actions,.bloom-app .cb-editor-actions{padding:15px 13px;gap:9px;flex-wrap:wrap}.bloom-app .editor-actions button,.bloom-app .cb-editor-actions button{font-size:10px;padding:10px 14px}.bloom-app .console-body{padding:20px 17px}.bloom-app .theory-reading{padding:20px}.bloom-app .theory-reading p{font-size:13px}.bloom-app>.cb-container{padding:96px 18px 40px}.bloom-app .path-hero{padding:14px 0 20px}.bloom-app .path-hero h1{font-size:38px;letter-spacing:-1.6px}.bloom-app .cb-theory article{padding:21px 18px}.bloom-app .cb-theory article h2{font-size:22px}.bloom-app .account-page{padding:112px 18px 45px}.bloom-app .account-page>h1{font-size:40px;letter-spacing:-1.8px}.bloom-app .account-lead{font-size:13px}.bloom-app .account-grid,.bloom-app .leaderboard-grid{grid-template-columns:1fr}.bloom-app .account-card{padding:23px 20px}.bloom-app .rank-table-wrap{overflow:auto}.bloom-app footer{flex-wrap:wrap}dialog.start-choice{padding:23px}dialog.start-choice h2{font-size:26px}}
 @media(prefers-reduced-motion:reduce){.bloom-app *{scroll-behavior:auto;transition:none}}
 @media(max-width:650px){.bloom-app .sidebar,.bloom-app .cb-course-sidebar,.bloom-app .theory-library-layout .sidebar{max-height:none;padding:0;overflow:visible;margin-bottom:25px}.bloom-app .bloom-outline-toggle{display:flex;align-items:center;gap:11px;list-style:none;padding:16px;color:var(--muted);font-size:11px;cursor:pointer}.bloom-outline-toggle::-webkit-details-marker{display:none}.bloom-outline-toggle>span:first-child{font:11px Consolas,monospace;color:var(--accent)}.bloom-outline-toggle::after{content:'+';font:18px Consolas,monospace;margin-left:auto;color:var(--accent)}.bloom-outline[open]>.bloom-outline-toggle::after{content:'−'}.bloom-app .bloom-outline-content{max-height:305px;overflow:auto;padding:0 16px 16px}.bloom-app .bloom-outline-content>.eyebrow,.bloom-app .bloom-outline-content>h2{display:none}.bloom-app .bloom-outline-content>.secondary-button{margin:0 0 15px;display:inline-flex;font-size:10px}.bloom-app .sidebar .progress-card,.bloom-app .sidebar .sidebar-note,.bloom-app .sidebar .next-course,.bloom-app .sidebar .basics-link{display:none}.bloom-app .module-button{padding:9px 8px}.bloom-app .module-tasks{display:block;margin-left:10px;padding-left:10px}.bloom-app .module-title{white-space:normal}.bloom-app .cb-stage-nav{max-height:220px}.bloom-app .theory-topic-link{white-space:normal}}
+
+/* Unified Python stage navigation. */
+.bloom-python-sidebar>.sidebar-intro,.bloom-python-sidebar .sidebar-intro,.bloom-python-sidebar .stage-nav,.bloom-python-sidebar>.eyebrow,.bloom-python-sidebar>h2,.bloom-python-sidebar .bloom-outline-content>.eyebrow,.bloom-python-sidebar .bloom-outline-content>h2{display:none}
+.bloom-python-heading{padding:0 7px 19px;border-bottom:1px solid var(--line);margin-bottom:15px}
+.bloom-app .bloom-python-heading h2{font-size:23px;letter-spacing:-.8px;margin:13px 0 18px;font-weight:500;line-height:1.25}
+.bloom-app .bloom-python-heading .secondary-button{display:flex;justify-content:center;margin:0;font-size:11px}
+.bloom-app .bloom-python-nav{display:block;padding:0;margin:0 0 22px;max-height:none;overflow:visible}
+.bloom-app .bloom-python-stage{margin:0 0 4px;background:transparent;border:0;border-radius:10px;overflow:visible}
+.bloom-app .bloom-python-nav .bloom-stage-row{display:flex;align-items:flex-start;gap:11px;width:100%;padding:13px 10px;color:var(--muted);text-decoration:none;text-align:left;border:1px solid transparent;border-radius:9px;list-style:none;cursor:pointer;font-size:11px;line-height:1.6;font-weight:500}
+.bloom-stage-row::-webkit-details-marker{display:none}
+.bloom-stage-number{font:9px/1.8 Consolas,monospace;color:var(--faint);padding-top:1px;min-width:20px;flex:none}
+.bloom-app .bloom-stage-row:hover{color:var(--ink);background:#ffffff04;border-color:var(--line)}
+.bloom-app .is-current>.bloom-stage-row{background:var(--soft);border-color:#d7fc7033;color:var(--accent)}
+.bloom-app .is-current>.bloom-stage-row .bloom-stage-number{color:var(--accent)}
+.bloom-app .is-current>.bloom-stage-row::after{content:'−';margin-left:auto;color:var(--accent)}
+.bloom-app .is-current:not(.is-open)>.bloom-stage-row::after{content:'+'}
+.bloom-app .bloom-python-nav>.bloom-python-stage>.bloom-stage-row::before{content:none}
+.bloom-app .bloom-python-tasks[hidden]{display:none}
+.bloom-app .bloom-python-tasks{margin:9px 0 15px 20px;padding-left:12px;border-left:1px solid #d7fc7028}
+.bloom-app .bloom-python-tasks #course-nav{display:block;overflow:visible;max-height:none;padding:0}
+.bloom-app .bloom-python-tasks .module{margin:0 0 7px;min-width:0;max-width:none}
+.bloom-app .bloom-python-tasks .module-button{padding:9px 6px;gap:8px}
+.bloom-app .bloom-python-tasks .module-num{width:23px;height:23px;font-size:8px;border-radius:6px}
+.bloom-app .bloom-python-tasks .module-title{font-size:10px;white-space:normal;line-height:1.65}
+.bloom-app .bloom-python-tasks .module-subtitle{display:none}
+.bloom-app .bloom-python-tasks .module-tasks{margin-left:9px;padding-left:11px}
+.bloom-app .bloom-python-tasks .task-link{font-size:10px;line-height:1.7;padding:7px 0}
+.bloom-app .bloom-python-tasks>button{display:block;width:100%;text-align:left;border:0;border-radius:5px;background:transparent;color:var(--muted);font-size:10px;line-height:1.7;padding:9px 6px;cursor:pointer}
+.bloom-app .bloom-python-tasks>button:hover{color:var(--ink);background:#ffffff04}
+.bloom-app .bloom-python-tasks>button.active{color:var(--accent);background:var(--soft)}
+.bloom-app .bloom-python-tasks>button.done::before{content:'✓ ';color:var(--accent)}
+@media(max-width:650px){.bloom-app .bloom-python-heading{padding:0 4px 14px}.bloom-app .bloom-python-heading h2{font-size:20px}.bloom-app .bloom-python-sidebar .bloom-outline-content{max-height:65svh}.bloom-app .bloom-python-tasks .module-subtitle{display:none}.bloom-app .bloom-python-tasks .module-tasks{display:block}.bloom-app .bloom-python-nav{display:block;max-height:none;overflow:visible}}
+
+.bloom-app .bloom-python-nav .bloom-python-stage{min-width:0;max-width:none}
+.bloom-app .bloom-python-tasks #course-nav>.module{min-width:0;max-width:none}
+.bloom-python-sidebar .bloom-outline-content>#course-all-stages,.bloom-python-sidebar .next-course{display:none}
