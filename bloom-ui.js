@@ -5,9 +5,9 @@
   const header = document.querySelector('.bloom-app .topbar');
   if (!header) return;
   const words = {
-    en: {languages:'Languages', leaderboard:'Study leaderboard', navigation:'Main navigation', outline:'Topics and exercises'},
-    ru: {languages:'Языки', leaderboard:'Рейтинг занятий', navigation:'Основная навигация', outline:'Темы и задания'},
-    uk: {languages:'Мови', leaderboard:'Рейтинг занять', navigation:'Головна навігація', outline:'Теми й завдання'}
+    en: {languages:'Languages', leaderboard:'Study leaderboard', navigation:'Main navigation', outline:'Topics and exercises', pythonOutline:'Stages and exercises'},
+    ru: {languages:'Языки', leaderboard:'Рейтинг занятий', navigation:'Основная навигация', outline:'Темы и задания', pythonOutline:'Этапы и задания'},
+    uk: {languages:'Мови', leaderboard:'Рейтинг занять', navigation:'Головна навігація', outline:'Теми й завдання', pythonOutline:'Етапи та завдання'}
   };
   const symbol = header.querySelector('.bloom-symbol');
   if (symbol) symbol.innerHTML = '<svg viewBox="0 0 32 36" aria-hidden="true"><path d="M6 4c0 14 20 14 20 28M26 4C26 18 6 18 6 32M8 8h16M11 14h10M11 22h10M8 28h16"/></svg>';
@@ -52,7 +52,7 @@
   function translate() {
     const t = words[document.documentElement.lang] || words.en;
     nav.setAttribute('aria-label',t.navigation);
-    if (outlineLabel) outlineLabel.textContent = t.outline;
+    if (outlineLabel) outlineLabel.textContent = sidebar.classList.contains('bloom-python-sidebar') ? t.pythonOutline : t.outline;
     nav.querySelectorAll('[data-bloom-nav]').forEach(link => { link.textContent = t[link.dataset.bloomNav] || link.dataset.bloomNav; });
     header.querySelectorAll('#language option,#site-language option,#account-language option,#rank-language option').forEach(option => {
       if (['en','ru','uk'].includes(option.value)) option.textContent = option.value.toUpperCase();
@@ -60,4 +60,36 @@
   }
   translate();
   new MutationObserver(translate).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+})();
+
+/* Small compositor-only particles. No canvas, frame loop, or learning-state access. */
+(() => {
+  'use strict';
+  const page = document.querySelector('.bloom-app');
+  if (!page || document.querySelector('.bloom-particles')) return;
+  const field = document.createElement('div');
+  field.className = 'bloom-particles';
+  field.setAttribute('aria-hidden','true');
+  const fragment = document.createDocumentFragment();
+  for (let index = 0; index < 48; index++) {
+    const particle = document.createElement('i');
+    particle.className = 'bloom-particle' + (index % 9 === 0 ? ' bloom-particle--ring' : index % 7 === 0 ? ' bloom-particle--cool' : '');
+    const values = {
+      x: ((index * .61803398875 + .035) % 1 * 100).toFixed(2) + '%',
+      y: ((index * .41421356237 + .067) % 1 * 100).toFixed(2) + '%',
+      size: (index % 9 === 0 ? 6 : index % 3 === 0 ? 4 : 2) + 'px',
+      alpha: (.24 + index % 5 * .065).toFixed(3),
+      dx: (18 + index % 6 * 5) + 'px',
+      dy: (16 + index % 7 * 4) + 'px',
+      duration: (28 + index % 9 * 3) + 's',
+      delay: (-index * 3.7).toFixed(1) + 's'
+    };
+    for (const [key,value] of Object.entries(values)) particle.style.setProperty('--particle-' + key,value);
+    fragment.append(particle);
+  }
+  field.append(fragment);
+  page.prepend(field);
+  const visibility = () => field.classList.toggle('is-paused',document.hidden);
+  visibility();
+  document.addEventListener('visibilitychange',visibility);
 })();
